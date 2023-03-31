@@ -1,0 +1,10 @@
+{%- css %}{% include "public/css/src.css" %}{% endcss %}
+<div class="src">
+    <h1>Sources</h1>
+    <p>{{ srcnote }}</p>
+    <ul>
+        {% for src in srcs %}
+            <li>{{ src }}</li>
+        {% endfor %}
+    </ul>
+</div>

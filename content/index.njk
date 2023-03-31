@@ -1,0 +1,29 @@
+---
+layout: layouts/home.njk
+eleventyNavigation:
+  key: Blog
+  order: 1
+numberOfLatestPostsToShow: 50
+---
+{% set postsCount = collections.posts | length %}
+{% set latestPostsCount = postsCount | min(numberOfLatestPostsToShow) %}
+{% set morePosts = postsCount - numberOfLatestPostsToShow %}
+
+{% if morePosts > 0 %}
+<a href="/blog">View all posts</a>
+{% endif %}
+
+<h1>Latest Post{% if latestPostsCount != 1 %}s{% endif %}</h1>
+
+{% set postslist = collections.posts | head(-1 * numberOfLatestPostsToShow) %}
+{% set postslistCounter = postsCount %}
+{% include "postslist.njk" %}
+
+{# List every content page in the project #}
+{# 
+<ul>
+	{%- for entry in collections.all %}
+	<li><a href="{{ entry.url }}"><code>{{ entry.url }}</code></a></li>
+	{%- endfor %}
+</ul> #}
+
