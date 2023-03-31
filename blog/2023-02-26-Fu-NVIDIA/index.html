@@ -1,0 +1,659 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>So NVIDIA, F*** you</title>
+		<meta name="description" content="I got a new GPU, and NVIDIA does not make me happy.">
+		<link rel="alternate" href="/feed/feed.xml" type="application/atom+xml" title="LXBlog">
+		<link rel="alternate" href="/feed/feed.json" type="application/json" title="LXBlog">
+		<meta name="generator" content="Eleventy v2.0.1">
+		
+		<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+		
+		<style>/**
+ * okaidia theme for JavaScript, CSS and HTML
+ * Loosely based on Monokai textmate theme by http://www.monokai.nl/
+ * @author ocodia
+ */
+
+code[class*="language-"],
+pre[class*="language-"] {
+	color: #f8f8f2;
+	background: none;
+	text-shadow: 0 1px rgba(0, 0, 0, 0.3);
+	font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+	font-size: 1em;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+	word-wrap: normal;
+	line-height: 1.5;
+
+	-moz-tab-size: 4;
+	-o-tab-size: 4;
+	tab-size: 4;
+
+	-webkit-hyphens: none;
+	-moz-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+	padding: 1em;
+	margin: .5em 0;
+	overflow: auto;
+	border-radius: 0.3em;
+}
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+	background: #272822;
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+	padding: .1em;
+	border-radius: .3em;
+	white-space: normal;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+	color: #8292a2;
+}
+
+.token.punctuation {
+	color: #f8f8f2;
+}
+
+.token.namespace {
+	opacity: .7;
+}
+
+.token.property,
+.token.tag,
+.token.constant,
+.token.symbol,
+.token.deleted {
+	color: #f92672;
+}
+
+.token.boolean,
+.token.number {
+	color: #ae81ff;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+	color: #a6e22e;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string,
+.token.variable {
+	color: #f8f8f2;
+}
+
+.token.atrule,
+.token.attr-value,
+.token.function,
+.token.class-name {
+	color: #e6db74;
+}
+
+.token.keyword {
+	color: #66d9ef;
+}
+
+.token.regex,
+.token.important {
+	color: #fd971f;
+}
+
+.token.important,
+.token.bold {
+	font-weight: bold;
+}
+.token.italic {
+	font-style: italic;
+}
+
+.token.entity {
+	cursor: help;
+}
+/*
+ * New diff- syntax
+ */
+
+pre[class*="language-diff-"] {
+	--eleventy-code-padding: 1.25em;
+	padding-left: var(--eleventy-code-padding);
+	padding-right: var(--eleventy-code-padding);
+}
+.token.deleted {
+	background-color: hsl(0, 51%, 37%);
+	color: inherit;
+}
+.token.inserted {
+	background-color: hsl(126, 31%, 39%);
+	color: inherit;
+}
+
+/* Make the + and - characters unselectable for copy/paste */
+.token.prefix.unchanged,
+.token.prefix.inserted,
+.token.prefix.deleted {
+	-webkit-user-select: none;
+	user-select: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+.token.prefix.inserted,
+.token.prefix.deleted {
+	width: var(--eleventy-code-padding);
+	background-color: rgba(0,0,0,.2);
+}
+
+/* Optional: full-width background color */
+.token.inserted:not(.prefix),
+.token.deleted:not(.prefix) {
+	display: block;
+	margin-left: calc(-1 * var(--eleventy-code-padding));
+	margin-right: calc(-1 * var(--eleventy-code-padding));
+	text-decoration: none; /* override del, ins, mark defaults */
+	color: inherit; /* override del, ins, mark defaults */
+}
+* { box-sizing: border-box; }
+/* Defaults */
+:root {
+	--font-family: 'Roboto', 'Segoe UI', 'Noto Sans', -apple-system, system-ui, sans-serif;
+	--font-family-monospace: Consolas, Menlo, Monaco, Andale Mono WT, Andale Mono, Lucida Console, Lucida Sans Typewriter, DejaVu Sans Mono, Bitstream Vera Sans Mono, Liberation Mono, Nimbus Mono L, Courier New, Courier, monospace;
+}
+
+/* Theme colors */
+:root {
+	--text-color: var(--color-gray-90);
+
+	--color-gray-10: #aaa;
+	--color-gray-20: #e0e0e0;
+	--color-gray-50: #C0C0C0;
+	--color-gray-90: #dad8d8;
+	--color-bg-highlight: #444;
+
+	--tint: rgba(255,255,255,0.1);
+
+	/* --text-color is assigned to --color-gray-_ above */
+	--text-color-link: #66C2fc;
+	--text-color-link-active: #ff88aa;
+
+	--background-color: #15202b;
+
+	--syntax-tab-size: 2;
+}
+
+/* Global stylesheet */
+* {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	padding: 0;
+	margin: 0 auto;
+	font-family: var(--font-family);
+	color: var(--text-color);
+	font-size: 1.05em;
+}
+html::before {
+	position: fixed;
+	content: "";
+	width: 100%;
+	height: 100%;
+	z-index: -1;
+}
+
+html {
+	background-color: #111;
+}
+body {
+	max-width: 47em;
+}
+
+/* https://www.a11yproject.com/posts/how-to-hide-content/ */
+.visually-hidden {
+	clip: rect(0 0 0 0);
+	clip-path: inset(50%);
+	height: 1px;
+	overflow: hidden;
+	position: absolute;
+	white-space: nowrap;
+	width: 1px;
+}
+
+p:last-child {
+	margin-bottom: 0;
+}
+p {
+	line-height: 1.7;
+}
+
+li {
+	line-height: 1.5;
+}
+
+a[href] {
+	color: var(--text-color-link);
+}
+a[href]:hover,
+a[href]:active {
+	color: var(--text-color-link-active);
+}
+
+main {
+	padding: 1rem;
+	position: relative;
+	background: rgba(255, 255, 255, 0.1);
+}
+main :first-child {
+	margin-top: 0;
+}
+header:before {
+	content: "";
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	background: linear-gradient(to bottom, transparent, var(--color-bg-highlight));
+	transform: perspective(800px) rotateX(60deg);
+	transform-origin: 50% 100%;
+	z-index: -1;
+}
+
+header {
+	position: relative;
+	display: flex;
+	justify-content: space-between;
+}
+
+header:after {
+	content: "";
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	height: 1px;
+	width: 100%;
+	background: linear-gradient(to right, transparent 10%, var(--text-color) 50%, transparent 90%)
+}
+
+header > nav {
+	margin-left: auto;
+}
+
+.links-nextprev {
+	display: flex;
+	position: relative;
+	justify-content: space-between;
+	padding: 1em 0;
+}
+
+.links-nextprev:before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 1px;
+	width: 100%;
+	background: linear-gradient(to right, transparent 0%, var(--text-color) 50%, transparent 100%)
+}
+
+table {
+	margin: 1em 0;
+}
+table td,
+table th {
+	padding-right: 1em;
+}
+
+pre,
+code {
+	font-family: var(--font-family-monospace);
+}
+pre:not([class*="language-"]) {
+	margin: .5em 0;
+	line-height: 1.375; /* 22px /16 */
+	-moz-tab-size: var(--syntax-tab-size);
+	-o-tab-size: var(--syntax-tab-size);
+	tab-size: var(--syntax-tab-size);
+	-webkit-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+	direction: ltr;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+}
+code {
+	word-break: break-all;
+}
+
+/* Header */
+header {
+	display: flex;
+	gap: 1em .5em;
+	flex-wrap: wrap;
+	align-items: center;
+	padding: 1em 0;
+}
+.home-link {
+	font-size: 1em; /* 16px /16 */
+	font-weight: 600;
+	margin-right: 2em;
+}
+.home-link:link:not(:hover) {
+	text-decoration: none;
+}
+
+/* Nav */
+.nav {
+	display: flex;
+	padding: 0;
+	margin: 0;
+	list-style: none;
+}
+.nav-item {
+	display: inline-block;
+	margin-right: 1em;
+}
+.nav-item a[href]:not(:hover) {
+	text-decoration: none;
+}
+.nav a[href][aria-current="page"] {
+	text-decoration: underline;
+}
+
+/* Posts list */
+.postlist {
+	list-style: none;
+	padding: 0;
+}
+.post-desc {
+	color: #888;
+	font-style: italic;
+}
+.postlist-item {
+	background: #333;
+	align-items: baseline;
+	margin-bottom: 1em;
+}
+.postlist-date,
+.postlist-item::before {
+	font-size: 0.8125em; /* 13px /16 */
+	color: var(--color-gray-90);
+}
+.postlist-date {
+	word-spacing: -0.5px;
+}
+.postlist-tags {
+	margin-left: 0.25em;
+}
+.postlist-tag {
+	position: relative;
+	display: inline-block;
+	text-decoration: none;
+	padding: 0 0.60em;
+}
+.postlist-tag::before {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	content: "";
+	padding: 0 0.1em;
+	transform: skewX(-15deg);
+	background: var(--tint);
+	border-right: 1px solid gray;
+}
+.postlist-tag:last-child::before {
+	border-right: none;
+}
+.postlist-tag:hover::before {
+	background: rgba(255, 255, 255, 0.2);
+}
+.tag {
+	font-size: 14px;
+	padding: 0 12px;
+	clip-path: polygon(calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 6px 100%, 0 50%, 6px 0);
+}
+.red {
+	background: #FF3311;
+}
+main img {
+	max-width: 100%;
+	height: auto;
+}
+@keyframes load {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
+main {
+	animation: 0.5s load;
+}
+.postlist-link {
+	font-size: 1.1875em; /* 19px /16 */
+	font-weight: 500;
+	flex-basis: calc(100% - 1.5rem);
+	padding-right: .75em;
+	text-underline-position: from-font;
+	text-underline-offset: 0;
+	text-decoration-thickness: 1px;
+}
+.postlist-item-active .postlist-link {
+	font-weight: bold;
+}
+
+/* Tags */
+.post-tag {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	text-transform: capitalize;
+}
+.postlist-item > .post-tag {
+	align-self: center;
+}
+.news {
+	background: black;
+	color: white;
+}
+
+.news > span {
+	margin-right: 30px;
+}
+
+/* Tags list */
+.post-metadata {
+	display: inline-flex;
+	flex-wrap: wrap;
+	gap: .5em;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+.post-metadata time {
+	margin-right: 1em;
+}
+
+/* Direct Links / Markdown Headers */
+.header-anchor {
+	text-decoration: none;
+	font-style: normal;
+	font-size: 1em;
+	margin-left: .1em;
+}
+a[href].header-anchor,
+a[href].header-anchor:visited {
+	color: transparent;
+}
+a[href].header-anchor:focus,
+a[href].header-anchor:hover {
+	text-decoration: underline;
+}
+a[href].header-anchor:focus,
+:hover > a[href].header-anchor {
+	color: #aaa;
+}
+
+h2 + .header-anchor {
+	font-size: 1.5em;
+}
+footer {
+	border-top: 1px solid gray;
+	display: flex;
+	justify-content: space-between;
+	padding: 10px 0;
+}
+.prevnext-post {
+	display: inline-block;
+	border: 1px solid var(--color-gray-90);
+	font-size: 16px;
+	color: white;
+	padding: 10px;
+}
+
+.prevnext-post:hover {
+	background: var(--color-gray-90);
+	color: #000;
+}
+
+/* >:( */
+.ARGH {
+	text-shadow: 0px 0px 12px #F00, 0px 0px 12px #F00;
+}
+
+.sub {
+	font-size: 0.9em;
+	color: var(--color-gray-10);
+}
+
+.highlight {
+	color: #FFF;
+	background: #111;
+	border-radius: 4px;
+	padding: 0 .25em;
+}
+
+.aesthetics {
+	text-shadow: 1px 1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, -1px -1px 0 #000;
+	font-weight: 500;
+	background: linear-gradient(90deg, rgba(255,0,0,0.75) 15%, rgba(255,154,0,0.75) 30%, rgba(208,222,33,0.75) 45%, rgba(39,140,34,0.75) 60%,rgba(28,127,238,0.75) 80%, rgba(95,21,242,0.75) 100%);
+}
+
+.hint {
+	filter: contrast(5);
+	background: #6C6C6C;
+}</style>
+	</head>
+
+	<body>
+		<a href="#skip" class="visually-hidden">Skip to main content</a>
+		<header>
+			<a href="/" class="home-link">
+				
+					<img width=120px src="/img/logo.png" alt="LXBlog">
+				
+			</a>
+			<nav>
+				<h2 class="visually-hidden">Top level navigation menu</h2>
+				<ul class="nav">
+					<li class="nav-item"><a href="/mainpage/">Main Page</a></li>
+					<li class="nav-item"><a href="/">Blog</a></li>
+					<li class="nav-item"><a href="/about/">About</a></li>
+				</ul>
+			</nav>
+		</header>
+
+		<main id="skip">
+			
+
+<h1>So NVIDIA, F*** you</h1>
+<p class="post-desc">I got a new GPU, and NVIDIA does not make me happy.</p>
+
+<ul class="post-metadata">
+	<li>Posted: <time datetime="2023-02-26">2023-02-26</time></li>
+		<li><a href="/tags/linux/" class="post-tag">Linux</a>, </li>
+		<li><a href="/tags/nvidia/" class="post-tag">NVIDIA</a></li>
+</ul>
+
+<p>Ever since I kinda have &quot;my own PC&quot;, my hardware is always several generations behind, whether it's CPU or GPU.
+However last Friday I got an NVIDIA GTX 1660 SUPER, which is going to replace my GTX 650 Ti BOOST 1GB (Coincidentally it is released almost exactly 1 decade ago).</p>
+<p>This card was actually a mining card by &lt;undisclosed member somewhere in my family tree&gt;, and it still seems to be in good condition.
+This upgrade is also a massive upgrade and it marks the first time I am using a so called &quot;mainstream&quot; GPU card that is still well within the support period.</p>
+<p>Now the NVIDIA GTX 650 Ti BOOST has served me rather well, but the main issue is that my variants only has 1GB of VRAM. Open up a browser on Windows and you're using almost 800MB/1GB, open up any game and you're doomed to swap with the System RAM which heavily tanks the performance and are not even using the GPU to the full potential. But I've been doing less gaming lately so that is still &quot;workable&quot;.</p>
+<p>Anyways the first thing I did is just boot into Windows, as I know there (usually) won't be any problem setting up the driver there, and it did work out as planned. Within a minute the driver gets installed automatically and I am now rocking with an 1660 Super with no issues.</p>
+<p>Now it's time to reboot into Linux. I know for a fact that NVIDIA driver on Linux is a pain, but considering my old GPU haven't really gave me &quot;too&quot; much issue I thought that the worst scanario is just purging my old NVIDIA legacy driver then reinstall it with the new one.</p>
+<p>I waited, and waited, hoping I would at least see the KDE Plasma Splash Screen... wait did the screen freeze?
+This is still within my expectations (Even if annoying), so I tried switching to another tty and remove all the NVIDIA stuff there, except that it seems my entire system just locked up and nothing works.</p>
+<p>Okay well let's reboot into recovery mode and hope it works there, but then I realized I've set my GRUB timeout to be 0s. I know that you can press &quot;Shift&quot; or &quot;Esc&quot; to force GRUB to appear, however I know this doesn't work at least under my configuration for whatever reason. Resetting the GRUB Timeout is somewhere on my todo list for a long time so I can actually boot into recovery mode when needed, but everytime I just dismiss it and finds something better to do. Well now it came back to haunt me.</p>
+<p>Well alright, at least I still have my Ventoy USB. I am going to boot into Ubuntu Live then modify the grub config there... what in the world is this?</p>
+<p><picture><source type="image/avif" srcset="/img/5bOvr55mdk-1920.avif 1920w"><source type="image/webp" srcset="/img/5bOvr55mdk-1920.webp 1920w"><img alt="Ubuntu Live Session, with a heavy green tint" loading="lazy" decoding="async" src="/img/5bOvr55mdk-1920.jpeg" width="1920" height="1080"></picture></p>
+<p>Yes it is still perfectly usable apart from the green tint, but this is already a big downgrade as none of this happens with my previous (also NVIDIA) GPU and it's just a terrible experience. Anyways I did finally get the GRUB menu to show up and entered recovery mode, and now I can finally uninstall the old NVIDIA Driver.
+After rebooting I am back on Plasma desktop with nouveau, which sucks in performance but are still better than the whatever NVIDIA nonsense I just had.</p>
+<p>So let's re-install the latest NVIDIA driver and it should work right? I rebooted and well I was greeted with the exact same issue. Black screen, nothing responds.
+I don't know what to do, does this card just don't work on Linux at all? That is until I remembered I saw a post on the fediverse that says he can't get NVIDIA KMS to work and he can't use Wayland because of that.
+This probably have nothing to do with my situation, but my session is set to auto-login to Wayland, maybe newer NVIDIA GPU just don't work with Wayland?
+So I modified the sddm config so that it would login to the X11 session instead, and yup that worked! (Which basically means I can no longer use the Wayland Session, which have massive performance improvements over X especially after the 5.27 update).</p>
+<p>Also, because NVIDIA is now my main GPU, all my xrandr script no longer works and I have to rely on NVIDIA's decade old &quot;X Server Settings&quot; (That's probably at least around 2008 or something) to tweak it. That settings panel would resize the window itself on some specific tab because apparently scrolling no longer exist. Clicking &quot;Save to X Configuration File&quot; doesn't account for PRIME monitor, and apparently you must launch nvidia-settings on startup just for your color profile to get applied???</p>
+<p>All my existing QEMU VM that utilize virtio gpu also no longer works under UEFI, so I either have to reinstall all of them with Legacy BIOS or just use QXL which is rather slow and not suitable for when I actually need to get stuff done.</p>
+<p>It's just sucks that NVIDIA makes the most advanced and popular GPU, yet they are just uncooperative at everything, making using NVIDIA GPU on Linux second class and devs and user spending more time dealing with NVIDIA specific quirks. This is an inferior product especially in contrast to Red and Blue Team where they both would work out of the box under Linux with absolute 0 configuration, everyone is happy.</p>
+
+<ul class="links-nextprev">
+		<a href="/blog/2022-12-26-school-computers/">
+			<div class="prevnext-post">
+				<< Previously: School computers
+			</div>
+		</a>
+	
+		<a href="/blog/2023-03-01-I-tried-KDE-Plasma/">
+		<div class="prevnext-post">
+			Next: I tried KDE Plasma >>
+		</div>
+		</a>
+	
+</ul>
+
+		</main>
+
+		<footer>
+			<span>LX86 2023</span>
+			<div>
+				<a href="/feed/feed.xml">RSS</a>
+				<a href="mailto:lx86@lx862.com">Email</a>
+			</div>
+			<span>Last updated: <time datetime="2023-03-31">2023-03-31</span>
+		</footer>
+
+<!--		 Current page: /blog/2023-02-26-Fu-NVIDIA/-->
+	</body>
+</html>

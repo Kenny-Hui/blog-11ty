@@ -1,0 +1,9 @@
+.src {
+    background-color: var(--color-bg-highlight);
+    padding: 0.5em;
+    margin: 1em 0;
+}
+
+.src h1 {
+    font-size: 1.5em;
+}

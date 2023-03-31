@@ -1,0 +1,41 @@
+<div class="src">
+    <h1>Sources</h1>
+    <p>If I tell you I figured this out all by my own I would be a god at this point. Please check out the following sources:</p>
+    <ul>
+<p><li><a href="https://typetype.medium.com/font-hinting-from-first-developments-to-use-in-practice-8643c7925478">Font hinting from first developments to use in practice</a></li></p>
+<p></ul></p>
+</div>
+If you make stuff on the web, or you need to put some nice looking font onto maybe your WinForm/WPF applications, you might have noticed that the font looks... off.  
+<p>It looks different than what you would expect, and in some cases harder to read.</p>
+<p><picture><source type="image/avif" srcset="/img/IctScdiaeH-708.avif 708w"><source type="image/webp" srcset="/img/IctScdiaeH-708.webp 708w"><img alt="" loading="lazy" decoding="async" src="/img/IctScdiaeH-708.png" width="708" height="299"></picture></p>
+<p>I am hit with this situation a few months ago when I need to make a webpage and the font looks very unpleasing.</p>
+<p>Now this isn't the first time I've noticed this, but it's genuinely <span class="ARGH">gut wrenching</span> on how my supposedly good looking fonts looks absolutely crap when I put it on my webpage, but not if I for example, use it in Paint.NET or Photoshop.</p>
+<p>As any other human would do I asked <strong>Mr. Google</strong>, but to my surprise I didn't really get any relevant answer at all.<br>
+(Not because there's no answer, but just that I didn't use the appropriate keyword as I have 0 idea about any font rendering stuff prior to this).</p>
+<p>So I decided to fire up a macOS and Linux VM and see how each performs.</p>
+<p>Unsurprisingly macOS doesn't have this issue (It's Apple afterall), but Linux doesn't have the same problem either.</p>
+<p>Yes macOS and Linux still looks different, but the point is they all won't deform the font to the degree that Windows does, so this is clearly a Windows specific issue?</p>
+<h1 id="font-hinting" tabindex="-1">Font Hinting <a class="header-anchor" href="#font-hinting">#</a></h1>
+<p>Better represented as &quot;grid-fitting&quot;, it is a process that deforms the font to make the glyph aligns to the pixels on your monitor.</p>
+<p>This is especially important before anti-aliasing exists, as one misplaced pixel could heavily affect the outlook of the font.</p>
+<p>Even after anti-aliasing becomes the norms, Font Hinting is still used to improve the &quot;Crispness&quot; of the fonts.</p>
+<p>This could however, as mentioned, alter the shape of the font, which is not always welcomed by graphics designer, or even just people wanting their fonts to look nice.</p>
+<p>As the font gets smaller, even snapping 1 pixel matters alot, and that's why fonts generally look different (Better or Worse) on different sizes with Font Hinting.</p>
+<h2 id="windows" tabindex="-1">Windows <a class="header-anchor" href="#windows">#</a></h2>
+<p>Microsoft favors <span class="highlight">readability</span> over <span class="aesthetics">aesthetics</span>, as such ClearType (The technology Windows uses to smoothen fonts) uses Very Strong <span class="hint">font hinting</span> to ensure the fonts looks crisp, even if it means the fonts will end up getting deformed.</p>
+<p>While it is meant to improve readability by making fonts crispier (And it does in most cases), it could end up backfiring.</p>
+<p>For example with <strong>Noto Sans TC</strong> (in Chinese) and <strong>GG Sans</strong> (Discord's new font), both doesn't render well and are not aesthetically pleasing on Windows and may even hurt readability in some cases.</p>
+<p>This also makes Cleartype remain controversial as it ruins the aesthetic of a fonts, which will certainly trigger graphics and font designer.</p>
+<p><strong>There's no way to reduce or disable font hinting with ClearType as far as I know</strong>.</p>
+<p>There are 3rd party programs like <a href="https://www.mactype.net">MacType</a> that aims to solve this, however from my experience it needs quite a bit of tweaking to get it right and it still feels a bit weird.</p>
+<h2 id="macos" tabindex="-1">macOS <a class="header-anchor" href="#macos">#</a></h2>
+<p>macOS on the other hand does not use any font hinting, at all.</p>
+<p>This means that fonts on macOS are generally blurrier than say maybe Windows, but the font will always retain the same shape on all sizes, printed or not.</p>
+<p>It has also became less of a problem as Apple switches to using HiDPI display, which makes the blurriness less visible.</p>
+<h2 id="linux" tabindex="-1">Linux <a class="header-anchor" href="#linux">#</a></h2>
+<p>It depends, most DE have an option to tweak the font hinting.<br>
+I completely turned it off as I think the way the font looks is above just crispiness.</p>
+<p>The truth is there's not one solution everyone can agree on, you either have to trade for quality or crispiness (Note crispiness != clarity).</p>
+<p>The only win win solution as far as I can tell is to really just buy a HiDPI screen, and in fact this is the only reason why I might want anything higher than 1080p.<br>
+I am clearly not the type of professional guy who would zoom in and appereciate each pixels, but when it comes to font rendering stuff it really matters.</p>
+<p>If you are REALLY desparate to get rid of the font hinting specifically for your Applications / Webpage, then your best bet is just to put the text in an image. (Or you can go the pain way and render the text entirely by your custom code). Be very wary of accessibilities issues though!</p>

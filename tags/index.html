@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>LXBlog</title>
+		<meta name="description" content="I am writing about my experiences as a naval navel-gazer.">
+		<link rel="alternate" href="/feed/feed.xml" type="application/atom+xml" title="LXBlog">
+		<link rel="alternate" href="/feed/feed.json" type="application/json" title="LXBlog">
+		<meta name="generator" content="Eleventy v2.0.1">
+		
+		<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+		
+		<style>* { box-sizing: border-box; }
+/* Defaults */
+:root {
+	--font-family: 'Roboto', 'Segoe UI', 'Noto Sans', -apple-system, system-ui, sans-serif;
+	--font-family-monospace: Consolas, Menlo, Monaco, Andale Mono WT, Andale Mono, Lucida Console, Lucida Sans Typewriter, DejaVu Sans Mono, Bitstream Vera Sans Mono, Liberation Mono, Nimbus Mono L, Courier New, Courier, monospace;
+}
+
+/* Theme colors */
+:root {
+	--text-color: var(--color-gray-90);
+
+	--color-gray-10: #aaa;
+	--color-gray-20: #e0e0e0;
+	--color-gray-50: #C0C0C0;
+	--color-gray-90: #dad8d8;
+	--color-bg-highlight: #444;
+
+	--tint: rgba(255,255,255,0.1);
+
+	/* --text-color is assigned to --color-gray-_ above */
+	--text-color-link: #66C2fc;
+	--text-color-link-active: #ff88aa;
+
+	--background-color: #15202b;
+
+	--syntax-tab-size: 2;
+}
+
+/* Global stylesheet */
+* {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	padding: 0;
+	margin: 0 auto;
+	font-family: var(--font-family);
+	color: var(--text-color);
+	font-size: 1.05em;
+}
+html::before {
+	position: fixed;
+	content: "";
+	width: 100%;
+	height: 100%;
+	z-index: -1;
+}
+
+html {
+	background-color: #111;
+}
+body {
+	max-width: 47em;
+}
+
+/* https://www.a11yproject.com/posts/how-to-hide-content/ */
+.visually-hidden {
+	clip: rect(0 0 0 0);
+	clip-path: inset(50%);
+	height: 1px;
+	overflow: hidden;
+	position: absolute;
+	white-space: nowrap;
+	width: 1px;
+}
+
+p:last-child {
+	margin-bottom: 0;
+}
+p {
+	line-height: 1.7;
+}
+
+li {
+	line-height: 1.5;
+}
+
+a[href] {
+	color: var(--text-color-link);
+}
+a[href]:hover,
+a[href]:active {
+	color: var(--text-color-link-active);
+}
+
+main {
+	padding: 1rem;
+	position: relative;
+	background: rgba(255, 255, 255, 0.1);
+}
+main :first-child {
+	margin-top: 0;
+}
+header:before {
+	content: "";
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	background: linear-gradient(to bottom, transparent, var(--color-bg-highlight));
+	transform: perspective(800px) rotateX(60deg);
+	transform-origin: 50% 100%;
+	z-index: -1;
+}
+
+header {
+	position: relative;
+	display: flex;
+	justify-content: space-between;
+}
+
+header:after {
+	content: "";
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	height: 1px;
+	width: 100%;
+	background: linear-gradient(to right, transparent 10%, var(--text-color) 50%, transparent 90%)
+}
+
+header > nav {
+	margin-left: auto;
+}
+
+.links-nextprev {
+	display: flex;
+	position: relative;
+	justify-content: space-between;
+	padding: 1em 0;
+}
+
+.links-nextprev:before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 1px;
+	width: 100%;
+	background: linear-gradient(to right, transparent 0%, var(--text-color) 50%, transparent 100%)
+}
+
+table {
+	margin: 1em 0;
+}
+table td,
+table th {
+	padding-right: 1em;
+}
+
+pre,
+code {
+	font-family: var(--font-family-monospace);
+}
+pre:not([class*="language-"]) {
+	margin: .5em 0;
+	line-height: 1.375; /* 22px /16 */
+	-moz-tab-size: var(--syntax-tab-size);
+	-o-tab-size: var(--syntax-tab-size);
+	tab-size: var(--syntax-tab-size);
+	-webkit-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+	direction: ltr;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+}
+code {
+	word-break: break-all;
+}
+
+/* Header */
+header {
+	display: flex;
+	gap: 1em .5em;
+	flex-wrap: wrap;
+	align-items: center;
+	padding: 1em 0;
+}
+.home-link {
+	font-size: 1em; /* 16px /16 */
+	font-weight: 600;
+	margin-right: 2em;
+}
+.home-link:link:not(:hover) {
+	text-decoration: none;
+}
+
+/* Nav */
+.nav {
+	display: flex;
+	padding: 0;
+	margin: 0;
+	list-style: none;
+}
+.nav-item {
+	display: inline-block;
+	margin-right: 1em;
+}
+.nav-item a[href]:not(:hover) {
+	text-decoration: none;
+}
+.nav a[href][aria-current="page"] {
+	text-decoration: underline;
+}
+
+/* Posts list */
+.postlist {
+	list-style: none;
+	padding: 0;
+}
+.post-desc {
+	color: #888;
+	font-style: italic;
+}
+.postlist-item {
+	background: #333;
+	align-items: baseline;
+	margin-bottom: 1em;
+}
+.postlist-date,
+.postlist-item::before {
+	font-size: 0.8125em; /* 13px /16 */
+	color: var(--color-gray-90);
+}
+.postlist-date {
+	word-spacing: -0.5px;
+}
+.postlist-tags {
+	margin-left: 0.25em;
+}
+.postlist-tag {
+	position: relative;
+	display: inline-block;
+	text-decoration: none;
+	padding: 0 0.60em;
+}
+.postlist-tag::before {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	content: "";
+	padding: 0 0.1em;
+	transform: skewX(-15deg);
+	background: var(--tint);
+	border-right: 1px solid gray;
+}
+.postlist-tag:last-child::before {
+	border-right: none;
+}
+.postlist-tag:hover::before {
+	background: rgba(255, 255, 255, 0.2);
+}
+.tag {
+	font-size: 14px;
+	padding: 0 12px;
+	clip-path: polygon(calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 6px 100%, 0 50%, 6px 0);
+}
+.red {
+	background: #FF3311;
+}
+main img {
+	max-width: 100%;
+	height: auto;
+}
+@keyframes load {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
+main {
+	animation: 0.5s load;
+}
+.postlist-link {
+	font-size: 1.1875em; /* 19px /16 */
+	font-weight: 500;
+	flex-basis: calc(100% - 1.5rem);
+	padding-right: .75em;
+	text-underline-position: from-font;
+	text-underline-offset: 0;
+	text-decoration-thickness: 1px;
+}
+.postlist-item-active .postlist-link {
+	font-weight: bold;
+}
+
+/* Tags */
+.post-tag {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	text-transform: capitalize;
+}
+.postlist-item > .post-tag {
+	align-self: center;
+}
+.news {
+	background: black;
+	color: white;
+}
+
+.news > span {
+	margin-right: 30px;
+}
+
+/* Tags list */
+.post-metadata {
+	display: inline-flex;
+	flex-wrap: wrap;
+	gap: .5em;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+.post-metadata time {
+	margin-right: 1em;
+}
+
+/* Direct Links / Markdown Headers */
+.header-anchor {
+	text-decoration: none;
+	font-style: normal;
+	font-size: 1em;
+	margin-left: .1em;
+}
+a[href].header-anchor,
+a[href].header-anchor:visited {
+	color: transparent;
+}
+a[href].header-anchor:focus,
+a[href].header-anchor:hover {
+	text-decoration: underline;
+}
+a[href].header-anchor:focus,
+:hover > a[href].header-anchor {
+	color: #aaa;
+}
+
+h2 + .header-anchor {
+	font-size: 1.5em;
+}
+footer {
+	border-top: 1px solid gray;
+	display: flex;
+	justify-content: space-between;
+	padding: 10px 0;
+}
+.prevnext-post {
+	display: inline-block;
+	border: 1px solid var(--color-gray-90);
+	font-size: 16px;
+	color: white;
+	padding: 10px;
+}
+
+.prevnext-post:hover {
+	background: var(--color-gray-90);
+	color: #000;
+}
+
+/* >:( */
+.ARGH {
+	text-shadow: 0px 0px 12px #F00, 0px 0px 12px #F00;
+}
+
+.sub {
+	font-size: 0.9em;
+	color: var(--color-gray-10);
+}
+
+.highlight {
+	color: #FFF;
+	background: #111;
+	border-radius: 4px;
+	padding: 0 .25em;
+}
+
+.aesthetics {
+	text-shadow: 1px 1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, -1px -1px 0 #000;
+	font-weight: 500;
+	background: linear-gradient(90deg, rgba(255,0,0,0.75) 15%, rgba(255,154,0,0.75) 30%, rgba(208,222,33,0.75) 45%, rgba(39,140,34,0.75) 60%,rgba(28,127,238,0.75) 80%, rgba(95,21,242,0.75) 100%);
+}
+
+.hint {
+	filter: contrast(5);
+	background: #6C6C6C;
+}</style>
+	</head>
+
+	<body>
+		<a href="#skip" class="visually-hidden">Skip to main content</a>
+		<header>
+			<a href="/" class="home-link">
+				
+					<img width=120px src="/img/logo.png" alt="LXBlog">
+				
+			</a>
+			<nav>
+				<h2 class="visually-hidden">Top level navigation menu</h2>
+				<ul class="nav">
+					<li class="nav-item"><a href="/mainpage/">Main Page</a></li>
+					<li class="nav-item"><a href="/">Blog</a></li>
+					<li class="nav-item"><a href="/about/">About</a></li>
+				</ul>
+			</nav>
+		</header>
+
+		<main id="skip">
+			<h1>Tags</h1>
+
+<ul>
+
+	
+	<li><a href="/tags/software/" class="post-tag">software (4)</a></li>
+
+	
+	<li><a href="/tags/school/" class="post-tag">school (3)</a></li>
+
+	
+	<li><a href="/tags/linux/" class="post-tag">Linux (1)</a></li>
+
+	
+	<li><a href="/tags/nvidia/" class="post-tag">NVIDIA (1)</a></li>
+
+	
+	<li><a href="/tags/kde/" class="post-tag">KDE (1)</a></li>
+
+	
+	<li><a href="/tags/fonts/" class="post-tag">fonts (1)</a></li>
+
+	
+	<li><a href="/tags/meta/" class="post-tag">meta (1)</a></li>
+
+</ul>
+
+
+		</main>
+
+		<footer>
+			<span>LX86 2023</span>
+			<div>
+				<a href="/feed/feed.xml">RSS</a>
+				<a href="mailto:lx86@lx862.com">Email</a>
+			</div>
+			<span>Last updated: <time datetime="2023-03-31">2023-03-31</span>
+		</footer>
+
+<!--		 Current page: /tags/-->
+	</body>
+</html>

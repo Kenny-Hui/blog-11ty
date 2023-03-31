@@ -1,0 +1,705 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>School computers</title>
+		<meta name="description" content="I love school computers!">
+		<link rel="alternate" href="/feed/feed.xml" type="application/atom+xml" title="LXBlog">
+		<link rel="alternate" href="/feed/feed.json" type="application/json" title="LXBlog">
+		<meta name="generator" content="Eleventy v2.0.1">
+		
+		<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+		
+		<style>/**
+ * okaidia theme for JavaScript, CSS and HTML
+ * Loosely based on Monokai textmate theme by http://www.monokai.nl/
+ * @author ocodia
+ */
+
+code[class*="language-"],
+pre[class*="language-"] {
+	color: #f8f8f2;
+	background: none;
+	text-shadow: 0 1px rgba(0, 0, 0, 0.3);
+	font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+	font-size: 1em;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+	word-wrap: normal;
+	line-height: 1.5;
+
+	-moz-tab-size: 4;
+	-o-tab-size: 4;
+	tab-size: 4;
+
+	-webkit-hyphens: none;
+	-moz-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+	padding: 1em;
+	margin: .5em 0;
+	overflow: auto;
+	border-radius: 0.3em;
+}
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+	background: #272822;
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+	padding: .1em;
+	border-radius: .3em;
+	white-space: normal;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+	color: #8292a2;
+}
+
+.token.punctuation {
+	color: #f8f8f2;
+}
+
+.token.namespace {
+	opacity: .7;
+}
+
+.token.property,
+.token.tag,
+.token.constant,
+.token.symbol,
+.token.deleted {
+	color: #f92672;
+}
+
+.token.boolean,
+.token.number {
+	color: #ae81ff;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+	color: #a6e22e;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string,
+.token.variable {
+	color: #f8f8f2;
+}
+
+.token.atrule,
+.token.attr-value,
+.token.function,
+.token.class-name {
+	color: #e6db74;
+}
+
+.token.keyword {
+	color: #66d9ef;
+}
+
+.token.regex,
+.token.important {
+	color: #fd971f;
+}
+
+.token.important,
+.token.bold {
+	font-weight: bold;
+}
+.token.italic {
+	font-style: italic;
+}
+
+.token.entity {
+	cursor: help;
+}
+/*
+ * New diff- syntax
+ */
+
+pre[class*="language-diff-"] {
+	--eleventy-code-padding: 1.25em;
+	padding-left: var(--eleventy-code-padding);
+	padding-right: var(--eleventy-code-padding);
+}
+.token.deleted {
+	background-color: hsl(0, 51%, 37%);
+	color: inherit;
+}
+.token.inserted {
+	background-color: hsl(126, 31%, 39%);
+	color: inherit;
+}
+
+/* Make the + and - characters unselectable for copy/paste */
+.token.prefix.unchanged,
+.token.prefix.inserted,
+.token.prefix.deleted {
+	-webkit-user-select: none;
+	user-select: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+.token.prefix.inserted,
+.token.prefix.deleted {
+	width: var(--eleventy-code-padding);
+	background-color: rgba(0,0,0,.2);
+}
+
+/* Optional: full-width background color */
+.token.inserted:not(.prefix),
+.token.deleted:not(.prefix) {
+	display: block;
+	margin-left: calc(-1 * var(--eleventy-code-padding));
+	margin-right: calc(-1 * var(--eleventy-code-padding));
+	text-decoration: none; /* override del, ins, mark defaults */
+	color: inherit; /* override del, ins, mark defaults */
+}
+* { box-sizing: border-box; }
+/* Defaults */
+:root {
+	--font-family: 'Roboto', 'Segoe UI', 'Noto Sans', -apple-system, system-ui, sans-serif;
+	--font-family-monospace: Consolas, Menlo, Monaco, Andale Mono WT, Andale Mono, Lucida Console, Lucida Sans Typewriter, DejaVu Sans Mono, Bitstream Vera Sans Mono, Liberation Mono, Nimbus Mono L, Courier New, Courier, monospace;
+}
+
+/* Theme colors */
+:root {
+	--text-color: var(--color-gray-90);
+
+	--color-gray-10: #aaa;
+	--color-gray-20: #e0e0e0;
+	--color-gray-50: #C0C0C0;
+	--color-gray-90: #dad8d8;
+	--color-bg-highlight: #444;
+
+	--tint: rgba(255,255,255,0.1);
+
+	/* --text-color is assigned to --color-gray-_ above */
+	--text-color-link: #66C2fc;
+	--text-color-link-active: #ff88aa;
+
+	--background-color: #15202b;
+
+	--syntax-tab-size: 2;
+}
+
+/* Global stylesheet */
+* {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	padding: 0;
+	margin: 0 auto;
+	font-family: var(--font-family);
+	color: var(--text-color);
+	font-size: 1.05em;
+}
+html::before {
+	position: fixed;
+	content: "";
+	width: 100%;
+	height: 100%;
+	z-index: -1;
+}
+
+html {
+	background-color: #111;
+}
+body {
+	max-width: 47em;
+}
+
+/* https://www.a11yproject.com/posts/how-to-hide-content/ */
+.visually-hidden {
+	clip: rect(0 0 0 0);
+	clip-path: inset(50%);
+	height: 1px;
+	overflow: hidden;
+	position: absolute;
+	white-space: nowrap;
+	width: 1px;
+}
+
+p:last-child {
+	margin-bottom: 0;
+}
+p {
+	line-height: 1.7;
+}
+
+li {
+	line-height: 1.5;
+}
+
+a[href] {
+	color: var(--text-color-link);
+}
+a[href]:hover,
+a[href]:active {
+	color: var(--text-color-link-active);
+}
+
+main {
+	padding: 1rem;
+	position: relative;
+	background: rgba(255, 255, 255, 0.1);
+}
+main :first-child {
+	margin-top: 0;
+}
+header:before {
+	content: "";
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	background: linear-gradient(to bottom, transparent, var(--color-bg-highlight));
+	transform: perspective(800px) rotateX(60deg);
+	transform-origin: 50% 100%;
+	z-index: -1;
+}
+
+header {
+	position: relative;
+	display: flex;
+	justify-content: space-between;
+}
+
+header:after {
+	content: "";
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	height: 1px;
+	width: 100%;
+	background: linear-gradient(to right, transparent 10%, var(--text-color) 50%, transparent 90%)
+}
+
+header > nav {
+	margin-left: auto;
+}
+
+.links-nextprev {
+	display: flex;
+	position: relative;
+	justify-content: space-between;
+	padding: 1em 0;
+}
+
+.links-nextprev:before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 1px;
+	width: 100%;
+	background: linear-gradient(to right, transparent 0%, var(--text-color) 50%, transparent 100%)
+}
+
+table {
+	margin: 1em 0;
+}
+table td,
+table th {
+	padding-right: 1em;
+}
+
+pre,
+code {
+	font-family: var(--font-family-monospace);
+}
+pre:not([class*="language-"]) {
+	margin: .5em 0;
+	line-height: 1.375; /* 22px /16 */
+	-moz-tab-size: var(--syntax-tab-size);
+	-o-tab-size: var(--syntax-tab-size);
+	tab-size: var(--syntax-tab-size);
+	-webkit-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+	direction: ltr;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+}
+code {
+	word-break: break-all;
+}
+
+/* Header */
+header {
+	display: flex;
+	gap: 1em .5em;
+	flex-wrap: wrap;
+	align-items: center;
+	padding: 1em 0;
+}
+.home-link {
+	font-size: 1em; /* 16px /16 */
+	font-weight: 600;
+	margin-right: 2em;
+}
+.home-link:link:not(:hover) {
+	text-decoration: none;
+}
+
+/* Nav */
+.nav {
+	display: flex;
+	padding: 0;
+	margin: 0;
+	list-style: none;
+}
+.nav-item {
+	display: inline-block;
+	margin-right: 1em;
+}
+.nav-item a[href]:not(:hover) {
+	text-decoration: none;
+}
+.nav a[href][aria-current="page"] {
+	text-decoration: underline;
+}
+
+/* Posts list */
+.postlist {
+	list-style: none;
+	padding: 0;
+}
+.post-desc {
+	color: #888;
+	font-style: italic;
+}
+.postlist-item {
+	background: #333;
+	align-items: baseline;
+	margin-bottom: 1em;
+}
+.postlist-date,
+.postlist-item::before {
+	font-size: 0.8125em; /* 13px /16 */
+	color: var(--color-gray-90);
+}
+.postlist-date {
+	word-spacing: -0.5px;
+}
+.postlist-tags {
+	margin-left: 0.25em;
+}
+.postlist-tag {
+	position: relative;
+	display: inline-block;
+	text-decoration: none;
+	padding: 0 0.60em;
+}
+.postlist-tag::before {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	content: "";
+	padding: 0 0.1em;
+	transform: skewX(-15deg);
+	background: var(--tint);
+	border-right: 1px solid gray;
+}
+.postlist-tag:last-child::before {
+	border-right: none;
+}
+.postlist-tag:hover::before {
+	background: rgba(255, 255, 255, 0.2);
+}
+.tag {
+	font-size: 14px;
+	padding: 0 12px;
+	clip-path: polygon(calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 6px 100%, 0 50%, 6px 0);
+}
+.red {
+	background: #FF3311;
+}
+main img {
+	max-width: 100%;
+	height: auto;
+}
+@keyframes load {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
+main {
+	animation: 0.5s load;
+}
+.postlist-link {
+	font-size: 1.1875em; /* 19px /16 */
+	font-weight: 500;
+	flex-basis: calc(100% - 1.5rem);
+	padding-right: .75em;
+	text-underline-position: from-font;
+	text-underline-offset: 0;
+	text-decoration-thickness: 1px;
+}
+.postlist-item-active .postlist-link {
+	font-weight: bold;
+}
+
+/* Tags */
+.post-tag {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	text-transform: capitalize;
+}
+.postlist-item > .post-tag {
+	align-self: center;
+}
+.news {
+	background: black;
+	color: white;
+}
+
+.news > span {
+	margin-right: 30px;
+}
+
+/* Tags list */
+.post-metadata {
+	display: inline-flex;
+	flex-wrap: wrap;
+	gap: .5em;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+.post-metadata time {
+	margin-right: 1em;
+}
+
+/* Direct Links / Markdown Headers */
+.header-anchor {
+	text-decoration: none;
+	font-style: normal;
+	font-size: 1em;
+	margin-left: .1em;
+}
+a[href].header-anchor,
+a[href].header-anchor:visited {
+	color: transparent;
+}
+a[href].header-anchor:focus,
+a[href].header-anchor:hover {
+	text-decoration: underline;
+}
+a[href].header-anchor:focus,
+:hover > a[href].header-anchor {
+	color: #aaa;
+}
+
+h2 + .header-anchor {
+	font-size: 1.5em;
+}
+footer {
+	border-top: 1px solid gray;
+	display: flex;
+	justify-content: space-between;
+	padding: 10px 0;
+}
+.prevnext-post {
+	display: inline-block;
+	border: 1px solid var(--color-gray-90);
+	font-size: 16px;
+	color: white;
+	padding: 10px;
+}
+
+.prevnext-post:hover {
+	background: var(--color-gray-90);
+	color: #000;
+}
+
+/* >:( */
+.ARGH {
+	text-shadow: 0px 0px 12px #F00, 0px 0px 12px #F00;
+}
+
+.sub {
+	font-size: 0.9em;
+	color: var(--color-gray-10);
+}
+
+.highlight {
+	color: #FFF;
+	background: #111;
+	border-radius: 4px;
+	padding: 0 .25em;
+}
+
+.aesthetics {
+	text-shadow: 1px 1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, -1px -1px 0 #000;
+	font-weight: 500;
+	background: linear-gradient(90deg, rgba(255,0,0,0.75) 15%, rgba(255,154,0,0.75) 30%, rgba(208,222,33,0.75) 45%, rgba(39,140,34,0.75) 60%,rgba(28,127,238,0.75) 80%, rgba(95,21,242,0.75) 100%);
+}
+
+.hint {
+	filter: contrast(5);
+	background: #6C6C6C;
+}</style>
+	</head>
+
+	<body>
+		<a href="#skip" class="visually-hidden">Skip to main content</a>
+		<header>
+			<a href="/" class="home-link">
+				
+					<img width=120px src="/img/logo.png" alt="LXBlog">
+				
+			</a>
+			<nav>
+				<h2 class="visually-hidden">Top level navigation menu</h2>
+				<ul class="nav">
+					<li class="nav-item"><a href="/mainpage/">Main Page</a></li>
+					<li class="nav-item"><a href="/">Blog</a></li>
+					<li class="nav-item"><a href="/about/">About</a></li>
+				</ul>
+			</nav>
+		</header>
+
+		<main id="skip">
+			
+
+<h1>School computers</h1>
+<p class="post-desc">I love school computers!</p>
+
+<ul class="post-metadata">
+	<li>Posted: <time datetime="2022-12-26">2022-12-26</time></li>
+		<li><a href="/tags/software/" class="post-tag">software</a>, </li>
+		<li><a href="/tags/school/" class="post-tag">school</a></li>
+</ul>
+
+<p>If you are a computer nerd like me, chances are you have messed around with school's computer and see what you can do with it.</p>
+<p>This is just going to be a blog talking about things I've done with school computers during my time studying.</p>
+<h2 id="primary-elementary-school" tabindex="-1">Primary / Elementary School <a class="header-anchor" href="#primary-elementary-school">#</a></h2>
+<p>I started falling in love with computers back in year 4, especially the Windows side of things, all simply because of a <a href="https://www.youtube.com/watch?v=D3-vBBQKOYU">Windows error remix</a>.
+Back then I don't have my own computer, then I found something called a Virtual Machine that allows you to emulate different system. My parents was kind enough to let me setup my own Windows XP VM, and I've learnt alot during the process.</p>
+<p>In the computer lab, I would just set the theme from the ugly classic theme my school set to Windows XP's Luna theme and think like I am dealing drugs or something lol. Occasionally I would grab other people's attention, but nothing more than that.</p>
+<h2 id="secondary-high-school" tabindex="-1">Secondary / High School <a class="header-anchor" href="#secondary-high-school">#</a></h2>
+<h3 id="year-1" tabindex="-1">Year 1 <a class="header-anchor" href="#year-1">#</a></h3>
+<p>At this point I was basically very obsessed with operating system.</p>
+<p>The computer lab runs on like first-gen i7 or something along with Win10, and I was initially very excited.</p>
+<p>...until I realized they did not enable administrator. (Which is the proper thing to do)</p>
+<p>I can't really do anything about it, but on the library there are ~5 computers running Windows XP. A brief look of the specs reveals that it's a pentium 4 machine with 2GB of RAM.</p>
+<p>These thing are slow, very slow, so I thought that destroying them would be a better use than just leaving it alone!</p>
+<p>So one by one I used different method to render the OS unbootable, whether that's by deleting registries, bootloader or System32.</p>
+<p>Like what are the odds they could catch us anyway, the computer will remain normal until they reboot, and by then I am already out of the library!</p>
+<p>Turns out a device called CCTV exist.</p>
+<p>Also, there are 1 instances where I was deleting registries and the computer suddenly hard reset, and it no longer boots.</p>
+<p>Behind me is a student who is queuing up for using this PC because I've literally destroyed the other 4 computer, and now I destroyed the remaining one infront of him.</p>
+<p>So I just uh <i>casually talk to my friend about this and left the library</i>.</p>
+<p>One day later my parents said that the IT department called him, stating that I destroyed the library computer and they have to restore the image. My parent didn't really believe that I would do that, and I obviously did not admit that I destroyed it, and things just ends there. My class teacher are a bit pissed off, but I didn't really receive any punishment for that.</p>
+<h3 id="year-2" tabindex="-1">Year 2 <a class="header-anchor" href="#year-2">#</a></h3>
+<p>I started taking advantages of breaks between lessons and started doing dumb things like forkbomb on the classroom's computer. (These classroom computers are still running the good old trusty Windows XP, so forkbomb is rather easy to stop)</p>
+<p>Funny enough they actually do not have CCTV installed on the classroom, so I didn't really get caught or anything, and I did not do anything permanent to the PC. It's a rather uneventful year.</p>
+<h3 id="year-3" tabindex="-1">Year 3 <a class="header-anchor" href="#year-3">#</a></h3>
+<p>At this point I am more in the programming side of stuff and lost interest in just &quot;bricking computers&quot;.</p>
+<p>The class teacher of the 3rd year decided to replace the old XP classroom computer to his own computer which is a 16GB win10 machines, even as to claiming that &quot;<i>The amount of RAM this PC has is 8 classroom computer combined together!</i>&quot;. But at this point I already have my own 16GB machine at my home. He's not wrong, but it's really nothing impressive about it.</p>
+<p>It's also worth noting that the class teacher himself setup the machine, so the default account is not locked down and I can do whatever I want.</p>
+<p>One thing I did notice is that the command prompt for mapping network drive appears on log-in (Where as in other PC does not, although the drive still end up getting mapped anyway), I was intrigued by it, and I started looking deeper to the drive. It's a collection of folders stored by different teacher, some of them even have homework answers in it. I quickly uploaded to my Google Drive account during the breaks. Slowly but surely I've got into the habit of uploading literally anything on that network drive to my school's Google Drive account. (Which has unlimited storage, well at least before Google started killing it off).</p>
+<p>Another thing I noticed is that the class teacher treat this as more of his personal computer than anything else, even as to connecting his OneDrive account to the computer. I took a peak at his OneDrive and noticed that there is a network drive batch file that connects to several other hidden network location, which contains even more homework answers.</p>
+<p>Besides since I now have admin power, I created another Windows user account to upload all the data on that drive in the background during lessons. This is a massive time-save and at one point I racked up around 4TB of data. (Obviously with some duplicated as I upload periodically)</p>
+<p>It's pretty nice but I was hoping one day at least 1 teacher would upload the exam paper answer to the network drive, then I could have a peak at it.</p>
+<p>Fast-forwarding to just days before the last exam of the year, that moment finally arrived. An English teacher uploaded the exam answer for G.E paper and I immediately uploaded it to google drive and shared with my friends.</p>
+<p>My friends are a little bit skeptical, thinking this is too good to be true and didn't bother (And their result are better than me anyway so it doesn't matter). However I still memorized the answer of at least the first page. On the day of the exam, that effort pays off as it is exact same paper. I got the highest mark of the entire class (Although still pretty low, only around ~70/100), and I was happy and guilty at the same time.</p>
+<p>^ So if you're a school IT Admin, or just a teacher reading this for whatever reason, please just use a USB.</p>
+<p>Anyways after that I am still bored. I then have an idea to downloaded <a href="https://www.intel.com/content/www/us/en/download/17881/intel-extreme-tuning-utility-intel-xtu.html">Intel Extreme Tuning Utility (XTU)</a> and dragged the clock speed of the classroom PC all the way down to 800Mhz.</p>
+<p><picture><source type="image/avif" srcset="/img/9isrlb33OC-1400.avif 1400w"><source type="image/webp" srcset="/img/9isrlb33OC-1400.webp 1400w"><img alt="Intel Extreme Tuning Utility UI" loading="lazy" decoding="async" src="/img/9isrlb33OC-1400.jpeg" width="1400" height="837"></picture></p>
+<p>I did this right before the History lesson starts, which is the lesson I probably hate the most. The History teacher ended up waiting 3 and a half minute just to open a photo with the Photo app, it was almost the most powerful and disruptive thing I could've done on every lesson. But I know I can't keep that rolling forever, someone will eventually find out so I just raised the clock speed back to normal. (In-fact it took me around 30 minute just to set it back to the normal speed)</p>
+<p>Anyways at that point I am still thinking what to do in the next year, but I don't reakky have to worry as the last moment I just switched to a vocational education school. (That obviously expertise in Information Technology, given how much of a nerd I am)</p>
+<h2 id="a-fresh-start" tabindex="-1">A fresh start <a class="header-anchor" href="#a-fresh-start">#</a></h2>
+<p>Arriving at the &quot;new&quot; school, I was finally greeted with reasonable computer specs and software. These computers are connected to a domain controller, and the system would be restored everytime the computer boots. Again the user account do have access to administrator privilege, however due to the large amount of professional software installed on the machine that often updates itself, it's not unreasonable to grant it administrator privilege.</p>
+<p>But obviously nothing is bullet proof. For one, there is a hosts files that prevents student from watching youtube or stuff like that, but with admin privilege it has became more easier than ever to just delete it, and now you can watch youtube.</p>
+<p>The task manager is disabled by a classroom management program called &quot;<strong>Lanschool</strong>&quot;. When the teacher client starts, it automatically locks the student's access to the task manager and several other stuff. However we often power our computer on before the teacher arrives, and Lanschool will not kill the task manager that is already opened. So we can use that and terminate the Lanschool program, now we have total control.</p>
+<p>Another method is discovered later to just run <code>taskkill /F /IM student.exe</code> to terminate Lanschool even with it being turned on, then editing group policy to re-enable task manager.</p>
+<p>However I didn't really do this for long. For one it's just annoying? Surely I have better stuff to do than terminating this everytime the lesson starts.</p>
+<p>Second I don't really see the benefit of killing it. I no longer have the interest to do stuff that is against the teacher's/school's rules. And the things they are teaching is rather essential, I usually just pay attention whenever I can.</p>
+<h3 id="year-2-1" tabindex="-1">Year 2 <a class="header-anchor" href="#year-2-1">#</a></h3>
+<p>Now that I know these computers are all &quot;connected&quot;, I found out I can command a remote shutdown/restart to anyone, And I can also use msg/psexec to remotely run programs.</p>
+<p>I only did some msgbox for testing, nothing harmful. There's also not alot of free time I could mess around, and I have no reason to not pay attention to the lesson as they all seems to interest me.</p>
+<h3 id="year-3-1" tabindex="-1">Year 3 <a class="header-anchor" href="#year-3-1">#</a></h3>
+<p>This is the final year. And there is an computer lessons that just teaches you basic office work and stuff. It's very boring, but at the same time that leaves me with alot of free time.</p>
+<p>I am still intrigued by the ability to remotely execute programs, but the IT Department probably knows about this and they finally turned off Remote Desktop this year.</p>
+<p>I can still shutdown remotely, but nothing more than that. However I soon discovered that you can use the default Windows Task Scheduler to remotely schedule commands, but I couldn't get it to work no matter what.</p>
+<p>Until ~2 weeks ago as of writing this, I was watching through a <a href="https://www.youtube.com/watch?v=K4WkdvZ2948">YouTube video</a> sharing his tech stories at school (Great video btw).</p>
+<p>I saw <a href="https://www.youtube.com/watch?v=K4WkdvZ2948&amp;lc=Ugy_iINUwWM-Op733pZ4AaABAg">this comments (In the highlighted comments section)</a>:</p>
+<p>Someone apparently downloaded the very same classroom software that their school uses, so they have the teacher client and are able to take control of others computer.
+I thought you can only bypass it in some really ancient and badly maintained classroom software and I didn't thought much about it at the time.</p>
+<p>Eventually it got me wondering can I do the same. But I can't download the classroom software (Lanschool) my school uses. My school is 1 major version behind, and I am very uncertain whether that will work.</p>
+<p>In addition I am just against trialware, and given Lanschool is maintained by Lenovo, surely they won't just give you access because you're on the same network right?</p>
+<p>But what if I can copy the client from the teacher's PC? I know I have to find a way to remotely execute some command on their end so I can obtain the file. I quickly realized the whole time I was scheduling the task with the wrong log-in credentials and that's why it did not run the task.</p>
+<p>So I switched to use an local account called <code>kfstud</code> which is setup by the school, presumably in the case where it can't connect to the domain, and now I can finally remotely schedule tasks!</p>
+<p>I still think that it won't be as simple as copying the binaries. There is only 2 lessons left, and I want to at least get something out of it.</p>
+<p>As a compromise I decided to not push my luck, but going to the safer and less impressive approach of viewing and taking control the teacher's PC. That means I would remotely download TightVNC Server to the teacher's PC, install it, then I can connect without raising suspicion.</p>
+<p>This ought to be a faster and more reliable approach that would guarentee success, but well this failed hard probably due to some powershell security policy Microsoft implemented, as such I can't even download anything on their end, I've spent the entire lesson trying to get this work but nope.</p>
+<p>At last I decided to just take a gamble and hope the teacher client will work on my student PC. It's the last lesson anyway, what could I possibily lose?</p>
+<p>Now I need to somehow get it transferred to my computer. My first thought is to copy the Lanschool Program to the network drive (Which is used to hand in homework remotely), then I can obtain it.</p>
+<p>But the account I uses to schedule (kfstud) does not have the network drive mapped, so I can't do that. I soon figured out that you can share a folder in Windows and it will create a network share that anyone can access.</p>
+<p>So I created a new folder and started sharing it. Then I schedule the copy command on teacher's PC and copied the Lanschool folder (<code>C:\Program Files(x86)\LanSchool</code>) to my shared folder.</p>
+<p><picture><source type="image/avif" srcset="/img/tfhyNZRnNi-1920.avif 1920w"><source type="image/webp" srcset="/img/tfhyNZRnNi-1920.webp 1920w"><img alt="Lanschool Teacher Client, captured at that day" loading="lazy" decoding="async" src="/img/tfhyNZRnNi-1920.jpeg" width="1920" height="1080"></picture></p>
+<p>And it actually worked! There's no password or anything either, I can even archive the teacher binaries and it will still work.</p>
+<p>This is probably my biggest discovery (At least at this school). Sure it's not like I have to do any hacking 101 or any network sniffing to get it working, and there are almost no barriers preventing me apart from some Windows knowledge. But in the end I am still quite happy about it, just having the teacher client running infront of you feels different.</p>
+<p>Unfortunately it is the last lesson. Looking over my remaining course I can only find 1 computer related course, and it's not even held in any computer lab.</p>
+<p>So that is how it has to end.</p>
+<p>Looking over this again, I can't help but notice that I often do bad stuff with bad intentions on the old school, although it probably make sense given how I gives 0 sh*t to almost any lessons.</p>
+
+<ul class="links-nextprev">
+		<a href="/blog/2023-02-26-Fu-NVIDIA/">
+		<div class="prevnext-post">
+			Next: So NVIDIA, F*** you >>
+		</div>
+		</a>
+	
+</ul>
+
+		</main>
+
+		<footer>
+			<span>LX86 2023</span>
+			<div>
+				<a href="/feed/feed.xml">RSS</a>
+				<a href="mailto:lx86@lx862.com">Email</a>
+			</div>
+			<span>Last updated: <time datetime="2023-03-31">2023-03-31</span>
+		</footer>
+
+<!--		 Current page: /blog/2022-12-26-school-computers/-->
+	</body>
+</html>

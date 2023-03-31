@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+	<channel>
+		<title>LXBlog</title>
+		<description>I am writing about my experiences as a naval navel-gazer.</description>
+		<link>https://blog.lx862.com/feed/rss.xml</link>
+		<atom:link href="https://blog.lx862.com/" rel="self" type="application/rss+xml"/>
+		
+		<item>
+			<title>I rebuilt this blog</title>
+			<description></description>
+				<category>posts</category>
+				<category>meta</category>
+			<link>https://blog.lx862.com/blog/2023-04-02-I-rebuilt-the-blog/</link>
+			<pubDate>Sun, 02 Apr 2023 00:00:00 +0000</pubDate>
+			<guid>https://blog.lx862.com/blog/2023-04-02-I-rebuilt-the-blog/</guid>
+		</item>
+		
+		<item>
+			<title>My English Teacher retired</title>
+			<description></description>
+				<category>posts</category>
+				<category>school</category>
+			<link>https://blog.lx862.com/blog/2023-03-29-English-Teacher-Retirement/</link>
+			<pubDate>Wed, 29 Mar 2023 00:00:00 +0000</pubDate>
+			<guid>https://blog.lx862.com/blog/2023-03-29-English-Teacher-Retirement/</guid>
+		</item>
+		
+		<item>
+			<title>I tried KDE Plasma</title>
+			<description>It&#39;s not what I think it would be</description>
+				<category>posts</category>
+				<category>software</category>
+				<category>KDE</category>
+			<link>https://blog.lx862.com/blog/2023-03-01-I-tried-KDE-Plasma/</link>
+			<pubDate>Wed, 01 Mar 2023 00:00:00 +0000</pubDate>
+			<guid>https://blog.lx862.com/blog/2023-03-01-I-tried-KDE-Plasma/</guid>
+		</item>
+		
+		<item>
+			<title>So NVIDIA, F*** you</title>
+			<description>I got a new GPU, and NVIDIA does not make me happy.</description>
+				<category>posts</category>
+				<category>Linux</category>
+				<category>NVIDIA</category>
+			<link>https://blog.lx862.com/blog/2023-02-26-Fu-NVIDIA/</link>
+			<pubDate>Sun, 26 Feb 2023 00:00:00 +0000</pubDate>
+			<guid>https://blog.lx862.com/blog/2023-02-26-Fu-NVIDIA/</guid>
+		</item>
+		
+		<item>
+			<title>School computers</title>
+			<description>I love school computers!</description>
+				<category>posts</category>
+				<category>software</category>
+				<category>school</category>
+			<link>https://blog.lx862.com/blog/2022-12-26-school-computers/</link>
+			<pubDate>Mon, 26 Dec 2022 00:00:00 +0000</pubDate>
+			<guid>https://blog.lx862.com/blog/2022-12-26-school-computers/</guid>
+		</item>
+	</channel>
+</rss>

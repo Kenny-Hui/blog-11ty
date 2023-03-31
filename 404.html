@@ -1,0 +1,116 @@
+<body>
+	<main>
+		<h1>404 Not Found</h1>
+		<p>How Devastating</p>
+		<table style="margin: auto;font-size: 1em;">
+			<tr>
+				<td><a class="btn" href="/">Back to Blog</a></td>
+				<td>
+					<div class="flip">
+						<a id="no" class="btn" href="#yes">No.</a>
+						<a id="yes" class="btn" href="/">Yes</a>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</main>
+</body>
+
+
+
+<style>
+	@keyframes txAnim {
+		0% {
+			text-shadow: 0 0 0px #000;
+		}
+		50% {
+			text-shadow: 0 0 50px #FF00AA, 0 0 100px #FF00AA;
+		}
+		100% {
+			text-shadow: 0 0 0px #000;
+		}
+	}
+
+	* {
+		box-sizing: border-box;
+	}
+
+	@import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400&display=swap');
+
+	body {
+		background: black;
+		color: white;
+		display: grid;
+		font-size: 1.5em;
+		justify-content: center;
+		align-items: center;
+		font-family: "Atkinson Hyperlegible", "Trebuchet MS", "Arial"
+	}
+
+	main {
+		text-align: center;
+	}
+
+	main h1 {
+		font-size: 4em;
+		animation: txAnim 5s infinite;
+	}
+
+	.btn {
+		position: relative;
+		display: inline-block;
+		margin: 5px;
+		padding: 12px;
+		background: #AA0077;
+		border-radius: 12px;
+		text-decoration: none;
+		color: white;
+		transition: outline 0.1s;
+	}
+
+	.btn:hover {
+		outline: 2px solid white;
+	}
+
+	.flip {
+		position: relative;
+		display: grid;
+  		grid-template-columns: 1fr;
+	}
+
+	.flip > * {
+		backface-visibility: hidden;
+		grid-row-start: 1;
+ 		grid-column-start: 1;
+		transition: outline 0.1s, transform 0.5s;
+	}
+
+	#no {
+		background: #FF0044;
+		transform: rotateY(0deg);
+	}
+
+	#yes {
+		background: #00BB00;
+		transform: rotateY(180deg);
+	}
+
+	#yes:target {
+		transform: rotateY(0deg);
+	}
+
+	.flip:has(#yes:target) #no {
+		transform: rotateY(180deg);
+	}
+</style>
+
+<!--
+
+Read more: https://www.11ty.dev/docs/quicktips/not-found/
+
+This will work for both GitHub pages and Netlify:
+
+* https://help.github.com/articles/creating-a-custom-404-page-for-your-github-pages-site/
+* https://www.netlify.com/docs/redirects/#custom-404
+
+-->
