@@ -6,19 +6,28 @@ eleventyNavigation:
 ---
 # Everything about me
 ## About me
-I am Kenny Hui (Better known as LX86). I sometimes code stuff, whether you like it or not.
-I like and hate technologies, and I am not a fan of mainstream social media.<br>
-Coming from Hong Kong, now supposedly <code>{{ metadata.bday | yearDiff }}</code> y/o.
+I am Kenny Hui (Better known as LX86). I sometimes code stuff, whether you like it or not.<br>
+I like learning new technologies, especially at the software side of things, and I am an absolute horror when it comes to managing stuff, whether it's within my computer or IRL.<br>
+If not saddened I am at least rather disappointed on how the modern web has became.
+
+Coming from Hong Kong, now supposedly <code>{{ metadata.bday | yearDiff }}</code> y/o :D
 
 If I sounds familiar to you then that's probably because I had taken part in lots of communities (e.g. Minecraft Transit Railway, OpenBVE). However as time passes I am just not as interested or not wanting to be involved on most of them for various reasons.
 
-Leave me alone and let me work on my small personal projects :D.
+Now leave me alone and let me work on my small personal projects :P
 
-For work I've done so far please check out my [main site](//lx862.com) because that's probably the only useful content on my main page.
+If you have anything to ask me (As long as it isn't sensitive info), please do! I am equally as interested of someone wanting to learn more about me.<br>
+Preferably via [Email](mailto:lx86@lx862.com) so that I can reply a thousand words back to you if I want to, but if you are more comfortable on Discord then yeah I do have one as well:  
+*<small>(unwillingly gives out the tag)</small>* **LX86#2271**
+
+For the work I've done so far please check out my [main site](//lx862.com) because that's the only way I can get people to visit my website... oh wait you came from there?
 
 ## About this blog
-This is a place where I, may, occasionally, post rambles and stuff.
-I might also start considering posting short posts, as I am really bad at formulating long writings, and there are just many small blips in my life that I don't get to cover.
+Here I document some of the more interesting/niches things, discoveries, and occasionally some of my stories.<br>
+I don't get the energy to write blogs all day long, but I hope that one day someone will find my website and have something useful to take away from it, or at least have a better understanding of me in general.
+
+And a reminder (again) that I am not an native english speaker.
+I am really bad at formulating long sentences and I do apologize if some of the wording used are a bit weird.
 
 This blog is originally based on Beautiful Jekyll hosted on GitHub page, but later moved to Eleventy for performant reason. (And also slightly more familiarity)
 
