@@ -12,7 +12,7 @@ If not saddened I am at least rather disappointed on how the modern web has beca
 
 Coming from Hong Kong, now supposedly <code>{{ metadata.bday | yearDiff }}</code> y/o :D
 
-If I sounds familiar to you then that's probably because I had taken part in lots of communities (e.g. Minecraft Transit Railway, OpenBVE). However as time passes I am just not as interested or not wanting to be involved on most of them for various reasons.
+If I sounds familiar to you then that's probably because I had taken part in other communities (e.g. Minecraft Transit Railway, OpenBVE), but as time passes I am just not as interested or not wanting to be involved on most of them for various reasons.
 
 Now leave me alone and let me work on my small personal projects :P
 
@@ -45,7 +45,7 @@ This blog is originally based on Beautiful Jekyll hosted on GitHub page, but lat
 - - Windows 10 in case I screwed up
 
 - Monitors:
-- - BenQ G2412D (Primary, 1920x1080@60Hz, 2009)
-- - LG L226WTQ (Secondary, 1680x1050@60Hz, 2007)
+- - BenQ G2412D (Primary, 1920x1080@60Hz)
+- - Philips PHL 247E6 (Secondary, 1920x1080@60Hz)
 
 Pretty decent hardware if you ask me :P
