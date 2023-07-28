@@ -61,12 +61,18 @@
 		</main>
 
 		<footer>
-			<span>LX86 2023</span>
-			<div>
-				<a href="/feed/feed.xml">RSS</a>
-				<a href="mailto:{{ metadata.author.email }}">Email</a>
+			<div class="footer">
+				<span>LX86 2023</span>
+				<div>
+					<a href="/feed/feed.xml">RSS</a>
+					<a href="mailto:{{ metadata.author.email }}">Email</a>
+				</div>
+				<span>Last updated: <time datetime="{{ page.inputPath | stat("mtime") | htmlDateString }}">{{ page.inputPath | stat("mtime") | readableDate }}</span>
 			</div>
-			<span>Last updated: <time datetime="{{ page.inputPath | stat("mtime") | htmlDateString }}">{{ page.inputPath | stat("mtime") | readableDate }}</span>
+			<div>
+				<span>All content are under <a href="https://creativecommons.org/licenses/by-nc/4.0/">CC BY-NC 4.0</a> unless noted otherwise</span>
+			</div>
+			
 		</footer>
 
 <!--		 Current page: {{ page.url | htmlBaseUrl }}-->

@@ -360,9 +360,13 @@ h2 + .header-anchor {
 }
 footer {
 	border-top: 1px solid gray;
+}
+
+.footer {
 	display: flex;
 	justify-content: space-between;
 	padding: 10px 0;
+	text-align: center;
 }
 .prevnext-post {
 	display: inline-block;
