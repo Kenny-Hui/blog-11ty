@@ -13,15 +13,15 @@ srcs:
   - "[Font hinting from first developments to use in practice](https://typetype.medium.com/font-hinting-from-first-developments-to-use-in-practice-8643c7925478)"
 ---
 {% include "src.njk" %}
-If you make stuff on the web, or you need to put some nice looking font onto maybe your WinForm/WPF applications, you might have noticed that the font looks... off.  
+If you make stuff on the web, or you need to put some nice looking font onto maybe your WinForm/WPF applications on Windows, you might have noticed that the font looks... off.  
 
-It looks different than what you would expect, and in some cases harder to read.
+It isn't unreadable, but it just ruins the aesthetic, and in some rare cases it makes it even harder to read.
 
 {% image "./test.png", "" %}
 
-I am hit with this situation a few months ago when I need to make a webpage and the font looks very unpleasing.
+I am hit with this situation a few months ago when I need to make a webpage and the font looks very unpleasing, despite knowing fully well that the font definitely looks better.
 
-Now this isn't the first time I've noticed this, but it's genuinely <span class="ARGH">gut wrenching</span> on how my supposedly good looking fonts looks absolutely crap when I put it on my webpage, but not if I for example, use it in Paint.NET or Photoshop.  
+This isn't the first time I've noticed this, but it's genuinely <span class="ARGH">gut wrenching</span> on how my supposedly good looking fonts looks absolutely crap when I put it on my webpage, but not if I for example, use it in Paint.NET or Photoshop.  
 
 As any other human would do I asked **Mr. Google**, but to my surprise I didn't really get any relevant answer at all.  
 (Not because there's no answer, but just that I didn't use the appropriate keyword as I have 0 idea about any font rendering stuff prior to this).
