@@ -14,8 +14,8 @@
 		<style>* { box-sizing: border-box; }
 /* Defaults */
 :root {
-	--font-family: 'Roboto', 'Segoe UI', 'Noto Sans', -apple-system, system-ui, sans-serif;
-	--font-family-monospace: Consolas, Menlo, Monaco, Andale Mono WT, Andale Mono, Lucida Console, Lucida Sans Typewriter, DejaVu Sans Mono, Bitstream Vera Sans Mono, Liberation Mono, Nimbus Mono L, Courier New, Courier, monospace;
+	--font-family: 'Roboto', 'Noto Sans', -apple-system, system-ui, sans-serif;
+	--font-family-monospace: monospace;
 }
 
 /* Theme colors */
@@ -26,15 +26,15 @@
 	--color-gray-20: #e0e0e0;
 	--color-gray-50: #C0C0C0;
 	--color-gray-90: #dad8d8;
-	--color-bg-highlight: #444;
+	--color-bg-highlight: #333;
 
-	--tint: rgba(255,255,255,0.1);
+	--background-color: #222;
+	--html-background-color: #191919;
+	--codeblock-background: #3B3B3B;
 
 	/* --text-color is assigned to --color-gray-_ above */
 	--text-color-link: #66C2fc;
 	--text-color-link-active: #ff88aa;
-
-	--background-color: #15202b;
 
 	--syntax-tab-size: 2;
 }
@@ -50,7 +50,7 @@ body {
 	margin: 0 auto;
 	font-family: var(--font-family);
 	color: var(--text-color);
-	font-size: 1.05em;
+	font-size: 1.025rem;
 }
 html::before {
 	position: fixed;
@@ -61,7 +61,7 @@ html::before {
 }
 
 html {
-	background-color: #111;
+	background-color: var(--html-background-color);
 }
 body {
 	max-width: 47em;
@@ -100,7 +100,7 @@ a[href]:active {
 main {
 	padding: 1rem;
 	position: relative;
-	background: rgba(255, 255, 255, 0.1);
+	background: var(--background-color);
 }
 main :first-child {
 	margin-top: 0;
@@ -164,7 +164,10 @@ table th {
 pre,
 code {
 	font-family: var(--font-family-monospace);
+	font-size: 0.80rem;
+	background: var(--codeblock-background);
 }
+
 pre:not([class*="language-"]) {
 	margin: .5em 0;
 	line-height: 1.375; /* 22px /16 */
@@ -182,6 +185,10 @@ pre:not([class*="language-"]) {
 }
 code {
 	word-break: break-all;
+}
+
+p > code, li > code {
+	border: 1px solid black;
 }
 
 /* Header */
@@ -229,7 +236,7 @@ header {
 	font-style: italic;
 }
 .postlist-item {
-	background: #333;
+	background: var(--color-bg-highlight);
 	align-items: baseline;
 	margin-bottom: 1em;
 }
@@ -249,8 +256,9 @@ header {
 	display: inline-block;
 	text-decoration: none;
 	padding: 0 0.60em;
+	z-index: 1;
 }
-.postlist-tag::before {
+.postlist-tag::after {
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -259,13 +267,14 @@ header {
 	content: "";
 	padding: 0 0.1em;
 	transform: skewX(-15deg);
-	background: var(--tint);
+	background: var(--codeblock-background);
+	z-index: -4;
 	border-right: 1px solid gray;
 }
-.postlist-tag:last-child::before {
+.postlist-tag:last-child::after {
 	border-right: none;
 }
-.postlist-tag:hover::before {
+.postlist-tag:hover::after {
 	background: rgba(255, 255, 255, 0.2);
 }
 .tag {
@@ -289,9 +298,12 @@ main img {
 	}
 }
 
-main {
-	animation: 0.5s load;
+@media (prefers-reduced-motion: no-preference) {
+	main {
+		animation: 0.5s load;
+	}
 }
+
 .postlist-link {
 	font-size: 1.1875em; /* 19px /16 */
 	font-weight: 500;
@@ -362,9 +374,13 @@ h2 + .header-anchor {
 }
 footer {
 	border-top: 1px solid gray;
+}
+
+.footer {
 	display: flex;
 	justify-content: space-between;
 	padding: 10px 0;
+	text-align: center;
 }
 .prevnext-post {
 	display: inline-block;
@@ -506,12 +522,18 @@ I am really bad at formulating long sentences and I do apologize if some of the 
 		</main>
 
 		<footer>
-			<span>LX86 2023</span>
-			<div>
-				<a href="/feed/feed.xml">RSS</a>
-				<a href="mailto:lx86@lx862.com">Email</a>
+			<div class="footer">
+				<span>LX86 2023</span>
+				<div>
+					<a href="/feed/feed.xml">RSS</a>
+					<a href="mailto:lx86@lx862.com">Email</a>
+				</div>
+				<span>Last updated: <time datetime="2023-07-28">2023-07-28</span>
 			</div>
-			<span>Last updated: <time datetime="2023-05-08">2023-05-08</span>
+			<div>
+				<span>All content are under <a href="https://creativecommons.org/licenses/by-nc/4.0/">CC BY-NC 4.0</a> unless noted otherwise</span>
+			</div>
+			
 		</footer>
 
 <!--		 Current page: /about/-->

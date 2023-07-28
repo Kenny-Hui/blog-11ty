@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>Tagged “fonts”</title>
+		<title>High memory usage on Minecraft 1.18+</title>
 		<meta name="description" content="I am writing about my experiences as a naval navel-gazer.">
 		<link rel="alternate" href="/feed/feed.xml" type="application/atom+xml" title="LXBlog">
 		<link rel="alternate" href="/feed/feed.json" type="application/json" title="LXBlog">
@@ -11,7 +11,175 @@
 		
 		<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
 		
-		<style>* { box-sizing: border-box; }
+		<style>/**
+ * okaidia theme for JavaScript, CSS and HTML
+ * Loosely based on Monokai textmate theme by http://www.monokai.nl/
+ * @author ocodia
+ */
+
+code[class*="language-"],
+pre[class*="language-"] {
+	color: #f8f8f2;
+	background: none;
+	text-shadow: 0 1px rgba(0, 0, 0, 0.3);
+	font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+	font-size: 1em;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+	word-wrap: normal;
+	line-height: 1.5;
+
+	-moz-tab-size: 4;
+	-o-tab-size: 4;
+	tab-size: 4;
+
+	-webkit-hyphens: none;
+	-moz-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+	padding: 1em;
+	margin: .5em 0;
+	overflow: auto;
+	border-radius: 0.3em;
+}
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+	background: #272822;
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+	padding: .1em;
+	border-radius: .3em;
+	white-space: normal;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+	color: #8292a2;
+}
+
+.token.punctuation {
+	color: #f8f8f2;
+}
+
+.token.namespace {
+	opacity: .7;
+}
+
+.token.property,
+.token.tag,
+.token.constant,
+.token.symbol,
+.token.deleted {
+	color: #f92672;
+}
+
+.token.boolean,
+.token.number {
+	color: #ae81ff;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+	color: #a6e22e;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string,
+.token.variable {
+	color: #f8f8f2;
+}
+
+.token.atrule,
+.token.attr-value,
+.token.function,
+.token.class-name {
+	color: #e6db74;
+}
+
+.token.keyword {
+	color: #66d9ef;
+}
+
+.token.regex,
+.token.important {
+	color: #fd971f;
+}
+
+.token.important,
+.token.bold {
+	font-weight: bold;
+}
+.token.italic {
+	font-style: italic;
+}
+
+.token.entity {
+	cursor: help;
+}
+/*
+ * New diff- syntax
+ */
+
+pre[class*="language-diff-"] {
+	--eleventy-code-padding: 1.25em;
+	padding-left: var(--eleventy-code-padding);
+	padding-right: var(--eleventy-code-padding);
+}
+.token.deleted {
+	background-color: hsl(0, 51%, 37%);
+	color: inherit;
+}
+.token.inserted {
+	background-color: hsl(126, 31%, 39%);
+	color: inherit;
+}
+
+/* Make the + and - characters unselectable for copy/paste */
+.token.prefix.unchanged,
+.token.prefix.inserted,
+.token.prefix.deleted {
+	-webkit-user-select: none;
+	user-select: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+.token.prefix.inserted,
+.token.prefix.deleted {
+	width: var(--eleventy-code-padding);
+	background-color: rgba(0,0,0,.2);
+}
+
+/* Optional: full-width background color */
+.token.inserted:not(.prefix),
+.token.deleted:not(.prefix) {
+	display: block;
+	margin-left: calc(-1 * var(--eleventy-code-padding));
+	margin-right: calc(-1 * var(--eleventy-code-padding));
+	text-decoration: none; /* override del, ins, mark defaults */
+	color: inherit; /* override del, ins, mark defaults */
+}
+* { box-sizing: border-box; }
 /* Defaults */
 :root {
 	--font-family: 'Roboto', 'Noto Sans', -apple-system, system-ui, sans-serif;
@@ -444,15 +612,34 @@ footer {
 
 		<main id="skip">
 			
-<a href="/tags/">See all tags</a>
-<h1>1 post tagged with "fonts"</h1>
 
-<ol reversed class="postlist">
+<h1>High memory usage on Minecraft 1.18+</h1>
+<p class="post-desc"></p>
 
+<ul class="post-metadata">
+	<li>Posted: <time datetime="2023-07-28">2023-07-28</time></li>
+		<li><a href="/tags/minecraft-server/" class="post-tag">Minecraft Server</a>, </li>
+		<li><a href="/tags/solution/" class="post-tag">Solution</a></li>
+</ul>
+
+<p>I've recently updated a Minecraft Fabric server from 1.17.1 to 1.19.2, and it's shocking to see the memory shooting up all the way from 1.6GB to 4.8GB on start up, and that is in a 6GB server!<br>
+It could only ever last for a few hours before running out of memory.</p>
+<p>I should have rolled back to 1.17 at this point, but my stupidity still thinks that this is just a temporary side effect and 1.19 gets much better mod support than 1.17 so it shouldn't be a big problem in the long run, and I was proven wrong once again. I've tried everything I could and the server still keeps running out of memory, and now I desparately need to find a solution.</p>
+<p>So later I found <a href="https://modrinth.com/mod/slumber">Slumber</a> which stops the world from ticking when no one is online.<br>
+This is usually more for self hosted environment as it can save resources, but it actually does slightly improves memory when no one is online.<br>
+However it still does not solve the core issue that 1.19 is just using so much more memory than before.</p>
+<p>That is until I was browsing through modrinth one day and found <a href="https://modrinth.com/mod/modernfix">ModernFix</a>, included in it is a patch that fixes chunkloading requiring a huge amount of memory.</p>
+<p><picture><source type="image/avif" srcset="/img/0OsSklk8Jn-921.avif 921w"><source type="image/webp" srcset="/img/0OsSklk8Jn-921.webp 921w"><img alt="Plasma's Alternative Widget, with 2 options (Minimize all Windows/Show Desktop) " loading="lazy" decoding="async" src="/img/0OsSklk8Jn-921.png" width="921" height="143"></picture></p>
+<p>I've actually heard of ModernFix before, but I've always thought it's only for Forge or something like that so I didn't look too deep (Perhaps I've mixed up with another mod), until I noticed it's also available for Fabric, so I gave it a shot and that nailed it, the memory are now back to normal (~2GB) :D</p>
+
+<ul class="links-nextprev">
+		<a href="/blog/2023-04-02-I-rebuilt-the-blog/">
+			<div class="prevnext-post">
+				<< Previously: I rebuilt this blog
+			</div>
+		</a>
 	
-
-</ol>
-
+</ul>
 
 		</main>
 
@@ -471,6 +658,6 @@ footer {
 			
 		</footer>
 
-<!--		 Current page: /tags/fonts/-->
+<!--		 Current page: /blog/2023-07-28-mc-1.19-memory/-->
 	</body>
 </html>

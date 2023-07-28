@@ -4,12 +4,29 @@
 	<subtitle>I am writing about my experiences as a naval navel-gazer.</subtitle>
 	<link href="https://blog.lx862.com/feed/feed.xml" rel="self"/>
 	<link href="https://blog.lx862.com/"/>
-	<updated>2023-04-02T00:00:00Z</updated>
+	<updated>2023-07-28T00:00:00Z</updated>
 	<id>https://blog.lx862.com/</id>
 	<author>
 		<name>LX86</name>
 		<email>lx86@lx862.com</email>
 	</author>
+	
+	<entry>
+		<title>High memory usage on Minecraft 1.18+</title>
+		<link href="https://blog.lx862.com/blog/2023-07-28-mc-1.19-memory/"/>
+		<updated>2023-07-28T00:00:00Z</updated>
+		<id>https://blog.lx862.com/blog/2023-07-28-mc-1.19-memory/</id>
+		<content type="html">&lt;p&gt;I&#39;ve recently updated a Minecraft Fabric server from 1.17.1 to 1.19.2, and it&#39;s shocking to see the memory shooting up all the way from 1.6GB to 4.8GB on start up, and that is in a 6GB server!&lt;br&gt;
+It could only ever last for a few hours before running out of memory.&lt;/p&gt;
+&lt;p&gt;I should have rolled back to 1.17 at this point, but my stupidity still thinks that this is just a temporary side effect and 1.19 gets much better mod support than 1.17 so it shouldn&#39;t be a big problem in the long run, and I was proven wrong once again. I&#39;ve tried everything I could and the server still keeps running out of memory, and now I desparately need to find a solution.&lt;/p&gt;
+&lt;p&gt;So later I found &lt;a href=&quot;https://modrinth.com/mod/slumber&quot;&gt;Slumber&lt;/a&gt; which stops the world from ticking when no one is online.&lt;br&gt;
+This is usually more for self hosted environment as it can save resources, but it actually does slightly improves memory when no one is online.&lt;br&gt;
+However it still does not solve the core issue that 1.19 is just using so much more memory than before.&lt;/p&gt;
+&lt;p&gt;That is until I was browsing through modrinth one day and found &lt;a href=&quot;https://modrinth.com/mod/modernfix&quot;&gt;ModernFix&lt;/a&gt;, included in it is a patch that fixes chunkloading requiring a huge amount of memory.&lt;/p&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/0OsSklk8Jn-921.avif 921w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/0OsSklk8Jn-921.webp 921w&quot;&gt;&lt;img alt=&quot;Plasma&#39;s Alternative Widget, with 2 options (Minimize all Windows/Show Desktop) &quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/0OsSklk8Jn-921.png&quot; width=&quot;921&quot; height=&quot;143&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
+&lt;p&gt;I&#39;ve actually heard of ModernFix before, but I&#39;ve always thought it&#39;s only for Forge or something like that so I didn&#39;t look too deep (Perhaps I&#39;ve mixed up with another mod), until I noticed it&#39;s also available for Fabric, so I gave it a shot and that nailed it, the memory are now back to normal (~2GB) :D&lt;/p&gt;
+</content>
+	</entry>
 	
 	<entry>
 		<title>I rebuilt this blog</title>

@@ -11,6 +11,14 @@
 	},
 	"items": [
 		{
+			"id": "https://blog.lx862.com/blog/2023-07-28-mc-1.19-memory/",
+			"url": "https://blog.lx862.com/blog/2023-07-28-mc-1.19-memory/",
+			"title": "High memory usage on Minecraft 1.18+",
+			"content_html": "<p>I've recently updated a Minecraft Fabric server from 1.17.1 to 1.19.2, and it's shocking to see the memory shooting up all the way from 1.6GB to 4.8GB on start up, and that is in a 6GB server!<br>\nIt could only ever last for a few hours before running out of memory.</p>\n<p>I should have rolled back to 1.17 at this point, but my stupidity still thinks that this is just a temporary side effect and 1.19 gets much better mod support than 1.17 so it shouldn't be a big problem in the long run, and I was proven wrong once again. I've tried everything I could and the server still keeps running out of memory, and now I desparately need to find a solution.</p>\n<p>So later I found <a href=\"https://modrinth.com/mod/slumber\">Slumber</a> which stops the world from ticking when no one is online.<br>\nThis is usually more for self hosted environment as it can save resources, but it actually does slightly improves memory when no one is online.<br>\nHowever it still does not solve the core issue that 1.19 is just using so much more memory than before.</p>\n<p>That is until I was browsing through modrinth one day and found <a href=\"https://modrinth.com/mod/modernfix\">ModernFix</a>, included in it is a patch that fixes chunkloading requiring a huge amount of memory.</p>\n<p><picture><source type=\"image/avif\" srcset=\"https://blog.lx862.com/img/0OsSklk8Jn-921.avif 921w\"><source type=\"image/webp\" srcset=\"https://blog.lx862.com/img/0OsSklk8Jn-921.webp 921w\"><img alt=\"Plasma's Alternative Widget, with 2 options (Minimize all Windows/Show Desktop) \" loading=\"lazy\" decoding=\"async\" src=\"https://blog.lx862.com/img/0OsSklk8Jn-921.png\" width=\"921\" height=\"143\"></picture></p>\n<p>I've actually heard of ModernFix before, but I've always thought it's only for Forge or something like that so I didn't look too deep (Perhaps I've mixed up with another mod), until I noticed it's also available for Fabric, so I gave it a shot and that nailed it, the memory are now back to normal (~2GB) :D</p>\n",
+			"date_published": "2023-07-28T00:00:00Z"
+		}
+		,
+		{
 			"id": "https://blog.lx862.com/blog/2023-04-02-I-rebuilt-the-blog/",
 			"url": "https://blog.lx862.com/blog/2023-04-02-I-rebuilt-the-blog/",
 			"title": "I rebuilt this blog",
