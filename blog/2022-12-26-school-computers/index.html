@@ -182,7 +182,7 @@ pre[class*="language-diff-"] {
 * { box-sizing: border-box; }
 /* Defaults */
 :root {
-	--font-family: 'Roboto', 'Noto Sans', -apple-system, system-ui, sans-serif;
+	--font-family: 'Roboto', sans-serif;
 	--font-family-monospace: monospace;
 }
 
@@ -212,14 +212,14 @@ pre[class*="language-diff-"] {
 	box-sizing: border-box;
 }
 
-html,
-body {
+html, body {
 	padding: 0;
 	margin: 0 auto;
 	font-family: var(--font-family);
 	color: var(--text-color);
 	font-size: 1.025rem;
 }
+
 html::before {
 	position: fixed;
 	content: "";
@@ -231,8 +231,9 @@ html::before {
 html {
 	background-color: var(--html-background-color);
 }
+
 body {
-	max-width: 47em;
+	max-width: 42em;
 }
 
 /* https://www.a11yproject.com/posts/how-to-hide-content/ */
@@ -249,6 +250,7 @@ body {
 p:last-child {
 	margin-bottom: 0;
 }
+
 p {
 	line-height: 1.7;
 }
@@ -324,6 +326,7 @@ header > nav {
 table {
 	margin: 1em 0;
 }
+
 table td,
 table th {
 	padding-right: 1em;
@@ -351,6 +354,7 @@ pre:not([class*="language-"]) {
 	word-spacing: normal;
 	word-break: normal;
 }
+
 code {
 	word-break: break-all;
 }
@@ -367,11 +371,13 @@ header {
 	align-items: center;
 	padding: 1em 0;
 }
+
 .home-link {
 	font-size: 1em; /* 16px /16 */
 	font-weight: 600;
 	margin-right: 2em;
 }
+
 .home-link:link:not(:hover) {
 	text-decoration: none;
 }
@@ -383,13 +389,16 @@ header {
 	margin: 0;
 	list-style: none;
 }
+
 .nav-item {
 	display: inline-block;
 	margin-right: 1em;
 }
+
 .nav-item a[href]:not(:hover) {
 	text-decoration: none;
 }
+
 .nav a[href][aria-current="page"] {
 	text-decoration: underline;
 }
@@ -403,22 +412,27 @@ header {
 	color: #888;
 	font-style: italic;
 }
+
 .postlist-item {
 	background: var(--color-bg-highlight);
 	align-items: baseline;
 	margin-bottom: 1em;
 }
+
 .postlist-date,
 .postlist-item::before {
 	font-size: 0.8125em; /* 13px /16 */
 	color: var(--color-gray-90);
 }
+
 .postlist-date {
 	word-spacing: -0.5px;
 }
+
 .postlist-tags {
 	margin-left: 0.25em;
 }
+
 .postlist-tag {
 	position: relative;
 	display: inline-block;
@@ -426,6 +440,7 @@ header {
 	padding: 0 0.60em;
 	z-index: 1;
 }
+
 .postlist-tag::after {
 	position: absolute;
 	top: 0;
@@ -439,24 +454,38 @@ header {
 	z-index: -4;
 	border-right: 1px solid gray;
 }
+
 .postlist-tag:last-child::after {
 	border-right: none;
 }
+
 .postlist-tag:hover::after {
 	background: rgba(255, 255, 255, 0.2);
 }
+
 .tag {
 	font-size: 14px;
 	padding: 0 12px;
 	clip-path: polygon(calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 6px 100%, 0 50%, 6px 0);
 }
+
 .red {
 	background: #FF3311;
 }
+
+.ace {
+	display: inline-block;
+	height: 1em;
+	width: 1.5em;
+	border-radius: 2px;
+	background-image: linear-gradient(#000 25%, #A4A4A4 25%, #A4A4A4 50%, #FFF 50%, #FFF 75%, #810081 75%, #810081 100%);
+}
+
 main img {
 	max-width: 100%;
 	height: auto;
 }
+
 @keyframes load {
 	0% {
 		opacity: 0;
@@ -481,6 +510,7 @@ main img {
 	text-underline-offset: 0;
 	text-decoration-thickness: 1px;
 }
+
 .postlist-item-active .postlist-link {
 	font-weight: bold;
 }
@@ -492,9 +522,11 @@ main img {
 	justify-content: center;
 	text-transform: capitalize;
 }
+
 .postlist-item > .post-tag {
 	align-self: center;
 }
+
 .news {
 	background: black;
 	color: white;
@@ -513,6 +545,7 @@ main img {
 	padding: 0;
 	margin: 0;
 }
+
 .post-metadata time {
 	margin-right: 1em;
 }
@@ -524,14 +557,17 @@ main img {
 	font-size: 1em;
 	margin-left: .1em;
 }
+
 a[href].header-anchor,
 a[href].header-anchor:visited {
 	color: transparent;
 }
+
 a[href].header-anchor:focus,
 a[href].header-anchor:hover {
 	text-decoration: underline;
 }
+
 a[href].header-anchor:focus,
 :hover > a[href].header-anchor {
 	color: #aaa;
@@ -540,6 +576,7 @@ a[href].header-anchor:focus,
 h2 + .header-anchor {
 	font-size: 1.5em;
 }
+
 footer {
 	border-top: 1px solid gray;
 }
@@ -547,9 +584,14 @@ footer {
 .footer {
 	display: flex;
 	justify-content: space-between;
-	padding: 10px 0;
+	padding: 1em 0;
 	text-align: center;
 }
+
+.footer2 {
+	margin-bottom: 1em;
+}
+
 .prevnext-post {
 	display: inline-block;
 	border: 1px solid var(--color-gray-90);
@@ -714,9 +756,9 @@ I thought you can only bypass it in some really ancient and badly maintained cla
 					<a href="/feed/feed.xml">RSS</a>
 					<a href="mailto:lx86@lx862.com">Email</a>
 				</div>
-				<span>Last updated: <time datetime="2023-07-28">2023-07-28</span>
+				<span>Last updated: <time datetime="2023-10-02">2023-10-02</span>
 			</div>
-			<div>
+			<div class="footer2">
 				<span>All content are under <a href="https://creativecommons.org/licenses/by-nc/4.0/">CC BY-NC 4.0</a> unless noted otherwise</span>
 			</div>
 			

@@ -4,12 +4,52 @@
 	<subtitle>I am writing about my experiences as a naval navel-gazer.</subtitle>
 	<link href="https://blog.lx862.com/feed/feed.xml" rel="self"/>
 	<link href="https://blog.lx862.com/"/>
-	<updated>2023-07-28T00:00:00Z</updated>
+	<updated>2023-10-02T00:00:00Z</updated>
 	<id>https://blog.lx862.com/</id>
 	<author>
 		<name>LX86</name>
 		<email>lx86@lx862.com</email>
 	</author>
+	
+	<entry>
+		<title>I made a class schedule widget</title>
+		<link href="https://blog.lx862.com/blog/2023-10-02-class-schedule-widget/"/>
+		<updated>2023-10-02T00:00:00Z</updated>
+		<id>https://blog.lx862.com/blog/2023-10-02-class-schedule-widget/</id>
+		<content type="html">&lt;p&gt;A while back I vented a bit over on twitter:&lt;/p&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/JHZU7uvT5a-732.avif 732w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/JHZU7uvT5a-732.webp 732w&quot;&gt;&lt;img alt=&quot;Unpopular opinion, but school&#39;s mobile app should have a static notification of what lesson is currently happening, what room to go, and how much time is left. Giving me a timetable of today&#39;s lesson is no different than sending a jpeg.&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/JHZU7uvT5a-732.png&quot; width=&quot;732&quot; height=&quot;184&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
+&lt;p&gt;As with my other venting tweets at the time, I have briefly thought about doing something with it, but ended up being too lazy to care and moves on.&lt;/p&gt;
+&lt;p&gt;That is until the next day, one of my friend sent me a picture of their home screen with a widget showing the current and the upcoming class information, the location and the time period of their school.&lt;/p&gt;
+&lt;p&gt;Yes it isn&#39;t a static notification I was initially expecting, but nevertheless it does the job, and it does it quite well, so I started looking for a way to achieve the same with my school.&lt;/p&gt;
+&lt;p&gt;I obviously don&#39;t want to manually enter each course, otherwise it would be a PITA on every new semester (And also as it turns out, occasionally the classroom would shift depending on different weeks), so I have to figure out a way to get the real-time class schedule from the school.&lt;/p&gt;
+&lt;h2 id=&quot;figuring-out-the-api&quot; tabindex=&quot;-1&quot;&gt;Figuring out the API &lt;a class=&quot;header-anchor&quot; href=&quot;https://blog.lx862.com/blog/2023-10-02-class-schedule-widget/&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;My first instinct would be to get the timetable from our school&#39;s portal website, which looks like it&#39;s something made in 2004.&lt;/p&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/SXjevR_fzq-1034.avif 1034w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/SXjevR_fzq-1034.webp 1034w&quot;&gt;&lt;img alt=&quot;Our school&#39;s portal website, displaying the timetable view.&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/SXjevR_fzq-1034.png&quot; width=&quot;1034&quot; height=&quot;928&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
+&lt;p&gt;In the portal, you can request a week (Or multiple week, but it doesn&#39;t work on student account as far as I am aware) of timetable, it then sends an AJAX call and the server returns back the timetable page in HTML.&lt;/p&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/BB2fOw3cnv-606.avif 606w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/BB2fOw3cnv-606.webp 606w&quot;&gt;&lt;img alt=&quot;Chromium&#39;s DevTool, showing the response of the timetable page in HTML&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/BB2fOw3cnv-606.png&quot; width=&quot;606&quot; height=&quot;479&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
+&lt;p&gt;Thanks I hated it! Sure if I really want to reverse engineer this thing I probably could have figured it out somehow, but why go the hard way when there&#39;s an easy way, so I started digging through the school&#39;s mobile app (Which is what my original tweet is targetting anyway).&lt;/p&gt;
+&lt;p&gt;With the help of old insecure android version in an emulator &amp;amp; mitmproxy I did get the endpoint, got it to authenticate (Just some basic username password authentication) and obtained the timetable data, now in JSON!&lt;/p&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/o0Jczopy_a-624.avif 624w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/o0Jczopy_a-624.webp 624w&quot;&gt;&lt;img alt=&quot;A JSON Timetable response from the school&#39;s API&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/o0Jczopy_a-624.png&quot; width=&quot;624&quot; height=&quot;700&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
+&lt;p&gt;Good, now let&#39;s actually build the app.&lt;/p&gt;
+&lt;h2 id=&quot;what-the-and-is-this-thing&quot; tabindex=&quot;-1&quot;&gt;What the &amp;amp;#@&#92; is this thing &lt;a class=&quot;header-anchor&quot; href=&quot;https://blog.lx862.com/blog/2023-10-02-class-schedule-widget/&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;When I first started this, I have absolutely no android app developing experience. I haven&#39;t tried Kotlin before, I have no idea what is an Activity, Fragment, Intent, the only time I ever touched Android Studio is for their Android Virtual Device.&lt;/p&gt;
+&lt;p&gt;I am not going to go through how I learned them as that isn&#39;t the main point (And if anything I shouldn&#39;t be the one qualified to document them), but overall my impression of native Android Development is that you need to be willing to learn a lot of concept rather than expecting things to work after maybe copying a few lines of example code then using it. (Especially Intent/Broadcasts), and that now all of a sudden React Native doesn&#39;t seems that crazy after all.&lt;/p&gt;
+&lt;p&gt;Anyways a few weeks in, the app is now in a functional state, I can log in to a school account, it will display the course appropriately, everything works.&lt;/p&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/jzyGbubMCm-391.avif 391w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/jzyGbubMCm-391.webp 391w&quot;&gt;&lt;img alt=&quot;My initial android app showing class schedules of today, in a card list&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/jzyGbubMCm-391.png&quot; width=&quot;391&quot; height=&quot;864&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
+&lt;p&gt;Except for the static notification, which is the whole point of the app.&lt;br&gt;
+Either the notification doesn&#39;t get updated, the timer is wrong, etc.&lt;br&gt;
+I&#39;ve spent weeks tinkering with it with no success, so I left the entire app in the dust and moved on with my life.&lt;/p&gt;
+&lt;p&gt;That is until around a year later when a new school year began, that means I have to completely re-adjust my schedules, and that also means having to pull up the timetable image/mobile app on every lesson change to know where am I suppose to go, and start memorizing it all over again.&lt;/p&gt;
+&lt;p&gt;Eventually I am fed up, so I decided to make the class schedule app again, this time in the form of android widget (Which I should have been in the beginning).&lt;br&gt;
+Note that I have since graduated and was no longer in the school I was previously in, but it is still under the same organization and they use the same system, so all the knowledge I&#39;ve discovered a year ago still applies!&lt;/p&gt;
+&lt;p&gt;And after a week of bashing my head against the computer, it has finally been done.&lt;/p&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/_tg72UyD-A-768.avif 768w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/_tg72UyD-A-768.webp 768w&quot;&gt;&lt;img alt=&quot;My self-made class schedule widget.&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/_tg72UyD-A-768.png&quot; width=&quot;768&quot; height=&quot;692&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
+&lt;p&gt;It&#39;s not fancy nor polished at the moment, it doesn&#39;t properly display across months, it likely doesn&#39;t support having multiple widget at once, nor does it handle holiday and exam schedule (Which the official school mobile app does).&lt;/p&gt;
+&lt;p&gt;But I am very happy with the end result, using and solving my own daily life problems/annoyances are always the best, this is one of the few projects that I get to do so, and I very much enjoy it :D&lt;/p&gt;
+&lt;p&gt;For now I don&#39;t think I will continue devote a lot of time to this widget, primarily I am not sure how happy my school would be if I distribute this thing, and tbh it&#39;s enough for my usage, although I hope it will reach a production-ready state one day.&lt;/p&gt;
+&lt;p&gt;That&#39;s about it, see you in the future :^)&lt;/p&gt;
+</content>
+	</entry>
 	
 	<entry>
 		<title>High memory usage on Minecraft 1.18+</title>
