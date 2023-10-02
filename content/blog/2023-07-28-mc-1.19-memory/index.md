@@ -3,7 +3,7 @@ title: High memory usage on Minecraft 1.18+
 
 date: 2023-07-28
 tags:
-  - Minecraft Server
+  - Minecraft-Server
   - Solution
 ---
 I've recently updated a Minecraft Fabric server from 1.17.1 to 1.19.2, and it's shocking to see the memory shooting up all the way from 1.6GB to 4.8GB on start up, and that is in a 6GB server!  

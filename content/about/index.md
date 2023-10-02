@@ -6,30 +6,28 @@ eleventyNavigation:
 ---
 # Everything about me
 ## About me
-I am Kenny Hui (Better known as LX86). I sometimes code stuff, whether you like it or not.<br>
-I like learning new technologies, especially at the software side of things, and I am an absolute horror when it comes to managing stuff, whether it's within my computer or IRL.<br>
+I am Kenny Hui (Better known as LX86). I sometimes code stuff, whether you like it or not.
+
+I like learning new technologies, especially at the software side of things, and I am an absolute horror when it comes to managing stuff, whether it's within my computer or IRL.
+
 If not saddened I am at least rather disappointed on how the modern web has became.
 
-Coming from Hong Kong, now supposedly <code>{{ metadata.bday | yearDiff }}</code> y/o :D
+<span class="ace"></span> Coming from Hong Kong, now supposedly <code>{{ metadata.bday | yearDiff }}</code> y/o :D
 
-If I sounds familiar to you then that's probably because I had taken part in other communities (e.g. Minecraft Transit Railway, OpenBVE), but as time passes I am just not as interested or not wanting to be involved on most of them for various reasons.
+If I sounds familiar to you then that's probably because I had taken part in various communities (e.g. Minecraft Transit Railway, OpenBVE), but I also have my own schedule and stuff I'd like to do, now leave me alone and let me work on my small personal projects :P
 
-Now leave me alone and let me work on my small personal projects :P
+If you have anything to ask me, please do! I am equally as interested of someone wanting to learn more about me.<br>
+Preferably via [Email](mailto:lx86@lx862.com) so that I can reply a thousand words back to you if I want to, but if you are more comfortable having a casual chat then contact me on [Revolt](https://revolt.chat) (LX86#3250).
 
-If you have anything to ask me (As long as it isn't sensitive info), please do! I am equally as interested of someone wanting to learn more about me.<br>
-Preferably via [Email](mailto:lx86@lx862.com) so that I can reply a thousand words back to you if I want to, but if you are more comfortable on Discord then yeah I do have one as well:  
-*<small>(unwillingly gives out the tag)</small>* **LX86#2271**
-
-For the work I've done so far please check out my [main site](//lx862.com) because that's the only way I can get people to visit my website... oh wait you came from there?
+For the work I've done so far please check out my [main site](//lx862.com) because that's the only way I can get people to visit my website... what you came from there?
 
 ## About this blog
 Here I document some of the more interesting/niches things, discoveries, and occasionally some of my stories.<br>
-I don't get the energy to write blogs all day long, but I hope that one day someone will find my website and have something useful to take away from it, or at least have a better understanding of me in general.
+I don't get the energy to write blogs all day long, but I hope that one day someone will find my website and have something useful to take away from it, or at the very least, have a better understanding of me in general.
 
-And a reminder (again) that I am not an native english speaker.
-I am really bad at formulating long sentences and I do apologize if some of the wording used are a bit weird.
+And a reminder (again) that I am not an native english speaker. I am really bad at formulating long sentences and I do apologize if some of the wording used are a bit weird.
 
-This blog is originally based on Beautiful Jekyll hosted on GitHub page, but later moved to Eleventy for performant reason. (And also slightly more familiarity)
+This blog is originally based on Beautiful Jekyll hosted on GitHub page, but later moved to Eleventy for performant reason. (And also Javascript.)
 
 ## About my PC
 - CPU: i5-7500 <span class="tag red">Not compatible with Windows 11</span>
@@ -48,4 +46,4 @@ This blog is originally based on Beautiful Jekyll hosted on GitHub page, but lat
 - - BenQ G2412D (Primary, 1920x1080@60Hz)
 - - Philips PHL 247E6 (Secondary, 1920x1080@60Hz)
 
-Pretty decent hardware if you ask me :P
+Definitely OK to work with, wish there's more SSD space however...
