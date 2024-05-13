@@ -1,0 +1,1515 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Reverse Engineering an USB mouse</title>
+		<meta name="description" content="Clueless, a bit pointless, but fun!">
+		<link rel="alternate" href="/feed/feed.xml" type="application/atom+xml" title="LXBlog">
+		<link rel="alternate" href="/feed/feed.json" type="application/json" title="LXBlog">
+		<meta name="generator" content="Eleventy v2.0.1">
+
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Inter:slnt,wght@-10..0,100..900&display=swap" rel="stylesheet">
+		
+		<style>.src {
+    background-color: var(--color-bg-highlight);
+    padding: 0.5em;
+    margin: 1em 0;
+}
+
+.src h1 {
+    font-size: 1.5em;
+}
+/**
+ * okaidia theme for JavaScript, CSS and HTML
+ * Loosely based on Monokai textmate theme by http://www.monokai.nl/
+ * @author ocodia
+ */
+
+code[class*="language-"],
+pre[class*="language-"] {
+	color: #f8f8f2;
+	background: none;
+	text-shadow: 0 1px rgba(0, 0, 0, 0.3);
+	font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+	font-size: 1em;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+	word-wrap: normal;
+	line-height: 1.5;
+
+	-moz-tab-size: 4;
+	-o-tab-size: 4;
+	tab-size: 4;
+
+	-webkit-hyphens: none;
+	-moz-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+	padding: 1em;
+	margin: .5em 0;
+	overflow: auto;
+	border-radius: 0.3em;
+}
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+	background: #272822;
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+	padding: .1em;
+	border-radius: .3em;
+	white-space: normal;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+	color: #8292a2;
+}
+
+.token.punctuation {
+	color: #f8f8f2;
+}
+
+.token.namespace {
+	opacity: .7;
+}
+
+.token.property,
+.token.tag,
+.token.constant,
+.token.symbol,
+.token.deleted {
+	color: #f92672;
+}
+
+.token.boolean,
+.token.number {
+	color: #ae81ff;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+	color: #a6e22e;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string,
+.token.variable {
+	color: #f8f8f2;
+}
+
+.token.atrule,
+.token.attr-value,
+.token.function,
+.token.class-name {
+	color: #e6db74;
+}
+
+.token.keyword {
+	color: #66d9ef;
+}
+
+.token.regex,
+.token.important {
+	color: #fd971f;
+}
+
+.token.important,
+.token.bold {
+	font-weight: bold;
+}
+.token.italic {
+	font-style: italic;
+}
+
+.token.entity {
+	cursor: help;
+}
+/*
+ * New diff- syntax
+ */
+
+pre[class*="language-diff-"] {
+	--eleventy-code-padding: 1.25em;
+	padding-left: var(--eleventy-code-padding);
+	padding-right: var(--eleventy-code-padding);
+}
+.token.deleted {
+	background-color: hsl(0, 51%, 37%);
+	color: inherit;
+}
+.token.inserted {
+	background-color: hsl(126, 31%, 39%);
+	color: inherit;
+}
+
+/* Make the + and - characters unselectable for copy/paste */
+.token.prefix.unchanged,
+.token.prefix.inserted,
+.token.prefix.deleted {
+	-webkit-user-select: none;
+	user-select: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+.token.prefix.inserted,
+.token.prefix.deleted {
+	width: var(--eleventy-code-padding);
+	background-color: rgba(0,0,0,.2);
+}
+
+/* Optional: full-width background color */
+.token.inserted:not(.prefix),
+.token.deleted:not(.prefix) {
+	display: block;
+	margin-left: calc(-1 * var(--eleventy-code-padding));
+	margin-right: calc(-1 * var(--eleventy-code-padding));
+	text-decoration: none; /* override del, ins, mark defaults */
+	color: inherit; /* override del, ins, mark defaults */
+}
+* { box-sizing: border-box; }
+/* Defaults */
+:root {
+	--font-family: 'Inter', -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;
+	--font-family-monospace: monospace;
+}
+
+/* Theme colors */
+:root {
+	--text-color: var(--color-gray-90);
+
+	--color-gray-10: #aaa;
+	--color-gray-20: #e0e0e0;
+	--color-gray-50: #C0C0C0;
+	--color-gray-90: #dad8d8;
+	--color-bg-highlight: #2C3034;
+
+	--background-color: #23272B;
+	--html-background-color: #181C22;
+	--codeblock-background: #383C40;
+
+	/* --text-color is assigned to --color-gray-_ above */
+	--text-color-link: #66C2fc;
+	--text-color-link-active: #ff88aa;
+
+	--syntax-tab-size: 2;
+}
+
+/* Global stylesheet */
+* {
+	box-sizing: border-box;
+}
+
+html, body {
+	padding: 0;
+	margin: 0 auto;
+	font-family: var(--font-family);
+	color: var(--text-color);
+	font-size: 1;
+}
+
+html::before {
+	position: fixed;
+	content: "";
+	width: 100%;
+	height: 100%;
+	z-index: -1;
+}
+
+html {
+	background-color: var(--html-background-color);
+	scroll-behavior: smooth;
+	scroll-padding: 4rem;
+}
+
+body {
+	max-width: 52em;
+}
+
+/* https://www.a11yproject.com/posts/how-to-hide-content/ */
+.visually-hidden {
+	clip: rect(0 0 0 0);
+	clip-path: inset(50%);
+	height: 1px;
+	overflow: hidden;
+	position: absolute;
+	white-space: nowrap;
+	width: 1px;
+}
+
+p:last-child {
+	margin-bottom: 0;
+}
+
+p {
+	margin: 1rem 0;
+	line-height: 1.7;
+}
+
+li {
+	margin: 0.5rem 0;
+}
+
+ol > li {
+	margin: 0.25rem 0;
+	line-height: 1.5;
+}
+
+a[href] {
+	color: var(--text-color-link);
+}
+a[href]:hover,
+a[href]:active {
+	color: var(--text-color-link-active);
+}
+
+main {
+	padding: 1rem;
+	position: relative;
+	background: var(--background-color);
+}
+main :first-child {
+	margin-top: 0;
+}
+header:before {
+	content: "";
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	background: linear-gradient(to bottom, transparent, var(--color-bg-highlight));
+	transform: perspective(800px) rotateX(60deg);
+	transform-origin: 50% 100%;
+	z-index: -1;
+}
+
+header {
+	position: relative;
+	display: flex;
+	justify-content: space-between;
+}
+
+header:after {
+	content: "";
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	height: 1px;
+	width: 100%;
+	background: linear-gradient(to right, transparent 10%, var(--text-color) 50%, transparent 90%)
+}
+
+header > nav {
+	margin-left: auto;
+}
+
+.links-nextprev {
+	display: flex;
+	position: relative;
+	justify-content: space-between;
+	padding: 1em 0;
+}
+
+.links-nextprev:before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 1px;
+	width: 100%;
+	background: linear-gradient(to right, transparent 0%, var(--text-color) 50%, transparent 100%)
+}
+
+table {
+	margin: 1em 0;
+	border-collapse: collapse;
+}
+
+table td,
+table th {
+	padding: 0.25rem;
+	padding-right: 0.75rem;
+	border: 1px solid var(--color-gray-10);
+}
+
+table th {
+	text-align: left;
+}
+
+pre,
+code {
+	display: inline-block;
+	font-family: var(--font-family-monospace);
+	font-size: 0.90rem;
+	border: 1px solid black;
+	background: var(--codeblock-background);
+}
+
+pre:not([class*="language-"]) {
+	margin: .5em 0;
+	line-height: 1.375; /* 22px /16 */
+	-moz-tab-size: var(--syntax-tab-size);
+	-o-tab-size: var(--syntax-tab-size);
+	tab-size: var(--syntax-tab-size);
+	-webkit-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+	direction: ltr;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+}
+
+code {
+	padding: 0 4px;
+	word-break: break-all;
+}
+
+p > code, li > code {
+	border: 1px solid black;
+}
+
+/* Header */
+header {
+	display: flex;
+	gap: 1em .5em;
+	flex-wrap: wrap;
+	align-items: center;
+	padding: 1.25em 0;
+}
+
+.home-link {
+	font-size: 1em; /* 16px /16 */
+	font-weight: 600;
+	margin-right: 2em;
+}
+
+.home-link:link:not(:hover) {
+	text-decoration: none;
+}
+
+/* Nav */
+.nav {
+	display: flex;
+	padding: 0;
+	margin: 0;
+	list-style: none;
+}
+
+.nav-item {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.nav-item a[href]:not(:hover) {
+	text-decoration: none;
+}
+
+.nav a[href][aria-current="page"] {
+	text-decoration: underline;
+}
+
+/* Posts list */
+.postlist {
+	list-style: none;
+	padding: 0;
+}
+.post-desc {
+	color: #888;
+	font-style: italic;
+}
+
+.postlist-item {
+	background: var(--color-bg-highlight);
+	align-items: baseline;
+	margin-bottom: 1em;
+	padding: 0.25em 0.25em 0em 0em;
+}
+
+.postlist-date,
+.postlist-item::before {
+	font-size: 0.8125em; /* 13px /16 */
+	color: var(--color-gray-90);
+}
+
+.postlist-date {
+	word-spacing: -0.5px;
+}
+
+.postlist-tags {
+	margin-left: 0.25em;
+}
+
+.postlist-tag {
+	position: relative;
+	display: inline-block;
+	text-decoration: none;
+	padding: 0 0.60em;
+	z-index: 1;
+}
+
+.postlist-tag::after {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	content: "";
+	padding: 0 0.1em;
+	transform: skewX(-15deg);
+	background-color: var(--codeblock-background);
+	z-index: -4;
+	border-left: 1px solid #555;
+	
+	border-top: 1px solid #555;
+}
+
+.postlist-tag:last-child::after {
+	border-right: 1px solid #555;
+}
+
+.postlist-tag:hover::after {
+	background-color: rgba(255, 255, 255, 0.15);
+}
+
+.tag {
+	font-size: 14px;
+	padding: 0 12px;
+	clip-path: polygon(calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 6px 100%, 0 50%, 6px 0);
+}
+
+.red {
+	background: #FF3311;
+}
+
+.ace {
+	display: inline-block;
+	height: 1em;
+	width: 1.5em;
+	border-radius: 2px;
+	background-image: linear-gradient(#000 25%, #A4A4A4 25%, #A4A4A4 50%, #FFF 50%, #FFF 75%, #810081 75%, #810081 100%);
+}
+
+main img {
+	max-width: 100%;
+	height: auto;
+}
+
+@keyframes load {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	main {
+		animation: 0.5s load;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	html {
+		scroll-behavior: auto;
+	}
+}
+
+a:target {
+	font-weight: 600;
+	text-decoration: underline;
+}
+
+#anchor-back-button {
+	position: fixed;
+	border: none;
+	outline: none;
+	padding: 0.5rem;
+	right: 15px;
+	top: 15px;
+	font-size: 1.1rem;
+	font-family: inherit;
+	display: none;
+	cursor: pointer;
+}
+
+.postlist-linkdesc {
+	padding-left: 0.5rem;
+}
+
+.postlink-desc {
+	margin-top: 0.25em;
+	margin-bottom: 1em !important;
+}
+
+.postlist-link {
+	font-size: 1.1875em; /* 19px /16 */
+	font-weight: 500;
+	flex-basis: calc(100% - 1.5rem);
+	padding-right: .5rem;
+	text-underline-position: from-font;
+	text-underline-offset: 0;
+	text-decoration-thickness: 1px;
+}
+
+.section-header {
+	display: inline-block;
+	background: var(--codeblock-background);
+	padding: 0.1rem 0.4rem;
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+.section-content {
+	margin-top: 0;
+	background: var(--codeblock-background);
+	padding: 0.5rem;
+}
+
+.postlist-item-active .postlist-link {
+	font-weight: bold;
+}
+
+ol {
+	margin-top: 0;
+}
+
+.backtotop {
+	position: fixed;
+	right: 0;
+	bottom: 0;
+	margin: 1rem;
+}
+
+@media only screen and (max-width: 1000px)  {
+	.backtotop {
+		display: none;
+	}
+}
+
+/* Tags */
+.post-tag {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	text-transform: capitalize;
+}
+
+.postlist-item > .post-tag {
+	align-self: center;
+}
+
+.news {
+	background: black;
+	color: white;
+}
+
+.news > span {
+	margin-right: 30px;
+}
+
+/* Tags list */
+.post-metadata {
+	display: inline-flex;
+	flex-wrap: wrap;
+	gap: .5em;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.post-metadata > li {
+	padding: 0;
+	margin: 0;
+}
+
+.post-metadata time {
+	margin-right: 1em;
+}
+
+/* Direct Links / Markdown Headers */
+.header-anchor {
+	text-decoration: none;
+	font-style: normal;
+	font-size: 1em;
+	margin-left: .1em;
+}
+
+a[href].header-anchor,
+a[href].header-anchor:visited {
+	color: transparent;
+}
+
+a[href].header-anchor:focus,
+a[href].header-anchor:hover {
+	text-decoration: underline;
+}
+
+a[href].header-anchor:focus,
+:hover > a[href].header-anchor {
+	color: #aaa;
+}
+
+h2 + .header-anchor {
+	font-size: 1.5em;
+}
+
+footer {
+	border-top: 1px solid gray;
+}
+
+.footer {
+	display: flex;
+	justify-content: space-between;
+	padding: 1em 0;
+	text-align: center;
+}
+
+.footer2 {
+	margin-bottom: 1em;
+}
+
+.prevnext-post {
+	display: inline-block;
+	border: 1px solid var(--color-gray-90);
+	font-size: 16px;
+	color: white;
+	padding: 10px;
+}
+
+.prevnext-post:hover {
+	background: var(--color-gray-90);
+	color: #000;
+}
+
+/* >:( */
+.ARGH {
+	text-shadow: 0px 0px 12px #F00, 0px 0px 12px #F00;
+}
+
+.sub {
+	font-size: 0.9em;
+	color: var(--color-gray-10);
+}
+
+.highlight {
+	color: #FFF;
+	background: #111;
+	border-radius: 4px;
+	padding: 0 .25em;
+}
+
+.aesthetics {
+	text-shadow: 1px 1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, -1px -1px 0 #000;
+	font-weight: 500;
+	background: linear-gradient(90deg, rgba(255,0,0,0.75) 15%, rgba(255,154,0,0.75) 30%, rgba(208,222,33,0.75) 45%, rgba(39,140,34,0.75) 60%,rgba(28,127,238,0.75) 80%, rgba(95,21,242,0.75) 100%);
+}
+
+.hint {
+	filter: contrast(5);
+	background: #6C6C6C;
+}</style>
+		<link rel="icon" type="image/x-icon" href="/img/favicon.png">
+	</head>
+
+	<body>
+		<a href="#skip" class="visually-hidden">Skip to main content</a>
+		<header>
+			<a href="/" class="home-link">
+				
+					<img width=128px src="/img/logo.png" alt="LXBlog">
+				
+			</a>
+			<nav>
+				<h2 class="visually-hidden">Top level navigation menu</h2>
+				<ul class="nav">
+					<li class="nav-item"><a href="/mainpage/">Main Page</a></li>
+					<li class="nav-item"><a href="/">Blog</a></li>
+					<li class="nav-item"><a href="/about/">About</a></li>
+				</ul>
+			</nav>
+		</header>
+
+		<main id="skip">
+			
+
+<h1>Reverse Engineering an USB mouse</h1>
+<p class="post-desc">Clueless, a bit pointless, but fun!</p>
+
+<ul class="post-metadata">
+	<li>Posted: <time datetime="2024-05-13">2024-05-13</time></li>
+		<li><a href="/tags/software/" class="post-tag">software</a>, </li>
+		<li><a href="/tags/reverse-engineering/" class="post-tag">reverse-engineering</a></li>
+</ul>
+
+<button id="anchor-back-button">↓ Back</button>
+
+<p>Heh what a busy semester. Anyway ever since I've switched to Linux, I usually try to find alternative replacements for the software I use on Windows. It's not perfect but it gets me 90% there. (And with the right configuration it does feels more productive than Windows)</p>
+<p>One thing that I cannot always find however is a replacement for vendor-provided software to control my peripherals.
+Fortunately most of my peripheral device is extremely dumb. A keyboard is a keyboard, it types and does absolutely nothing more. The same cannot be said for my mouse though.</p>
+<p>For some background, this is the current mouse I have, an <strong>AOC GM110 &quot;Gaming Mouse&quot;</strong> getting sold for roughly the same price or cheaper than an office mouse.</p>
+<p><picture><source type="image/avif" srcset="/img/3BxV6UzEMC-343.avif 343w"><source type="image/webp" srcset="/img/3BxV6UzEMC-343.webp 343w"><img alt="An AOC GM110 Gaming Mouse" loading="lazy" decoding="async" src="/img/3BxV6UzEMC-343.jpeg" width="343" height="312"></picture><br>
+<small>I know the picture quality sucks, this blog is a huge mess™</small></p>
+<p>It has a total of 7 buttons (Left/Middle/Right button, 2 side buttons and 2 in the middle), and it also has a RGB breathing light.</p>
+<p>I bought this after my previous mouse, a <strong>Philips SPK9505 &quot;Gaming Mouse&quot;</strong> with the same configuration, starts to have all sort of click issues and stuff.</p>
+<p>These 2 mouses are all sold at a reasonably cheap price for what is supposedly &quot;more than an office mouse&quot;.</p>
+<p>Now if you have never heard of these 2 mouse before, that is completely normal as:</p>
+<ol>
+<li><em>Model number sucks and are never meant to be memorized by humans :)</em></li>
+<li><strong>These mice are not actually produced by either Philips nor AOC.</strong> I am not sure of the inner workings, but from what I know these mice are manufactured somewhere (Probably Mainland China) for a good price, then the logos are just slapped onto the mouse after some approval or licensing fee or whatever.</li>
+</ol>
+<p>Anyway these mouse ships with a mouse software that runs on the Microsoft® Windows® Operating System that allows you to configure your mouse.</p>
+<p>This is the software that comes with my old Philips mouse:<br>
+<picture><source type="image/avif" srcset="/img/9nkyZNUGoZ-1022.avif 1022w"><source type="image/webp" srcset="/img/9nkyZNUGoZ-1022.webp 1022w"><img alt="Button rebinding page in the mouse software" loading="lazy" decoding="async" src="/img/9nkyZNUGoZ-1022.png" width="1022" height="730"></picture>
+<small>Button binding page, where you can rebind mouse buttons to however you like</small></p>
+<a id="macro-intro">
+<picture><source type="image/avif" srcset="/img/KW7KcPTcoV-1022.avif 1022w"><source type="image/webp" srcset="/img/KW7KcPTcoV-1022.webp 1022w"><img alt="Macro page in the mouse software, which allows you to input a sequence of timed key input command" loading="lazy" decoding="async" src="/img/KW7KcPTcoV-1022.png" width="1022" height="730"></picture>  
+</a>
+<small>Macros page, which allows you to setup a sequence of key event that is triggered by a button<br>(Trigger is setup by binding the mouse to a macro in the Mouse Binding Page)</small>
+<p><picture><source type="image/avif" srcset="/img/CYnmuX1y-L-1022.avif 1022w"><source type="image/webp" srcset="/img/CYnmuX1y-L-1022.webp 1022w"><img alt="Advanced page in the mouse software" loading="lazy" decoding="async" src="/img/CYnmuX1y-L-1022.png" width="1022" height="730"></picture><br>
+<small>Fire Speed, &quot;Pointer Precision&quot; <em>(Bad Translation; Should be Pointer Speed)</em>, Scroll Speed and DPI Setup w/ 4 DPI to choose from</small></p>
+<p><picture><source type="image/avif" srcset="/img/BSMQF8tknK-1022.avif 1022w"><source type="image/webp" srcset="/img/BSMQF8tknK-1022.webp 1022w"><img alt="LED Page in the mouse software, which allows you to configure the lighting of the mouse" loading="lazy" decoding="async" src="/img/BSMQF8tknK-1022.png" width="1022" height="730"></picture><br>
+<small>Breathing Light Setup, with Slow, Fast, Static and Off available as option.</small></p>
+<p>Why am I still talking about my old mouse and its software? Well that's because I can't find the software for the AOC GM110 that I am currently using. <strong>But</strong> I noticed that my old Philips-branded software still do work on my AOC GM110 mouse, every single option.<br>
+This suggests that these 2 mouse is probably the same under the hood, just maybe with a different shell, branding and packaging.</p>
+<p>Anyway it should be worth mentioning that I don't <em>need</em> the mouse software for my daily use.<br>
+For the most part this little mouse already fulfills my daily need as a non-gamer, heck you can even rebind the 2 side button on Linux which is really handy.<br>
+(At least on KDE, but I assume you can also do it on other platform as well).</p>
+<p><picture><source type="image/avif" srcset="/img/DPrcs7uVOp-1104.avif 1104w"><source type="image/webp" srcset="/img/DPrcs7uVOp-1104.webp 1104w"><img alt="KDE Mouse Settings Window, allowing you to rebind extra buttons" loading="lazy" decoding="async" src="/img/DPrcs7uVOp-1104.png" width="1104" height="820"></picture></p>
+<p>However that doesn't mean that I am not <em>at least a bit intrigued</em> by the extra functionalities that the mouse software provides, especially after seeing projects like <a href="https://openrgb.org">OpenRGB</a> which does not rely on the Vendor's software.</p>
+<p>Besides I miss the time when I just plays around and try new things, as opposed to me tiredlessly working on Minecraft mods that doesn't give me much satisfaction for the past 2 years or so. Perhaps I won't stick with that thing in the long term, but I had fun and I gained knowledge.<br>
+With around a week of holiday before exam, this seems like a greats opportunity to do so.</p>
+<p>My plan for this is that I don't really have a plan, other than hopefully making a program that can configure my mouse in Linux, and starting with absolutely <em>zero</em> knowledge on anything USB related!</p>
+<p>My first step is to literally Google <strong>How to reverse engineer a USB Mouse</strong>, which led me to <a href="https://bytepunk.wordpress.com/2017/03/25/reverse-engineering-a-usb-mouse/">this</a> and <a href="https://zazama.de/blog/reverse-engineering-usb-rgb-devices-and-building-your-own-rgb-software-by-example-using-rust-and-glorious-model-o/">this great blog post</a>, both have helped increase my understanding of the general work required to pull something like this off.</p>
+<h1 id="wireshark-save-me" tabindex="-1">Wireshark, save me! <a class="header-anchor" href="#wireshark-save-me">#</a></h1>
+<p>The first thing I need is some sort of tools that can capture USB data so I can see what is actually being sent to the mouse <em>(Or well reverse-engineer the software itself, but I am not going there)</em></p>
+<p>Reading the aforementioned blog post, I am a bit surprised to find out that Wireshark can capture USB data as well, given that for the longest time I've only heard it being used in the context of networking.<br>
+Originally I just throw it off as some sort of &quot;hacks&quot; that requires you to setup this and that to fake that it's a network interface or whatever, but no this is an officially supported use-case.<br>
+In fact the Wireshark installer on Windows even asks you whether you want to install USBPCap which allows you to capture USB traffic:</p>
+<p><picture><source type="image/avif" srcset="/img/GKAAPVcggR-499.avif 499w"><source type="image/webp" srcset="/img/GKAAPVcggR-499.webp 499w"><img alt="Wireshark Installer on Windows, asking whether you want to install USBPCap" loading="lazy" decoding="async" src="/img/GKAAPVcggR-499.png" width="499" height="388"></picture><br>
+<small>(Greyed out because I already have it installed)</small></p>
+<p>After that, the USBPCap entry just appears on the Wireshark Homescreen like magic!</p>
+<p><picture><source type="image/avif" srcset="/img/tTq6LkV2xD-711.avif 711w"><source type="image/webp" srcset="/img/tTq6LkV2xD-711.webp 711w"><img alt="Wireshark Home Screen, presenting a list of interfaces that can be captured. USBPCap appeared there." loading="lazy" decoding="async" src="/img/tTq6LkV2xD-711.png" width="711" height="594"></picture></p>
+<p>And now I have access to all the USB data under the sun, ha-ha!</p>
+<p><picture><source type="image/avif" srcset="/img/Z4i-ippZjA-1024.avif 1024w"><source type="image/webp" srcset="/img/Z4i-ippZjA-1024.webp 1024w"><img alt="Wireshark Window, with tons of USB Packets displayed" loading="lazy" decoding="async" src="/img/Z4i-ippZjA-1024.png" width="1024" height="756"></picture></p>
+<p>...Okay that's a lot of traffic. The first thing I did is trying to filter out the massive amount of traffic getting displayed so I can actually focus on what matters.
+I am no genius so I just moved my mouse and see which address it's coming from, and I just filtered that address, 1.2.1.</p>
+<p><picture><source type="image/avif" srcset="/img/NGduDK7uOA-1024.avif 1024w"><source type="image/webp" srcset="/img/NGduDK7uOA-1024.webp 1024w"><img alt="Wireshark Window, with usb packets filtered to usb address 1.2.1" loading="lazy" decoding="async" src="/img/NGduDK7uOA-1024.png" width="1024" height="756"></picture></p>
+<p>But I quickly realized that's not the address I should be looking for. Sure it may have mouse traffic, but when I fired up my mouse software and hit &quot;Apply&quot;, nothing seems to show up other than my mouse movement &amp; my left click.</p>
+<p>After a bit of fiddling and research, it turns out that there are different so called <strong>Endpoint</strong> in a USB device. (Well to put it very simply, you can think of it as a location where data can go in/out, but I am far from qualified to explain it in detail).</p>
+<p>To the best of my understanding all USB device <em>must</em> have at least 1 Endpoint in Address number 0 (Endpoint 0) used for control transfer. This is the endpoint that is used to communicate and configure your USB device by the OS.</p>
+<p>In this case it appears that the mouse software also sends configuration data to the mouse on Endpoint 0, so I changed my wireshark filter to <code>1.2.0</code> instead to inspect data coming from/to that endpoint instead.</p>
+<p>After that I hit the &quot;Apply&quot; button on my mouse software again, and 14 new entry appeared:</p>
+<p><picture><source type="image/avif" srcset="/img/Sz51r1Z2TC-1024.avif 1024w"><source type="image/webp" srcset="/img/Sz51r1Z2TC-1024.webp 1024w"><img alt="Wireshark Window, with a list of usb packets appearing after clicking the Apply button in the mouse software" loading="lazy" decoding="async" src="/img/Sz51r1Z2TC-1024.png" width="1024" height="756"></picture></p>
+<p>OwO let's inspect it :P</p>
+<h1 id="observation" tabindex="-1">Observation <a class="header-anchor" href="#observation">#</a></h1>
+<p>This is probably the most nerdiest part, to figure out and guess what each of the packet does and how is the data formatted.</p>
+<p>Now I don't know a lot about reverse-engineering, but I know that a good starting point is to change 1 option in the software, apply it again, then compare it with the previous data sent and figure out the difference, so here are my (initial) observations:</p>
+<h2 id="button-bindings" tabindex="-1">Button Bindings <a class="header-anchor" href="#button-bindings">#</a></h2>
+<p>This mouse have the capabilities to rebind buttons, either to another button or an action like &quot;Showing Desktop&quot; or performing shortcuts.</p>
+<a id="button-bindings">
+<picture><source type="image/avif" srcset="/img/F6GlP_Xnpc-725.avif 725w"><source type="image/webp" srcset="/img/F6GlP_Xnpc-725.webp 725w"><img alt="Button binding page, allowing you to not only rebind buttons, but also perform Shortcuts and perform Multimedia key input" loading="lazy" decoding="async" src="/img/F6GlP_Xnpc-725.png" width="725" height="397"></picture>
+</a>
+<p>For simplicity sake I'll just call all of these <strong>actions</strong> (i.e. A <strong>Left Mouse Button</strong> is binded to a <strong>&quot;Left Click&quot; action</strong>)</p>
+<p>So I started changing the bindings to see what got changed from which packets (Remember it sends 14 of them all at once on apply!), and it seems that for Mouse Bindings, the data is sent in the following format (7 times for each of the 7 buttons on the mouse):</p>
+<pre><code>07 10 BT AT 00 00 00 00
+      ^^ ^^
+</code></pre>
+<p><strong>BT</strong> is the physical button that is to be rebinded:</p>
+<table>
+  <tr>
+    <th>Value</th>
+    <th>Button Name</th>
+  </tr>
+  <tr>
+    <td>01</td><td>Left Mouse Button</td>
+  </tr>
+  <tr>
+    <td>02</td><td>Right Mouse Button</td>
+  </tr>
+  <tr>
+    <td>03</td><td>Middle Mouse Button</td>
+  </tr>
+  <tr>
+    <td>04</td><td>Side Forward (Towards front)</td>
+  </tr>
+  <tr>
+    <td>05</td><td>Side Backward (Towards user)</td>
+  </tr>
+  <tr>
+    <td>06</td><td>Middle backward (Towards user)</td>
+  </tr>
+  <tr>
+    <td>08</td><td>Middle forward (Towards front)</td>
+  </tr>
+</table>
+<p><strong>AT</strong> is the rebinded action:</p>
+<table>
+  <tr>
+    <th>Value</th>
+    <th>Action Name</th>
+  </tr>
+  <tr>
+    <td>00</td><td>Software action...?</td>
+  </tr>
+  <tr>
+    <td>01</td><td>Left Click</td>
+  </tr>
+  <tr>
+    <td>02</td><td>Middle Click</td>
+  </tr>
+  <tr>
+    <td>03</td><td>Right Click</td>
+  </tr>
+  <tr>
+    <td>04</td><td>Back</td>
+  </tr>
+  <tr>
+    <td>05</td><td>Forward</td>
+  </tr>
+  <tr>
+    <td>06</td><td>DPI Cycle</td>
+  </tr>
+  <tr>
+    <td>07</td><td>Show Desktop</td>
+  </tr>
+  <tr>
+    <td>08</td><td>Double Click</td>
+  </tr>
+  <tr>
+    <td>09</td><td>Fire</td>
+  </tr>
+  <tr>
+    <td>0a</td><td>DPI+</td>
+  </tr>
+  <tr>
+    <td>0b</td><td>DPI-</td>
+  </tr>
+</table>
+<p>So for example, a report about the <strong>Left Mouse Button</strong> binded to a <strong>Right Click Action</strong> would look like:</p>
+<pre><code>07 10 01 03 00 00 00 00
+      ^^ ^^
+</code></pre>
+<p>Also worth noting is the <code>00</code> in <strong>AT</strong>. It seems that when choosing any actions within the <a href="#button-bindings">ShortCut / Media submenu</a> (Copy/Pasting, Calculator, Play/Pause), <strong>AT</strong> is always reported as <code>00</code>.
+There's no follow up data either, <em>which means that the mouse would have no idea which specific action is actually binded</em>?</p>
+<p>For now I will call <code>00</code> as <strong>Software action</strong>. Since the mouse have no knowledge of the action, my guesses are that it most likely relies on some interference from the mouse software.</p>
+<h2 id="something" tabindex="-1">Something...? <a class="header-anchor" href="#something">#</a></h2>
+<p>It seems that on apply, there's always this one report that is always getting sent by the software and the value never changes:</p>
+<pre><code>07 11 00 00 00 00 00 00
+</code></pre>
+<p>Without anything I can change in the software that affects the values, I really have no idea what this data means. I can only assume this is unused for now.</p>
+<h2 id="fire-speed" tabindex="-1">Fire Speed <a class="header-anchor" href="#fire-speed">#</a></h2>
+<p><picture><source type="image/avif" srcset="/img/EozDWirarv-389.avif 389w"><source type="image/webp" srcset="/img/EozDWirarv-389.webp 389w"><img alt="Fire Speed Slider in the mouse software" loading="lazy" decoding="async" src="/img/EozDWirarv-389.png" width="389" height="101"></picture></p>
+<p>There's a <strong>Fire Speed</strong> slider in my mouse software. Now since I don't use 90% of the mouse features I have no idea what this means, other than that it's a slider going from 8-300 :)</p>
+<p>Data sent:</p>
+<pre><code>07 12 00 FR 00 00 00 00
+         ^^
+</code></pre>
+<p><strong>FR</strong> appears to be a value between <strong>00</strong> and <strong>1F</strong>. Interestingly it seems to be <strong>in +16 increments and rounded down</strong>. (So if the Slider reads 15 in the software, it gets sent as <code>00</code>, if it's 16 it gets sent as <code>01</code>), even though the software itself makes it look like you can set an arbitrary value.</p>
+<p>I guess I did get what I paid for...</p>
+<h2 id="rgb-lights" tabindex="-1">RGB Lights <a class="header-anchor" href="#rgb-lights">#</a></h2>
+<p>This mouse comes with RGB lights (Or more appropriately named, Breathing Light), which would cycle between <strong>Blue, Magenta, Red and Purple</strong> color.</p>
+<p>You can choose between 4 modes in the software: <strong>Slow, Fast, Static and Off</strong></p>
+<p><picture><source type="image/avif" srcset="/img/xjVsMbnKDq-355.avif 355w"><source type="image/webp" srcset="/img/xjVsMbnKDq-355.webp 355w"><img alt="Slow, Fast, Static and Off option presented in the LED page of the mouse software" loading="lazy" decoding="async" src="/img/xjVsMbnKDq-355.png" width="355" height="246"></picture></p>
+<p>Now let's see what is sent:</p>
+<pre><code>07 13 7f CF 00 00 00 00
+         ^^
+</code></pre>
+<p><strong>CF</strong> is the RGB Configuration:<br>
+<small>(The &quot;seconds&quot; below represents the time the mouse stayed in 1 color before cycling to the next one)</small></p>
+<table>
+  <tr>
+    <th>Value</th>
+    <th>RGB Mode</th>
+  </tr>
+  <tr>
+    <td>10</td><td>Slow (6s)</td>
+  </tr>
+  <tr>
+    <td>13</td><td>Fast (3s)</td>
+  </tr>
+  <tr>
+    <td>16</td><td>Static</td>
+  </tr>
+  <tr>
+    <td>17</td><td>Off</td>
+  </tr>
+</table>
+<h2 id="dpi-configuration" tabindex="-1">DPI Configuration <a class="header-anchor" href="#dpi-configuration">#</a></h2>
+<p>There are a total of 4 DPI profiles available for this Mouse.</p>
+<p>Each profile has it's own configurable DPI value, and can be set as &quot;active&quot; either by pressing mouse buttons binded to a DPI-related action, or by simply clicking the <strong>DPI 1/2/3/4</strong> on the software.</p>
+<p><picture><source type="image/avif" srcset="/img/XhrDPgwt75-444.avif 444w"><source type="image/webp" srcset="/img/XhrDPgwt75-444.webp 444w"><img alt="Advanced page in the mouse software, allowing you to choose different DPI Profile" loading="lazy" decoding="async" src="/img/XhrDPgwt75-444.png" width="444" height="414"></picture></p>
+<p>4 reports gets sent to the mouse, with each representing one of the 4 DPI profiles:</p>
+<pre><code>07 09 AD DP 0f 00 00 00
+      ^^ ^^
+</code></pre>
+<p><strong>AD</strong> is the currently active DPI Profile (00 - 03)<br>
+<strong>DP</strong> is the DPI Configuration for the profile, where:</p>
+<ul>
+<li>The left 4 bits is the DPI value from 1-f</li>
+<li>The right 4 bits is the DPI profile (8-b for 4 profiles in order)</li>
+</ul>
+<p>So <strong>DP</strong> would be:</p>
+<table>
+  <tr>
+    <td>18-f8</td><td>DPI for DPI 1</td>
+  </tr>
+  <tr>
+    <td>19-f9</td><td>DPI for DPI 2</td>
+  </tr>
+  <tr>
+    <td>1a-fa</td><td>DPI for DPI 3</td>
+  </tr>
+  <tr>
+    <td>1b-fb</td><td>DPI for DPI 4</td>
+  </tr>
+</table>
+<h2 id="an-imposter" tabindex="-1">An Imposter... <a class="header-anchor" href="#an-imposter">#</a></h2>
+<p>Out of everything I've changed, it seems that there's 2 options that doesn't change anything sent when clicking the &quot;Apply&quot; button:</p>
+<p><picture><source type="image/avif" srcset="/img/mqco72C-HK-356.avif 356w"><source type="image/webp" srcset="/img/mqco72C-HK-356.webp 356w"><img alt="Advanced page in the mouse software, with a Pointer precision slider and a wheel speed slider" loading="lazy" decoding="async" src="/img/mqco72C-HK-356.png" width="356" height="188"></picture></p>
+<p>Initially I thought that there may be some other way it's communicating with the device that I have not discovered yet, and maybe it's going to another rabbit hole?<br>
+But then I have an idea. I opened up the Start Menu, typed &quot;Mouse Settings&quot;, and well there it is!</p>
+<p><picture><source type="image/avif" srcset="/img/kQuWabgFiv-407.avif 407w"><source type="image/webp" srcset="/img/kQuWabgFiv-407.webp 407w"><img alt="The Pointer precision slider in the mouse software and Windows mouse pointer speed settings side by side, showing that they match" loading="lazy" decoding="async" src="/img/kQuWabgFiv-407.png" width="407" height="248"></picture></p>
+<p><picture><source type="image/avif" srcset="/img/XSOd36I15e-413.avif 413w"><source type="image/webp" srcset="/img/XSOd36I15e-413.webp 413w"><img alt="The wheel speed slider in the mouse software and Windows scroll wheel settings side by side, showing that they match, but the mouse software always underrepresented the value by 1" loading="lazy" decoding="async" src="/img/XSOd36I15e-413.png" width="413" height="237"></picture><br>
+<small><em>Looks like someone forgot 0-based index :)</em></small></p>
+<h1 id="writing-the-implementation" tabindex="-1">Writing the implementation <a class="header-anchor" href="#writing-the-implementation">#</a></h1>
+<p>Now that I have everything I need (Or at least I thought so...), it's time to start writing an application in Linux that can control my mouse!</p>
+<p>Given that both my Philips and my AOC mouse can be used interchangably with the same vendor-provided software, it also suggests that my implementation can potentially be used by dozens of other same generation of mouses that are simply just released under a different brand and shell.
+As such I want it to have a reasonable GUI interface rather than something that is hacked together only for my use, and ideally it should be as user-friendly and as painless as possible.</p>
+<p>Initially I am plan to write this in Python as it's usually already bundled by most Linux distributions. I have came across a <a href="https://pypi.org/project/hidapi/">Python hidapi library</a>, which is a wrapper to the <a href="https://github.com/libusb/hidapi">C hidapi library</a>. However my experience with Python has been <em>really</em> limited and even for smaller scripts I've made, I just don't feel like it's my thing. So after some delibration I decided to just use the C hidapi library, as the example provided in the README seems reasonable enough to use.</p>
+<p>I have also considered just using <a href="https://developer.mozilla.org/en-US/docs/Web/API/WebHID_API">WebHID API</a> and make a webpage out of it so you can literally configure it in a web browser. However when I start to factor in the fact that:</p>
+<ul>
+<li>The mouse does not store settings persistently (So every reboot it resets the config)</li>
+<li>Firefox doesn't support WebHID API (For better or for worse)</li>
+<li>
+<ul>
+<li>I primarily use Firefox</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>Most Linux Distributions only ships Firefox out of the box</li>
+</ul>
+</li>
+<li>The possibility that I may need a persistently running daemon for more advanced feature I may discover later <small>(Spoiler: I do ended up needing it)</small></li>
+</ul>
+<p>Yeah that seems rough... let's just make a traditional desktop application lmao.</p>
+<p>With that out of the way, I started working a prototype in C based on the hidapi example code.
+After a bit of back and fourth, just pretty much &quot;blindly&quot; filling everything from Wireshark, I managed to change my RGB Light configuration on my mouse, exciting stuff!</p>
+<p><picture><source type="image/avif" srcset="/img/f1M5JBKAnQ-1098.avif 1098w"><source type="image/webp" srcset="/img/f1M5JBKAnQ-1098.webp 1098w"><img alt="A code editor showing my C prototype implementation" loading="lazy" decoding="async" src="/img/f1M5JBKAnQ-1098.png" width="1098" height="905"></picture>
+<small><em>Note: You may need to run the program as root (sudo), or <a href="https://github.com/libusb/hidapi/blob/master/udev/69-hid.rules">make a udev rules</a> that permits user access to the device</em></small></p>
+<p><picture><source type="image/avif" srcset="/img/W13qsvwn8s-450.avif 450w"><source type="image/webp" srcset="/img/W13qsvwn8s-450.webp 450w"><img alt="My mouse's light being turned off" loading="lazy" decoding="async" src="/img/W13qsvwn8s-450.png" width="450" height="337"></picture><br>
+<small>it off!</small></p>
+<p>Now for the GUI. As I've said I don't want to touch python, so I decided to use Qt Widgets (C++) as it does seems to offer a GUI Editor (.ui files), and Qt in general as it seems to offer a lot of abstractions so hopefully I don't have to shoot myself into the foot.<br>
+<small><em>Gosh I need to thank my C++ teacher last semester.</em></small></p>
+<p>As someone who have never touched Qt Widget before, it somewhat reminded me of WinForms. It's quick and a bit messy, doesn't have that much of a structure or hierarchy, but it's stupidly simple to get started.</p>
+<p><picture><source type="image/avif" srcset="/img/s50rWHhfzo-1130.avif 1130w"><source type="image/webp" srcset="/img/s50rWHhfzo-1130.webp 1130w"><img alt="Qt Creator showing C++ code with repetitive functions and my newly written program side by side" loading="lazy" decoding="async" src="/img/s50rWHhfzo-1130.png" width="1130" height="655"></picture></p>
+<h2 id="the-unanswered" tabindex="-1">The unanswered <a class="header-anchor" href="#the-unanswered">#</a></h2>
+<p>As I was working through making the DPI Page in my program, I came across multiple questions I have not thought of yet:</p>
+<ol>
+<li>How is the software suppose to keep in sync with the mouse configuration? Does it read the value from the mouse on startup?</li>
+<li>What does the DPI value actually reads on each tick in the slider of the software? I know it's a value from 1-f, but I need a readable DPI value for the users.</li>
+</ol>
+<p>For the 1st question, I booted back into Windows, launched Wireshark and started monitoring, then started up the mouse software.<br>
+As it turns out, instead of ensuring the software is in-sync with the mouse, it ensures the mouse is in-sync with the software by applying the software's config to the mouse on startup.<br>
+Well fair enough I guess.</p>
+<p>For the 2nd question, I started taking notes of the value for each tick in the DPI Slider.<br>
+However I can't help but notice that the DPI Slider only have a total of 12 ticks, but there should be 16 different values I can send.</p>
+<p><picture><source type="image/avif" srcset="/img/LxHqwdHl0c-348.avif 348w"><source type="image/webp" srcset="/img/LxHqwdHl0c-348.webp 348w"><img alt="The DPI Slider in the mouse software, with 12 slider overlay showing the possible value that the slider can be dragged onto" loading="lazy" decoding="async" src="/img/LxHqwdHl0c-348.png" width="348" height="67"></picture></p>
+<p>Then what do they do with the rest of the 4 values, are some of them just skipped over?<br>
+Apparently yes, let's look at the DPI values reported by the software:</p>
+<table>
+  <tr>
+    <th>Value</th>
+    <th>User-facing value</th>
+    <th>Increments</th>
+  </tr>
+  <tr>
+    <td>1</td><td>200</td><td>-</td>
+  </tr>
+  <tr>
+    <td>2</td><td>400</td><td>+200</td>
+  </tr>
+  <tr>
+    <td>3</td><td>600</td><td>+200</td>
+  </tr>
+  <tr>
+    <td>4</td><td>800</td><td>+200</td>
+  </tr>
+  <tr>
+    <td>5</td><td>1000</td><td>+200</td>
+  </tr>
+  <tr>
+    <td>6</td><td>1200</td><td>+200</td>
+  </tr>
+  <tr>
+    <td>8</td><td>1600</td><td>+400 (Skipped)</td>
+  </tr>
+  <tr>
+    <td>a</td><td>2000</td><td>+400 (Skipped)</td>
+  </tr>
+  <tr>
+    <td>c</td><td>2400</td><td>+400 (Skipped)</td>
+  </tr>
+  <tr>
+    <td>d</td><td>3200</td><td><strong>+800</strong></td>
+  </tr>
+  <tr>
+    <td>e</td><td>4000</td><td><strong>+800</strong></td>
+  </tr>
+  <tr>
+    <td>f</td><td>4800</td><td><strong>+800</strong></td>
+  </tr>
+</table>
+<small>(Values that are not covered by the chart is the value skipped over by the slider)</small>
+<p>The value from 1-c seems to be consistent with a +200 incrementation on each value bump. After that however it increments by +800 for each value.<br>
+I am no expert but this seems a bit arbitrary and I am having a hard time believing that these values are really reported as is.</p>
+<p>I've decided to just stick with a consistent +200 incrementation for my program (So the DPI Range would be displayed as 200 - 3000) as it seems to make the most sense at the moment.</p>
+<p><picture><source type="image/avif" srcset="/img/W0EqxIQ-l3-671.avif 671w"><source type="image/webp" srcset="/img/W0EqxIQ-l3-671.webp 671w"><img alt="My mouse program, showing the DPI Page with 4 DPI profile to choose from, and a slider ranging between 200 - 3000" loading="lazy" decoding="async" src="/img/W0EqxIQ-l3-671.png" width="671" height="650"></picture></p>
+<h3 id="i-didn-t-know-enough-about-the-software-apparently" tabindex="-1">I didn't know enough about the software, apparently <a class="header-anchor" href="#i-didn-t-know-enough-about-the-software-apparently">#</a></h3>
+<p>While looking through the DPI Page in the mouse software, I've also discovered that these little Blue Square is actually checkboxes that can be turned on and off!</p>
+<p><picture><source type="image/avif" srcset="/img/MhKXb83NRv-407.avif 407w"><source type="image/webp" srcset="/img/MhKXb83NRv-407.webp 407w"><img alt="The provided mouse software, there's a blue square on the top of each DPI selection that is actually a checkbox" loading="lazy" decoding="async" src="/img/MhKXb83NRv-407.png" width="407" height="283"></picture></p>
+<p>Once disabled, the mouse will simply skip over the DPI value when changing the DPI.<br>
+<small><em>Well who would have thought this is clickable? It's not like the colored circle below is clickable either!</em></small></p>
+<p>Anyway let's see what happens if I turn off the 1st DPI Profile:</p>
+<p><picture><source type="image/avif" srcset="/img/RZZQqWOdmw-462.avif 462w"><source type="image/webp" srcset="/img/RZZQqWOdmw-462.webp 462w"><img alt="Wireshark packet, highlighting the data '07 09 AD DC 0e 00 00 00'" loading="lazy" decoding="async" src="/img/RZZQqWOdmw-462.png" width="462" height="120"></picture></p>
+<p>And compare it with our previous DPI observation:</p>
+<pre><code>07 09 AD DC 0f 00 00 00
+            ^^
+</code></pre>
+<p>Hmm so it seems that the <code>0f</code> is not a static value after all and represents which DPI is enabled or not. But how exactly are they represented?<br>
+The number seems a bit random at first, especially when there are so many on/off combinations you can make, but soon it became clear:</p>
+<p class="section-header"><b>Computer 101</b></p>
+<p class="section-content">
+For the uninitiated, a byte is consisted of 8 bit (1111 1111), where each bit can either be a 0 (off) or 1 (on).
+Conveniently a byte can be represented by 2 hexadecimal number. That is because each hexadecimal number is used to represent 4 bits (1111). The total combination of all these 4 bits being on/off is (4^2 = 16), which can fit exactly to a hexadecimal as a hex have 16 possible values.
+</p>
+<p>It seems that only the rightmost 4 bits is used to represent the enabled DPI profiles, where the 4 bits corresponds to the 4 DPI profiles for this mouse, each with an on (1) and off (0) state: <code>1111</code></p>
+<p>So if the first profile is disabled, it would be <code>1110</code>, converting it to hexadecimal and then you get <code>e</code>.</p>
+<p><picture><source type="image/avif" srcset="/img/VxroZy-s5s-671.avif 671w"><source type="image/webp" srcset="/img/VxroZy-s5s-671.webp 671w"><img alt="The DPI Page in my program, now with Enabled checkboxes" loading="lazy" decoding="async" src="/img/VxroZy-s5s-671.png" width="671" height="650"></picture><br>
+<small>Now with DPI Checkboxes! I do wonder how much people use it though</small></p>
+<h3 id="the-fire-speed" tabindex="-1">The &quot;Fire Speed&quot; <a class="header-anchor" href="#the-fire-speed">#</a></h3>
+<p>It seems that the <strong>Fire Speed</strong> slider is related to the <strong>Fire</strong> button that is bindable in the mouse binding page, wow who would've thought!</p>
+<p><picture><source type="image/avif" srcset="/img/lRhR-fht1a-386.avif 386w"><source type="image/webp" srcset="/img/lRhR-fht1a-386.webp 386w"><img alt="Button binding page in the mouse software, allowing a button to be binded to an action called 'Fire'" loading="lazy" decoding="async" src="/img/lRhR-fht1a-386.png" width="386" height="324"></picture></p>
+<p><picture><source type="image/avif" srcset="/img/EozDWirarv-389.avif 389w"><source type="image/webp" srcset="/img/EozDWirarv-389.webp 389w"><img alt="The Fire Speed slider, which corresponds to the Fire action." loading="lazy" decoding="async" src="/img/EozDWirarv-389.png" width="389" height="101"></picture></p>
+<p>When the <strong>Fire</strong> button is held down, it essentially acts like an auto-clicker where it will spam the left-click according to the Fire Speed.</p>
+<p>The <strong>lower</strong> the fire speed is, the <strong>faster</strong> it clicks, starting with <strong>8</strong> which clicks at a rate of <strong>8ms</strong>. The highest I can set in the software is <strong>300</strong>, which clicks at a rate of... <strong>150</strong>ms? I am truly starting to develop trust issues with this software...</p>
+<p>But still even with the slider maxed, the value only goes up to <code>1F</code>, surely it doesn't max out at that right?</p>
+<p>So I went back to Linux and added a slider in my application that goes from 0-255 (<code>00-FF</code>) and fed that to the mouse.
+With the maximum value (FF), it seems that it can fire as low as every 2s, and it's merely not exposed by the vendor software, <em>now I am starting to feel like I am getting something out of all of this!</em></p>
+<h2 id="syncing-the-active-dpi-profile-with-the-ui" tabindex="-1">Syncing the active DPI Profile with the UI <a class="header-anchor" href="#syncing-the-active-dpi-profile-with-the-ui">#</a></h2>
+<p>As mentioned earlier, the software syncs its config to the mouse on startup, so the UI in the software should in-theory always be aligned with the mouse's state.</p>
+<p>Now this <em>would be</em> true if the software is the only one being able to change the mouse configuration. But remember how you can bind your mouse button to change the DPI? This means that you can change the active DPI by pressing a mouse button, bypassing the software entirely.
+As such I constantly find my program showing the wrong active DPI profile when playing around.</p>
+<p>So I went back to Windows and check how the mouse software would handle this:</p>
+<p><video controls src="/img/2024-05-15/dpi_sync_win.mp4" type="video/mp4"></video></p>
+<p>So it appears that the software <em>does know</em> when the DPI got changed as it would reflect the new active DPI profile in real-time. This suggests that the software is also actively monitoring the device, probably for some sort of button press, or maybe the mouse would send DPI change report to the Host?</p>
+<h3 id="a-second-interface" tabindex="-1">A second interface <a class="header-anchor" href="#a-second-interface">#</a></h3>
+<p>I went back to Wireshark, filtered the input endpoint (1.2.1) and clicked on my DPI+ button, expecting something to come up from the mouse... But nothing?
+I mean I can clearly see stuff coming through when I click my Left/Middle/Right Mouse Button and even my side button, is the DPI button just special?<br>
+I was puzzled, and I left it there and went to sleep.</p>
+<p>The next day I booted back to Windows for further digging. I fired up wireshark again, except this time the filter got cleared and I didn't bother re-applying the filter I previously had.</p>
+<p><picture><source type="image/avif" srcset="/img/RuePpSr2g5-293.avif 293w"><source type="image/webp" srcset="/img/RuePpSr2g5-293.webp 293w"><img alt="Wireshark window, but I didn't apply a filter" loading="lazy" decoding="async" src="/img/RuePpSr2g5-293.png" width="293" height="75"></picture></p>
+<p>I clicked the DPI+ button again, and suddenly I see data sent from an address I have never seen before: <strong>1.2.2</strong></p>
+<p><picture><source type="image/avif" srcset="/img/nijrVa2YIs-803.avif 803w"><source type="image/webp" srcset="/img/nijrVa2YIs-803.webp 803w"><img alt="Wireshark window with bunch of USB Packet, with a highlighted packet from usb address 1.2.2" loading="lazy" decoding="async" src="/img/nijrVa2YIs-803.png" width="803" height="624"></picture></p>
+<p>It turns out there's another USB Interface (Interface 1, the one we were messing with is Interface 0) for handling... some sort of &quot;special&quot; input from the mouse? Anyway let's take a look at the data first, which is 3 byte long:</p>
+<pre><code>Button pressed: 06 f6 01
+Button released: 06 f6 80
+</code></pre>
+<p>After trying the DPI+ button, I tried the DPI- button:</p>
+<pre><code>Button pressed: 06 f8 00
+Button released: 06 f8 80
+</code></pre>
+<p>Eventually I ended up with the following conclusion:</p>
+<pre><code>06 BT DP
+   ^^ ^^
+</code></pre>
+<p><strong>BT</strong> is the physical button pressed (Not the binded action):</p>
+<table>
+  <tr>
+    <th>Value</th>
+    <th>Button Name</th>
+  </tr>
+  <tr>
+    <td>f1</td><td>Left Mouse Button</td>
+  </tr>
+  <tr>
+    <td>f2</td><td>Middle Mouse Button</td>
+  </tr>
+  <tr>
+    <td>f3</td><td>Right Mouse Button</td>
+  </tr>
+  <tr>
+    <td>f4</td><td>Side Backward (Towards user)</td>
+  </tr>
+  <tr>
+    <td>f5</td><td>Side Forward (Towards front)</td>
+  </tr>
+  <tr>
+    <td>f6</td><td>Middle backward (Towards user)</td>
+  </tr>
+  <tr>
+    <td>f8</td><td>Middle forward (Towards front)</td>
+</table>
+<p><strong>DP</strong> is the DPI profile that should be active (00-03)
+Or <strong>80</strong> if the button is released. (I assume 80 is only to indicate the button is released &amp; is not related to DPI)</p>
+<p>So what likely is the case is that the program monitors incoming data from this address, and update the active DPI accordingly to <strong>DP</strong> reported by the mouse.</p>
+<p>What I ended up doing in my program is to spin up another thread to monitor Interface 1 for &quot;in-coming&quot; data like this, then pass the data off to the UI and let it change the selected DPI.</p>
+<a id="dpi_input_handler">
+<picture><source type="image/avif" srcset="/img/loX3t-97q2-653.avif 653w"><source type="image/webp" srcset="/img/loX3t-97q2-653.webp 653w"><img alt="My program's implementation for monitoring incoming input" loading="lazy" decoding="async" src="/img/loX3t-97q2-653.png" width="653" height="307"></picture>
+</a>
+<p>Again this feels like one of those very minor &quot;QOL&quot; features, like it's not the end of the world if the UI doesn't update, which I do agree at that time as well. However this will end up laying the ground-work for some other features which I am yet to discover at this point.</p>
+<h2 id="hidden-in-plain-sight" tabindex="-1">Hidden In Plain Sight <a class="header-anchor" href="#hidden-in-plain-sight">#</a></h2>
+<p>After figuring all of that out, I am determined to get one last thing working: The <strong>Software action</strong> bindings.</p>
+<p>So I booted back into Windows. Before launching the program however, my mouse just managed to hovered long enough on the program to reveal the description of the executable:</p>
+<p><picture><source type="image/avif" srcset="/img/aEv_uZ9Pof-294.avif 294w"><source type="image/webp" srcset="/img/aEv_uZ9Pof-294.webp 294w"><img alt="Windows Desktop, hovering the program icon revealing a tooltips" loading="lazy" decoding="async" src="/img/aEv_uZ9Pof-294.png" width="294" height="156"></picture></p>
+<p>It literally translates into &quot;Instant A704F Gaming Mouse&quot;<br>
+I have never heard of that before, so I decided to look it up:</p>
+<p><picture><source type="image/avif" srcset="/img/KFPz_uNpna-382.avif 382w"><source type="image/webp" srcset="/img/KFPz_uNpna-382.webp 382w"><img alt="Instant A704F Gaming Mouse SOC Datasheet" loading="lazy" decoding="async" src="/img/KFPz_uNpna-382.png" width="382" height="585"></picture></p>
+<p>Turns out A704F is a gaming mouse SoC (System on a chip) from a Chinese company called Instant Microelectronics, <em>well that would have been useful to know like at the very start!</em></p>
+<p>This PDF did at least confirm some the behaviours I am seeing, but well I am not a hardware guy. (<em>And if you are, <a href="https://instant-sys.com/uploads/pdf/norm/SPEC/A704F_SPEC_EN.V1.00.pdf">here is the PDF</a></em>)<br>
+Besides, it doesn't mention anything about how the software works, as obviously you are suppose to obtain the software from them as well, then customize the user interface to your need (Which the software allows you to do via .ini files) and sell the mouse as it's own product, so it's not particularly helpful either.</p>
+<p>But hey! At least now I know how to call my program now other than possibly<br>
+<small>&quot;Mouse utilities for AOC GM110 &amp; Philips SPK9505 and maybe other mouse who knows!&quot;</small></p>
+<p><a id="vendor-scroll-wheel">Oh I've also found a Instant A704 &quot;Driver Manual&quot;, which documents the software usage, along with images of their mouse software which has a different UI than mine, but more or less offers the same options, except this &quot;Scroll Wheel Configuration&quot; that allows you to use your mouse scroll wheel to either scroll <em>or</em> change the sound volume:</a></p>
+<p><picture><source type="image/avif" srcset="/img/dsgKnXyNaV-183.avif 183w"><source type="image/webp" srcset="/img/dsgKnXyNaV-183.webp 183w"><img alt="Instant A704 Driver Manual, which featured a different UI, with the option to use your mouse wheel to scroll or to control the sound volume" loading="lazy" decoding="async" src="/img/dsgKnXyNaV-183.png" width="183" height="93"></picture></p>
+<p>The Philips software I have did not offer those options, although I am not surprised if they just hid the option all together as their target audience is probably not some DJ :)</p>
+<h2 id="back-to-software-action" tabindex="-1">Back to &quot;Software action&quot; <a class="header-anchor" href="#back-to-software-action">#</a></h2>
+<p>For a quick recap, when I say &quot;Software action&quot; I meant these:</p>
+<p><picture><source type="image/avif" srcset="/img/F6GlP_Xnpc-725.avif 725w"><source type="image/webp" srcset="/img/F6GlP_Xnpc-725.webp 725w"><img alt="Button binding page, allowing you to not only rebind buttons, but also perform Shortcuts and perform Multimedia key input" loading="lazy" decoding="async" src="/img/F6GlP_Xnpc-725.png" width="725" height="397"></picture></p>
+<p>For these menus, <code>00</code> is sent as the binding to the mouse, and no other data is sent. So the mouse should not know about which specific function the button is binded to other than &quot;it's a software-related action&quot;.
+So in-theory only the software would know it and be able to perform the corresponding action.</p>
+<p>To confirm that, I binded my Middle Forward Button to <strong>Media &gt; Calculator</strong>. I then closed the software, and sure enough it no longer opens Calculator. These functions do rely on the software to be active.</p>
+<p>Now remember how the mouse sends data about &quot;Button Press/Release&quot; for buttons with DPI action so as to update the DPI User Interface? It seems that the mouse also does the same when the action is set to <code>00</code>!</p>
+<p><picture><source type="image/avif" srcset="/img/s5Mj6-twAr-693.avif 693w"><source type="image/webp" srcset="/img/s5Mj6-twAr-693.webp 693w"><img alt="Wireshark USB Packet listing. First packet is the Mouse reported that the button is pressed. Second packet is the Mouse reported that the button is released" loading="lazy" decoding="async" src="/img/s5Mj6-twAr-693.png" width="693" height="33"></picture><br>
+I've decided to start the mouse software again just to see if there's any difference, and yup!<br>
+<picture><source type="image/avif" srcset="/img/kFBiXyWoBY-693.avif 693w"><source type="image/webp" srcset="/img/kFBiXyWoBY-693.webp 693w"><img alt="Wireshark USB Packet listing. First packet is the Mouse reported that the button is pressed. There's 2 more usb packets in between, and the last packet is the Mouse reported that the button is released" loading="lazy" decoding="async" src="/img/kFBiXyWoBY-693.png" width="693" height="66"></picture><br>
+It seems there are now 2 more reports by the mouse in between:</p>
+<pre><code>02 92 01
+02 00 00
+</code></pre>
+<p>After further digging, it seems they are in the following pattern:</p>
+<pre><code>02 KY KY
+</code></pre>
+<p><strong>KY</strong> is the multimedia key held (Calculator in this case) configured in the software, and <code>00</code> represents that the key is no longer held.</p>
+<p>Observation so far:</p>
+<ul>
+<li>&quot;Software action&quot; is reliant on the software being active.</li>
+<li>The mouse report to the Host when a button that is binded to either DPI or Software Actions has been clicked.</li>
+<li>The mouse itself should not have knowledge about which specific software action to perform, as it was never sent in the config.</li>
+<li>And yet the mouse itself sends the appropriate multimedia key back to the system</li>
+</ul>
+<p>So I did some further digging on different endpoints.<br>
+As it turns out the host sends a report back to the mouse in Endpoint 0 (The same one used to apply configuration to the mouse), likely commanding the mouse to do some sort of input, then the mouse makes the input to the system.</p>
+<p>So to sum it up:</p>
+<ul>
+<li>If a button is binded to a Software/DPI-related action, the mouse will report to the Host about the button pressed and the currently active DPI.</li>
+<li>The software monitors the incoming button press from the mouse (See Above):</li>
+<li>
+<ul>
+<li>In order to keep the Software UI in sync with the Active DPI</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>To command the mouse to input keys by looking up the specific action binded for this button</li>
+</ul>
+</li>
+</ul>
+<p><picture><source type="image/avif" srcset="/img/qVF3p7KUmW-827.avif 827w"><source type="image/webp" srcset="/img/qVF3p7KUmW-827.webp 827w"><img alt="Wireshark usb packet listing. First packet is 'Mouse report button pressed to host', Second packet is 'Host commands mouse to send function key', Third Packet is 'Mouse report function key is pressed to host', Fourth packet is 'Mouse report function key is released to host', fifth and final packet is 'Mouse report button released to host'" loading="lazy" decoding="async" src="/img/qVF3p7KUmW-827.png" width="827" height="85"></picture></p>
+<p>This is also when I realized that what the 2 interfaces of the Mouse is all about:</p>
+<ul>
+<li>The first interface reports itself as a <strong>HID-Complaint Mouse</strong>, which is expected as it's a mouse.</li>
+<li>The other interface (Where the Software action and blablabla is sent) reports itself as a <strong>HID-Keyboard</strong>.</li>
+</ul>
+<p>This now makes much more sense. The so called &quot;Software action&quot; should be more appropriately called &quot;Key Input action&quot; as it's likely just the mouse sending key input to the host, acting as a keyboard.</p>
+<p>Perhaps I should've done more research and look into my mouse before starting all of this, but no :)</p>
+<p>Anyway now let's take a look at what's actually being sent for the mouse to perform the input:</p>
+<pre><code>07 17 00 ea = Music Vol -
+07 17 00 e9 = Music Vol +
+07 17 02 23 = Browser
+07 17 01 83 = Media Player
+07 17 01 8a = Mail Manager
+07 17 00 b6 = Last Chapter
+07 17 00 b5 = Next Chapter
+07 17 00 e2 = Mute Vol
+07 17 00 cd = Play/Pause
+07 17 01 92 = Open Calculator
+</code></pre>
+<p>Keep in mind that this is sent on Endpoint 0 (The same one used for configuring and applying mouse settings), and it doesn't feel all that different from sending a regular mouse config at all.</p>
+<p>The 2nd byte is <code>17</code>, which I assume is to tell the mouse that this is a software key command.<br>
+Then next 2 bytes appears to be... some sort of key code I guess. I didn't really look further as this list seems to be enough :P</p>
+<p>But it's not over. Apart from the <strong>Media</strong> menu (Which inputs multimedia key), there's also a <strong>ShortCut</strong> menu:</p>
+<p><picture><source type="image/avif" srcset="/img/0RsbtgS_tj-346.avif 346w"><source type="image/webp" srcset="/img/0RsbtgS_tj-346.webp 346w"><img alt="Button binding page from the mouse software, with a Shortcut submenu that offers actions like Copy/Paste" loading="lazy" decoding="async" src="/img/0RsbtgS_tj-346.png" width="346" height="306"></picture></p>
+<p><em>I don't know about you, but something suggest that it probably has to do with inputting Keyboard Shortcut.</em> And assuming that is the case, the mouse would probably have inputted <strong>Ctrl+C</strong> if I binded it to &quot;Copy&quot;, so let's start with Copy.</p>
+<p>This time the software sent 6 reports to the mouse:</p>
+<pre><code>07 15 e0 00 00 00 00 00
+07 15 e0 06 00 00 00 00
+07 15 e0 00 00 00 00 00
+07 15 00 00 00 00 00 00
+
+07 16 00 ff 00 00 00 00
+07 15 00 00 00 00 00 00
+</code></pre>
+<p>Now let's try pasting (Ctrl+V):</p>
+<pre><code>07 15 e0 00 00 00 00 00
+07 15 e0 19 00 00 00 00
+07 15 e0 00 00 00 00 00
+07 15 00 00 00 00 00 00
+
+07 16 00 ff 00 00 00 00
+07 15 00 00 00 00 00 00
+</code></pre>
+<p>After trying some other shortcuts, my best guess would be that:</p>
+<ul>
+<li>The <strong>2nd</strong> byte (<code>15</code>) is to command the mouse to make a regular keyboard input, just like <code>17</code> is to command multimedia key input.</li>
+<li>The <strong>3rd</strong> byte (<code>e0</code>) is for the key modifier (Probably <strong>Ctrl</strong>)</li>
+<li>The <strong>4th</strong> byte (<code>06/19</code>) is some sort of keycode that represents the key (Probably <strong>C or V</strong>)</li>
+<li>Each of the report is indicating all the keys that should be pressed.
+(So the sequence would be <code>Ctrl -&gt; Ctrl+V -&gt; Ctrl -&gt; None</code>)</li>
+</ul>
+<p>I am not sure what the <code>07 16 00 ff</code> is for, maybe it's to prevent some sort of key jamming? Either way I never ended up figuring it out :P</p>
+<p>Okay so being able to Copy and Paste is cool and all, but if we can figure out which keycode corresponds to which key, then we can allow user to bind any key-shortcut as they like.<br>
+But how can we figure that out? I mean there's only a handful of shortcuts provided by the software that we can toy around with. Maybe at best we can make a LinkedIn shortcut (<code>Ctrl+Shift+Win+Alt+L</code>), but that's cumbersome to press!</p>
+<h3 id="macros" tabindex="-1">Macros! <a class="header-anchor" href="#macros">#</a></h3>
+<p>If your brain has not exploded yet like me writing this blog post, you might have noticed that I never talked about the &quot;Macros&quot; feature after <a href="#macro-intro">listing it out in the beginning</a>. That's because it is not a feature I use nor do I care about it, and it's also beyond the scope of this project.</p>
+<p>However since we are looking around keyboard input for now, playing around with macros might not be a bad idea.
+After all Macro also just a series of keyboard inputs, maybe we will have some hope there? So I setup a macro in the software and triggered it.</p>
+<p>As I have hoped, it behaves exactly the same as those in the Shortcuts menu, just that it now returns the key that I get to define!<br>
+So now I can press almost every indiviual key on my keyboard and get the value of it.</p>
+<p>Oh and I also realized that there is actually no separate byte for a Key Modifier and a Regular Key.<br>
+In-fact all 6 bytes after the initial <code>15</code> is just a keycode. You can hold down a maximum of 6 keys at a time and it would fill all 6 bytes:</p>
+<pre><code>07 15 KY KY KY KY KY KY
+      ^^ ^^ ^^ ^^ ^^ ^^
+</code></pre>
+<p><strong>KY</strong> is the keycode.</p>
+<p>After pressing a good amount of key and noting down the keycode, I just cannot ever imagine that the manufacturer would make their own set of keycode. So I looked up online to see if there's any key code with some similarities, and well it's literally just the <a href="https://gist.github.com/MightyPork/6da26e382a7ad91b5496ee55fdc73db2">HID Keyboard scan code</a>.</p>
+<h2 id="back-to-implementation" tabindex="-1">Back to implementation <a class="header-anchor" href="#back-to-implementation">#</a></h2>
+<p>With this information and filled with excitement, I went back to Linux and modified the prototype to start sending the input to the mouse, first by trying to input the Win/Meta key.</p>
+<p><picture><source type="image/avif" srcset="/img/G9p080muNr-430.avif 430w"><source type="image/webp" srcset="/img/G9p080muNr-430.webp 430w"><img alt="Linux Terminal, showing me run my prototype program" loading="lazy" decoding="async" src="/img/G9p080muNr-430.png" width="430" height="78"></picture><br>
+Nothing.<br>
+I tried it again, still nothing.</p>
+<p>At this point I become a bit fustrated, could it be some differing implementation between Windows and Linux? Is there anything I overlooked? I even booted back to Windows to make sure I am not doing anything wrong, but nothing seems off.<br>
+I went back to Linux, ran it again and then it just worked??? But then sometimes it doesn't, it's like a 50/50, which is very odd.</p>
+<p>At one point I removed the final report that would release all keys (<code>07 15 00 00 ..</code>) as an attempt to debug, which ended up working and my Win/Meta key is now held without releasing.</p>
+<p>Hmm so it clearly seems to work. As I try to focus back to my terminal and press Ctrl+C to terminate the program... oh no this can't be... no No!!!<br>
+<small><em>(I binded my Win/Meta key to &quot;Drag Windows&quot;, so I can't focus on any Window or anything as long as it's held down)</em></small></p>
+<p>Anyway after a Hard Reset of my computer, my takeaway is that it may not be a good idea to leave a key held forever!</p>
+<p>After some further digging, I found out that that the whole time it's because I run my program in the terminal, and naturally I pressed <strong>Enter</strong> on my keyboard to run it.<br>
+By the time the program has executed and the key command is sent to the mouse, if my reaction is slow enough I might not have released the Enter key yet, it will end up blocking the Win/Meta key input by the mouse, as such I didn't notice any effect. Well that's clearly a lot of fun to figure out!</p>
+<p>Adding a short delay before running the program (So I have time to release my enter key) fixes the issue, and practically speaking it is very unlikely such event will happen as you can only trigger the action by a mouse anyway.</p>
+<p>Now back to my program. Since <a href="#dpi_input_handler">earlier I've already made a monitor thread</a> to sync the active DPI, I can now just extend that to handle software key as well.</p>
+<p><picture><source type="image/avif" srcset="/img/TipHBxssCs-1041.avif 1041w"><source type="image/webp" srcset="/img/TipHBxssCs-1041.webp 1041w"><img alt="My linux mouse program, with new codes inserted to the DPI monitoring code I wrote earlier" loading="lazy" decoding="async" src="/img/TipHBxssCs-1041.png" width="1041" height="596"></picture></p>
+<h1 id="the-untold" tabindex="-1">The Untold <a class="header-anchor" href="#the-untold">#</a></h1>
+<p>My own program can be considered mostly finished, with the exception of fully-featured Macros which I didn't bother implementing as it was never the scope of the project. (Doesn't interest me enough :P)</p>
+<p>As one last act, I decided to fiddle around a bit with different config values sent to the mouse, those that was not exposed nor sent by the vendor software.
+(Spoiler: It's nothing mind-blowing, but still nice to know)</p>
+<h2 id="rgb-light-goes-brrrr" tabindex="-1">RGB light goes brrrr <a class="header-anchor" href="#rgb-light-goes-brrrr">#</a></h2>
+<p>Remember how we can set 4 different configuration for the RGB Light?</p>
+<table>
+  <tr>
+    <th>Value</th>
+    <th>RGB Mode</th>
+  </tr>
+  <tr>
+    <td>10</td><td>Slow (6s)</td>
+  </tr>
+  <tr>
+    <td>13</td><td>Fast (3s)</td>
+  </tr>
+  <tr>
+    <td>16</td><td>Static</td>
+  </tr>
+  <tr>
+    <td>17</td><td>Off</td>
+  </tr>
+</table>
+<p>I decided to try the value in between, and the result is... well the speed in between.</p>
+<table>
+  <tr>
+    <th>Value</th>
+    <th>RGB Mode</th>
+  </tr>
+  <tr>
+    <td>10</td><td>Slow (6s)</td>
+  </tr>
+  <tr>
+    <td><strong>11</strong></td><td><strong>Slower (5s)</strong></td>
+  </tr>
+  <tr>
+    <td><strong>12</strong></td><td><strong>Slightly Slower (4s)</strong></td>
+  </tr>
+  <tr>
+    <td>13</td><td>Fast (3s)</td>
+  </tr>
+  <tr>
+    <td><strong>14</strong></td><td><strong>Faster (2s)</strong></td>
+  </tr>
+  <tr>
+    <td><strong>15</strong></td><td><strong>Very Fast (1s)</strong></td>
+  </tr>
+  <tr>
+    <td>16</td><td>Static</td>
+  </tr>
+  <tr>
+    <td>17</td><td>Off</td>
+  </tr>
+</table>
+<p>Here's how it looks with <code>15</code> btw:</p>
+<p><video controls src="/img/rgb_vfast.mp4" type="video/mp4"></video><br>
+<small>Okay it may not look very fast, but trust me it's definitely way faster than I can ever set it to in the official software!</small></p>
+<p>I've also added the &quot;Very Fast&quot; option in the GUI as it seems cool:</p>
+<p><picture><source type="image/avif" srcset="/img/tEBkqtF53Z-580.avif 580w"><source type="image/webp" srcset="/img/tEBkqtF53Z-580.webp 580w"><img alt="My linux mouse program's RGB Page, showing a new 'Very Fast' radio option that can be selected" loading="lazy" decoding="async" src="/img/tEBkqtF53Z-580.png" width="580" height="615"></picture></p>
+<h2 id="utilizing-scroll-wheel-to-its-fullest" tabindex="-1">Utilizing scroll wheel to its fullest <a class="header-anchor" href="#utilizing-scroll-wheel-to-its-fullest">#</a></h2>
+<p>Remember earlier when the mouse software always sends this to the mouse on apply?</p>
+<pre><code>07 11 00 00 00 00 00 00
+</code></pre>
+<p>I just thrown it off as some unused feature, but out of curiosity I decided to mess with it anyway. Maybe with enough luck I can change some minor behaviour of the mouse?</p>
+<p>First, let's try <code>01</code> on the 3rd byte:</p>
+<pre><code>07 11 01 00 00 00 00 00
+      ^^
+</code></pre>
+<p>Now my scroll wheel is used to control my sound volume instead of scrolling!<br>
+<picture><source type="image/avif" srcset="/img/vyiFOK6zMy-295.avif 295w"><source type="image/webp" srcset="/img/vyiFOK6zMy-295.webp 295w"><img alt="Sound volume got changed" loading="lazy" decoding="async" src="/img/vyiFOK6zMy-295.png" width="295" height="55"></picture></p>
+<p>This is inline with what I <a href="#vendor-scroll-wheel">observed earlier</a> about there being an option to change your scroll wheel to control volume as well.</p>
+<p>Now let's try <code>02</code>:</p>
+<pre><code>07 11 02 00 00 00 00 00
+      ^^
+</code></pre>
+<p>This seems to disable the scroll wheel all-together, rendering it ineffective.</p>
+<p><code>03</code> is also the same, after that the cycle just repeats.</p>
+<h3 id="what-about-the-4th-byte" tabindex="-1">What about the 4th byte <a class="header-anchor" href="#what-about-the-4th-byte">#</a></h3>
+<p>Out of curiosity I also decided to mess around with the 4th byte, starting off with <code>01</code>:</p>
+<pre><code>07 11 00 01 00 00 00 00
+         ^^
+</code></pre>
+<p>This does not appear to do anything at first, <em>however</em> if I change the 3rd byte to <code>02</code> like so:</p>
+<pre><code>07 11 02 01 00 00 00 00
+      ^^ ^^
+</code></pre>
+<p>I can now <em>only</em> scroll up but not down.</p>
+<p>Now for <code>02</code>:</p>
+<pre><code>07 11 02 02 00 00 00 00
+         ^^
+</code></pre>
+<p>I can still only scroll up, but the scroll direction is reversed. (So I scrolls up and it acts like it scrolls down)</p>
+<p>After more testing, it seems that this byte is used for <strong>debugging/QA purposes</strong>, here's a full list of the values that have an effect:<br>
+<small>(Everything shown below can only be triggered by scrolling up, not down)</small></p>
+<table>
+  <tr>
+    <th>Value</th>
+    <th>Action</th>
+  </tr>
+  <tr>
+    <td>01</td><td>Normal scrolling</td>
+  </tr>
+  <tr>
+    <td>02</td><td>Normal scrolling, direction reversed</td>
+  </tr>
+  <tr>
+    <td>03</td><td>Control volume</td>
+  </tr>
+  <tr>
+    <td>04</td><td>Control volume, direction reversed</td>
+  </tr>
+  <tr>
+    <td>06</td><td>Cycle active DPI Profile</td>
+  </tr>
+  <tr>
+    <td>07</td><td>Trigger the <strong>Show Desktop</strong> action</td>
+  </tr>
+  <tr>
+    <td>08</td><td>Toggle RGB Light (On/Off)</td>
+  </tr>
+  <tr>
+    <td>09</td><td>Flash RGB Light</td>
+  </tr>
+  <tr>
+    <td>0b</td><td>Resets the RGB Light breathing animation, starting with Purple.</td>
+  </tr>
+  <tr>
+    <td>0c</td><td>Resets the RGB Light breathing animation, starting with Blue.</td>
+  </tr>
+  <tr>
+    <td>0d</td><td>Spam <code>z</code> key input!</td>
+  </tr>
+  <tr>
+    <td>10</td><td>Flash RGB Light (In Red color)</td>
+  </tr>
+  <tr>
+    <td>11</td><td>Momentarily turn off the RGB Light, then turn it back on again</td>
+  </tr>
+  <tr>
+    <td>12</td><td>Flash RGB Light (In Blue color)</td>
+  </tr>
+  <tr>
+    <td>13</td><td>Flash RGB Light (In Magenta color)</td>
+  </tr>
+</table>
+<p>So I ended up with:</p>
+<pre><code>07 11 SM DB 00 00 00 00
+      ^^ ^^
+</code></pre>
+<p><strong>SM</strong> is the scroll mode. <strong>00</strong> is normal, <strong>01</strong> is to control volume, and <strong>02/03</strong> is for debugging.
+<strong>DB</strong> is the debug byte, only have an effect if <strong>SM</strong> is 02/03. <em>See above for the list.</em></p>
+<h1 id="conclusion" tabindex="-1">Conclusion <a class="header-anchor" href="#conclusion">#</a></h1>
+<p>Well it's quite a journey! I hope this blog post won't be a seizure to read due to the sheer length and my inability to formulate sentences.
+I won't claim to know the full detail of everything I did (Esp USB-related), but it is still rewarding nevertheless. Feel free to let me know if there's anything wrong or stuff that I missed in the blog post.</p>
+<p>All the findings and the program I made to configure the mouse can be found on <a href="https://github.com/Kenny-Hui/Instant-A704F-Mouse-Utilities">my GitHub repo</a>, installation and usage instructions are included in the README.</p>
+<p>See you in the next one :3</p>
+
+<ul class="links-nextprev">
+		<a href="/blog/2023-10-02-class-schedule-widget/">
+			<div class="prevnext-post">
+				<< Previously: I made a class schedule widget
+			</div>
+		</a>
+	
+</ul>
+
+<a href="#" class="backtotop">↑Back to top</a>
+<script src="/js/main.js"></script>
+		</main>
+
+		<footer>
+			<div class="footer">
+				<span>LX86 2024</span>
+				<div>
+					<a href="/feed/feed.xml">RSS</a>
+					<a href="mailto:lx86@lx862.com">Contact</a>
+				</div>
+				<span>Last updated: <time datetime="2024-05-13">2024-05-13</span>
+			</div>
+			<div class="footer2">
+				<span>All content are under <a href="https://creativecommons.org/licenses/by-nc/4.0/">CC BY-NC 4.0</a> unless noted otherwise</span>
+			</div>
+			
+		</footer>
+
+<!--		 Current page: /blog/2024-05-13-reverse-engineering-a-mouse/-->
+	</body>
+</html>

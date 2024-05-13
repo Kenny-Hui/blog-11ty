@@ -1,0 +1,634 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Tagged “reverse-engineering”</title>
+		<meta name="description" content="I am writing about my experiences as a naval navel-gazer.">
+		<link rel="alternate" href="/feed/feed.xml" type="application/atom+xml" title="LXBlog">
+		<link rel="alternate" href="/feed/feed.json" type="application/json" title="LXBlog">
+		<meta name="generator" content="Eleventy v2.0.1">
+
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Inter:slnt,wght@-10..0,100..900&display=swap" rel="stylesheet">
+		
+		<style>* { box-sizing: border-box; }
+/* Defaults */
+:root {
+	--font-family: 'Inter', -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;
+	--font-family-monospace: monospace;
+}
+
+/* Theme colors */
+:root {
+	--text-color: var(--color-gray-90);
+
+	--color-gray-10: #aaa;
+	--color-gray-20: #e0e0e0;
+	--color-gray-50: #C0C0C0;
+	--color-gray-90: #dad8d8;
+	--color-bg-highlight: #2C3034;
+
+	--background-color: #23272B;
+	--html-background-color: #181C22;
+	--codeblock-background: #383C40;
+
+	/* --text-color is assigned to --color-gray-_ above */
+	--text-color-link: #66C2fc;
+	--text-color-link-active: #ff88aa;
+
+	--syntax-tab-size: 2;
+}
+
+/* Global stylesheet */
+* {
+	box-sizing: border-box;
+}
+
+html, body {
+	padding: 0;
+	margin: 0 auto;
+	font-family: var(--font-family);
+	color: var(--text-color);
+	font-size: 1;
+}
+
+html::before {
+	position: fixed;
+	content: "";
+	width: 100%;
+	height: 100%;
+	z-index: -1;
+}
+
+html {
+	background-color: var(--html-background-color);
+	scroll-behavior: smooth;
+	scroll-padding: 4rem;
+}
+
+body {
+	max-width: 52em;
+}
+
+/* https://www.a11yproject.com/posts/how-to-hide-content/ */
+.visually-hidden {
+	clip: rect(0 0 0 0);
+	clip-path: inset(50%);
+	height: 1px;
+	overflow: hidden;
+	position: absolute;
+	white-space: nowrap;
+	width: 1px;
+}
+
+p:last-child {
+	margin-bottom: 0;
+}
+
+p {
+	margin: 1rem 0;
+	line-height: 1.7;
+}
+
+li {
+	margin: 0.5rem 0;
+}
+
+ol > li {
+	margin: 0.25rem 0;
+	line-height: 1.5;
+}
+
+a[href] {
+	color: var(--text-color-link);
+}
+a[href]:hover,
+a[href]:active {
+	color: var(--text-color-link-active);
+}
+
+main {
+	padding: 1rem;
+	position: relative;
+	background: var(--background-color);
+}
+main :first-child {
+	margin-top: 0;
+}
+header:before {
+	content: "";
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	background: linear-gradient(to bottom, transparent, var(--color-bg-highlight));
+	transform: perspective(800px) rotateX(60deg);
+	transform-origin: 50% 100%;
+	z-index: -1;
+}
+
+header {
+	position: relative;
+	display: flex;
+	justify-content: space-between;
+}
+
+header:after {
+	content: "";
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	height: 1px;
+	width: 100%;
+	background: linear-gradient(to right, transparent 10%, var(--text-color) 50%, transparent 90%)
+}
+
+header > nav {
+	margin-left: auto;
+}
+
+.links-nextprev {
+	display: flex;
+	position: relative;
+	justify-content: space-between;
+	padding: 1em 0;
+}
+
+.links-nextprev:before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 1px;
+	width: 100%;
+	background: linear-gradient(to right, transparent 0%, var(--text-color) 50%, transparent 100%)
+}
+
+table {
+	margin: 1em 0;
+	border-collapse: collapse;
+}
+
+table td,
+table th {
+	padding: 0.25rem;
+	padding-right: 0.75rem;
+	border: 1px solid var(--color-gray-10);
+}
+
+table th {
+	text-align: left;
+}
+
+pre,
+code {
+	display: inline-block;
+	font-family: var(--font-family-monospace);
+	font-size: 0.90rem;
+	border: 1px solid black;
+	background: var(--codeblock-background);
+}
+
+pre:not([class*="language-"]) {
+	margin: .5em 0;
+	line-height: 1.375; /* 22px /16 */
+	-moz-tab-size: var(--syntax-tab-size);
+	-o-tab-size: var(--syntax-tab-size);
+	tab-size: var(--syntax-tab-size);
+	-webkit-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+	direction: ltr;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+}
+
+code {
+	padding: 0 4px;
+	word-break: break-all;
+}
+
+p > code, li > code {
+	border: 1px solid black;
+}
+
+/* Header */
+header {
+	display: flex;
+	gap: 1em .5em;
+	flex-wrap: wrap;
+	align-items: center;
+	padding: 1.25em 0;
+}
+
+.home-link {
+	font-size: 1em; /* 16px /16 */
+	font-weight: 600;
+	margin-right: 2em;
+}
+
+.home-link:link:not(:hover) {
+	text-decoration: none;
+}
+
+/* Nav */
+.nav {
+	display: flex;
+	padding: 0;
+	margin: 0;
+	list-style: none;
+}
+
+.nav-item {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.nav-item a[href]:not(:hover) {
+	text-decoration: none;
+}
+
+.nav a[href][aria-current="page"] {
+	text-decoration: underline;
+}
+
+/* Posts list */
+.postlist {
+	list-style: none;
+	padding: 0;
+}
+.post-desc {
+	color: #888;
+	font-style: italic;
+}
+
+.postlist-item {
+	background: var(--color-bg-highlight);
+	align-items: baseline;
+	margin-bottom: 1em;
+	padding: 0.25em 0.25em 0em 0em;
+}
+
+.postlist-date,
+.postlist-item::before {
+	font-size: 0.8125em; /* 13px /16 */
+	color: var(--color-gray-90);
+}
+
+.postlist-date {
+	word-spacing: -0.5px;
+}
+
+.postlist-tags {
+	margin-left: 0.25em;
+}
+
+.postlist-tag {
+	position: relative;
+	display: inline-block;
+	text-decoration: none;
+	padding: 0 0.60em;
+	z-index: 1;
+}
+
+.postlist-tag::after {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	content: "";
+	padding: 0 0.1em;
+	transform: skewX(-15deg);
+	background-color: var(--codeblock-background);
+	z-index: -4;
+	border-left: 1px solid #555;
+	
+	border-top: 1px solid #555;
+}
+
+.postlist-tag:last-child::after {
+	border-right: 1px solid #555;
+}
+
+.postlist-tag:hover::after {
+	background-color: rgba(255, 255, 255, 0.15);
+}
+
+.tag {
+	font-size: 14px;
+	padding: 0 12px;
+	clip-path: polygon(calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 6px 100%, 0 50%, 6px 0);
+}
+
+.red {
+	background: #FF3311;
+}
+
+.ace {
+	display: inline-block;
+	height: 1em;
+	width: 1.5em;
+	border-radius: 2px;
+	background-image: linear-gradient(#000 25%, #A4A4A4 25%, #A4A4A4 50%, #FFF 50%, #FFF 75%, #810081 75%, #810081 100%);
+}
+
+main img {
+	max-width: 100%;
+	height: auto;
+}
+
+@keyframes load {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	main {
+		animation: 0.5s load;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	html {
+		scroll-behavior: auto;
+	}
+}
+
+a:target {
+	font-weight: 600;
+	text-decoration: underline;
+}
+
+#anchor-back-button {
+	position: fixed;
+	border: none;
+	outline: none;
+	padding: 0.5rem;
+	right: 15px;
+	top: 15px;
+	font-size: 1.1rem;
+	font-family: inherit;
+	display: none;
+	cursor: pointer;
+}
+
+.postlist-linkdesc {
+	padding-left: 0.5rem;
+}
+
+.postlink-desc {
+	margin-top: 0.25em;
+	margin-bottom: 1em !important;
+}
+
+.postlist-link {
+	font-size: 1.1875em; /* 19px /16 */
+	font-weight: 500;
+	flex-basis: calc(100% - 1.5rem);
+	padding-right: .5rem;
+	text-underline-position: from-font;
+	text-underline-offset: 0;
+	text-decoration-thickness: 1px;
+}
+
+.section-header {
+	display: inline-block;
+	background: var(--codeblock-background);
+	padding: 0.1rem 0.4rem;
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+.section-content {
+	margin-top: 0;
+	background: var(--codeblock-background);
+	padding: 0.5rem;
+}
+
+.postlist-item-active .postlist-link {
+	font-weight: bold;
+}
+
+ol {
+	margin-top: 0;
+}
+
+.backtotop {
+	position: fixed;
+	right: 0;
+	bottom: 0;
+	margin: 1rem;
+}
+
+@media only screen and (max-width: 1000px)  {
+	.backtotop {
+		display: none;
+	}
+}
+
+/* Tags */
+.post-tag {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	text-transform: capitalize;
+}
+
+.postlist-item > .post-tag {
+	align-self: center;
+}
+
+.news {
+	background: black;
+	color: white;
+}
+
+.news > span {
+	margin-right: 30px;
+}
+
+/* Tags list */
+.post-metadata {
+	display: inline-flex;
+	flex-wrap: wrap;
+	gap: .5em;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.post-metadata > li {
+	padding: 0;
+	margin: 0;
+}
+
+.post-metadata time {
+	margin-right: 1em;
+}
+
+/* Direct Links / Markdown Headers */
+.header-anchor {
+	text-decoration: none;
+	font-style: normal;
+	font-size: 1em;
+	margin-left: .1em;
+}
+
+a[href].header-anchor,
+a[href].header-anchor:visited {
+	color: transparent;
+}
+
+a[href].header-anchor:focus,
+a[href].header-anchor:hover {
+	text-decoration: underline;
+}
+
+a[href].header-anchor:focus,
+:hover > a[href].header-anchor {
+	color: #aaa;
+}
+
+h2 + .header-anchor {
+	font-size: 1.5em;
+}
+
+footer {
+	border-top: 1px solid gray;
+}
+
+.footer {
+	display: flex;
+	justify-content: space-between;
+	padding: 1em 0;
+	text-align: center;
+}
+
+.footer2 {
+	margin-bottom: 1em;
+}
+
+.prevnext-post {
+	display: inline-block;
+	border: 1px solid var(--color-gray-90);
+	font-size: 16px;
+	color: white;
+	padding: 10px;
+}
+
+.prevnext-post:hover {
+	background: var(--color-gray-90);
+	color: #000;
+}
+
+/* >:( */
+.ARGH {
+	text-shadow: 0px 0px 12px #F00, 0px 0px 12px #F00;
+}
+
+.sub {
+	font-size: 0.9em;
+	color: var(--color-gray-10);
+}
+
+.highlight {
+	color: #FFF;
+	background: #111;
+	border-radius: 4px;
+	padding: 0 .25em;
+}
+
+.aesthetics {
+	text-shadow: 1px 1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, -1px -1px 0 #000;
+	font-weight: 500;
+	background: linear-gradient(90deg, rgba(255,0,0,0.75) 15%, rgba(255,154,0,0.75) 30%, rgba(208,222,33,0.75) 45%, rgba(39,140,34,0.75) 60%,rgba(28,127,238,0.75) 80%, rgba(95,21,242,0.75) 100%);
+}
+
+.hint {
+	filter: contrast(5);
+	background: #6C6C6C;
+}</style>
+		<link rel="icon" type="image/x-icon" href="/img/favicon.png">
+	</head>
+
+	<body>
+		<a href="#skip" class="visually-hidden">Skip to main content</a>
+		<header>
+			<a href="/" class="home-link">
+				
+					<img width=128px src="/img/logo.png" alt="LXBlog">
+				
+			</a>
+			<nav>
+				<h2 class="visually-hidden">Top level navigation menu</h2>
+				<ul class="nav">
+					<li class="nav-item"><a href="/mainpage/">Main Page</a></li>
+					<li class="nav-item"><a href="/">Blog</a></li>
+					<li class="nav-item"><a href="/about/">About</a></li>
+				</ul>
+			</nav>
+		</header>
+
+		<main id="skip">
+			
+<a href="/tags/">See all tags</a>
+<h1>1 post tagged with "reverse-engineering"</h1>
+
+<ol reversed class="postlist">
+
+	
+		<li class="postlist-item">
+			<div class="postlist-linkdesc">
+				<a href="/blog/2024-05-13-reverse-engineering-a-mouse/" class="postlist-link">Reverse Engineering an USB mouse</a>
+				<time class="postlist-date" datetime="2024-05-13">2024/05/13</time>
+				<p class="postlink-desc">Clueless, a bit pointless, but fun!</p>
+			</div>
+			
+			<div class="postlist-tags">
+				
+				
+					
+				
+					
+						<a href="/tags/software" class="postlist-tag">software</a>
+					
+				
+					
+						<a href="/tags/reverse-engineering" class="postlist-tag">reverse-engineering</a>
+					
+				
+			</div>
+		</li>
+	
+
+</ol>
+
+
+		</main>
+
+		<footer>
+			<div class="footer">
+				<span>LX86 2024</span>
+				<div>
+					<a href="/feed/feed.xml">RSS</a>
+					<a href="mailto:lx86@lx862.com">Contact</a>
+				</div>
+				<span>Last updated: <time datetime="2024-05-13">2024-05-13</span>
+			</div>
+			<div class="footer2">
+				<span>All content are under <a href="https://creativecommons.org/licenses/by-nc/4.0/">CC BY-NC 4.0</a> unless noted otherwise</span>
+			</div>
+			
+		</footer>
+
+<!--		 Current page: /tags/reverse-engineering/-->
+	</body>
+</html>

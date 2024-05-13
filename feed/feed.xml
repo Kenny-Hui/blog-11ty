@@ -4,12 +4,733 @@
 	<subtitle>I am writing about my experiences as a naval navel-gazer.</subtitle>
 	<link href="https://blog.lx862.com/feed/feed.xml" rel="self"/>
 	<link href="https://blog.lx862.com/"/>
-	<updated>2023-10-02T00:00:00Z</updated>
+	<updated>2024-05-13T00:00:00Z</updated>
 	<id>https://blog.lx862.com/</id>
 	<author>
 		<name>LX86</name>
 		<email>lx86@lx862.com</email>
 	</author>
+	
+	<entry>
+		<title>Reverse Engineering an USB mouse</title>
+		<link href="https://blog.lx862.com/blog/2024-05-13-reverse-engineering-a-mouse/"/>
+		<updated>2024-05-13T00:00:00Z</updated>
+		<id>https://blog.lx862.com/blog/2024-05-13-reverse-engineering-a-mouse/</id>
+		<content type="html">&lt;p&gt;Heh what a busy semester. Anyway ever since I&#39;ve switched to Linux, I usually try to find alternative replacements for the software I use on Windows. It&#39;s not perfect but it gets me 90% there. (And with the right configuration it does feels more productive than Windows)&lt;/p&gt;
+&lt;p&gt;One thing that I cannot always find however is a replacement for vendor-provided software to control my peripherals.
+Fortunately most of my peripheral device is extremely dumb. A keyboard is a keyboard, it types and does absolutely nothing more. The same cannot be said for my mouse though.&lt;/p&gt;
+&lt;p&gt;For some background, this is the current mouse I have, an &lt;strong&gt;AOC GM110 &amp;quot;Gaming Mouse&amp;quot;&lt;/strong&gt; getting sold for roughly the same price or cheaper than an office mouse.&lt;/p&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/3BxV6UzEMC-343.avif 343w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/3BxV6UzEMC-343.webp 343w&quot;&gt;&lt;img alt=&quot;An AOC GM110 Gaming Mouse&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/3BxV6UzEMC-343.jpeg&quot; width=&quot;343&quot; height=&quot;312&quot;&gt;&lt;/picture&gt;&lt;br&gt;
+&lt;small&gt;I know the picture quality sucks, this blog is a huge mess™&lt;/small&gt;&lt;/p&gt;
+&lt;p&gt;It has a total of 7 buttons (Left/Middle/Right button, 2 side buttons and 2 in the middle), and it also has a RGB breathing light.&lt;/p&gt;
+&lt;p&gt;I bought this after my previous mouse, a &lt;strong&gt;Philips SPK9505 &amp;quot;Gaming Mouse&amp;quot;&lt;/strong&gt; with the same configuration, starts to have all sort of click issues and stuff.&lt;/p&gt;
+&lt;p&gt;These 2 mouses are all sold at a reasonably cheap price for what is supposedly &amp;quot;more than an office mouse&amp;quot;.&lt;/p&gt;
+&lt;p&gt;Now if you have never heard of these 2 mouse before, that is completely normal as:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;em&gt;Model number sucks and are never meant to be memorized by humans :)&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;These mice are not actually produced by either Philips nor AOC.&lt;/strong&gt; I am not sure of the inner workings, but from what I know these mice are manufactured somewhere (Probably Mainland China) for a good price, then the logos are just slapped onto the mouse after some approval or licensing fee or whatever.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Anyway these mouse ships with a mouse software that runs on the Microsoft® Windows® Operating System that allows you to configure your mouse.&lt;/p&gt;
+&lt;p&gt;This is the software that comes with my old Philips mouse:&lt;br&gt;
+&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/9nkyZNUGoZ-1022.avif 1022w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/9nkyZNUGoZ-1022.webp 1022w&quot;&gt;&lt;img alt=&quot;Button rebinding page in the mouse software&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/9nkyZNUGoZ-1022.png&quot; width=&quot;1022&quot; height=&quot;730&quot;&gt;&lt;/picture&gt;
+&lt;small&gt;Button binding page, where you can rebind mouse buttons to however you like&lt;/small&gt;&lt;/p&gt;
+&lt;a id=&quot;macro-intro&quot;&gt;
+&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/KW7KcPTcoV-1022.avif 1022w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/KW7KcPTcoV-1022.webp 1022w&quot;&gt;&lt;img alt=&quot;Macro page in the mouse software, which allows you to input a sequence of timed key input command&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/KW7KcPTcoV-1022.png&quot; width=&quot;1022&quot; height=&quot;730&quot;&gt;&lt;/picture&gt;  
+&lt;/a&gt;
+&lt;small&gt;Macros page, which allows you to setup a sequence of key event that is triggered by a button&lt;br&gt;(Trigger is setup by binding the mouse to a macro in the Mouse Binding Page)&lt;/small&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/CYnmuX1y-L-1022.avif 1022w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/CYnmuX1y-L-1022.webp 1022w&quot;&gt;&lt;img alt=&quot;Advanced page in the mouse software&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/CYnmuX1y-L-1022.png&quot; width=&quot;1022&quot; height=&quot;730&quot;&gt;&lt;/picture&gt;&lt;br&gt;
+&lt;small&gt;Fire Speed, &amp;quot;Pointer Precision&amp;quot; &lt;em&gt;(Bad Translation; Should be Pointer Speed)&lt;/em&gt;, Scroll Speed and DPI Setup w/ 4 DPI to choose from&lt;/small&gt;&lt;/p&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/BSMQF8tknK-1022.avif 1022w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/BSMQF8tknK-1022.webp 1022w&quot;&gt;&lt;img alt=&quot;LED Page in the mouse software, which allows you to configure the lighting of the mouse&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/BSMQF8tknK-1022.png&quot; width=&quot;1022&quot; height=&quot;730&quot;&gt;&lt;/picture&gt;&lt;br&gt;
+&lt;small&gt;Breathing Light Setup, with Slow, Fast, Static and Off available as option.&lt;/small&gt;&lt;/p&gt;
+&lt;p&gt;Why am I still talking about my old mouse and its software? Well that&#39;s because I can&#39;t find the software for the AOC GM110 that I am currently using. &lt;strong&gt;But&lt;/strong&gt; I noticed that my old Philips-branded software still do work on my AOC GM110 mouse, every single option.&lt;br&gt;
+This suggests that these 2 mouse is probably the same under the hood, just maybe with a different shell, branding and packaging.&lt;/p&gt;
+&lt;p&gt;Anyway it should be worth mentioning that I don&#39;t &lt;em&gt;need&lt;/em&gt; the mouse software for my daily use.&lt;br&gt;
+For the most part this little mouse already fulfills my daily need as a non-gamer, heck you can even rebind the 2 side button on Linux which is really handy.&lt;br&gt;
+(At least on KDE, but I assume you can also do it on other platform as well).&lt;/p&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/DPrcs7uVOp-1104.avif 1104w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/DPrcs7uVOp-1104.webp 1104w&quot;&gt;&lt;img alt=&quot;KDE Mouse Settings Window, allowing you to rebind extra buttons&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/DPrcs7uVOp-1104.png&quot; width=&quot;1104&quot; height=&quot;820&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
+&lt;p&gt;However that doesn&#39;t mean that I am not &lt;em&gt;at least a bit intrigued&lt;/em&gt; by the extra functionalities that the mouse software provides, especially after seeing projects like &lt;a href=&quot;https://openrgb.org&quot;&gt;OpenRGB&lt;/a&gt; which does not rely on the Vendor&#39;s software.&lt;/p&gt;
+&lt;p&gt;Besides I miss the time when I just plays around and try new things, as opposed to me tiredlessly working on Minecraft mods that doesn&#39;t give me much satisfaction for the past 2 years or so. Perhaps I won&#39;t stick with that thing in the long term, but I had fun and I gained knowledge.&lt;br&gt;
+With around a week of holiday before exam, this seems like a greats opportunity to do so.&lt;/p&gt;
+&lt;p&gt;My plan for this is that I don&#39;t really have a plan, other than hopefully making a program that can configure my mouse in Linux, and starting with absolutely &lt;em&gt;zero&lt;/em&gt; knowledge on anything USB related!&lt;/p&gt;
+&lt;p&gt;My first step is to literally Google &lt;strong&gt;How to reverse engineer a USB Mouse&lt;/strong&gt;, which led me to &lt;a href=&quot;https://bytepunk.wordpress.com/2017/03/25/reverse-engineering-a-usb-mouse/&quot;&gt;this&lt;/a&gt; and &lt;a href=&quot;https://zazama.de/blog/reverse-engineering-usb-rgb-devices-and-building-your-own-rgb-software-by-example-using-rust-and-glorious-model-o/&quot;&gt;this great blog post&lt;/a&gt;, both have helped increase my understanding of the general work required to pull something like this off.&lt;/p&gt;
+&lt;h1 id=&quot;wireshark-save-me&quot; tabindex=&quot;-1&quot;&gt;Wireshark, save me! &lt;a class=&quot;header-anchor&quot; href=&quot;https://blog.lx862.com/blog/2024-05-13-reverse-engineering-a-mouse/&quot;&gt;#&lt;/a&gt;&lt;/h1&gt;
+&lt;p&gt;The first thing I need is some sort of tools that can capture USB data so I can see what is actually being sent to the mouse &lt;em&gt;(Or well reverse-engineer the software itself, but I am not going there)&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Reading the aforementioned blog post, I am a bit surprised to find out that Wireshark can capture USB data as well, given that for the longest time I&#39;ve only heard it being used in the context of networking.&lt;br&gt;
+Originally I just throw it off as some sort of &amp;quot;hacks&amp;quot; that requires you to setup this and that to fake that it&#39;s a network interface or whatever, but no this is an officially supported use-case.&lt;br&gt;
+In fact the Wireshark installer on Windows even asks you whether you want to install USBPCap which allows you to capture USB traffic:&lt;/p&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/GKAAPVcggR-499.avif 499w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/GKAAPVcggR-499.webp 499w&quot;&gt;&lt;img alt=&quot;Wireshark Installer on Windows, asking whether you want to install USBPCap&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/GKAAPVcggR-499.png&quot; width=&quot;499&quot; height=&quot;388&quot;&gt;&lt;/picture&gt;&lt;br&gt;
+&lt;small&gt;(Greyed out because I already have it installed)&lt;/small&gt;&lt;/p&gt;
+&lt;p&gt;After that, the USBPCap entry just appears on the Wireshark Homescreen like magic!&lt;/p&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/tTq6LkV2xD-711.avif 711w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/tTq6LkV2xD-711.webp 711w&quot;&gt;&lt;img alt=&quot;Wireshark Home Screen, presenting a list of interfaces that can be captured. USBPCap appeared there.&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/tTq6LkV2xD-711.png&quot; width=&quot;711&quot; height=&quot;594&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
+&lt;p&gt;And now I have access to all the USB data under the sun, ha-ha!&lt;/p&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/Z4i-ippZjA-1024.avif 1024w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/Z4i-ippZjA-1024.webp 1024w&quot;&gt;&lt;img alt=&quot;Wireshark Window, with tons of USB Packets displayed&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/Z4i-ippZjA-1024.png&quot; width=&quot;1024&quot; height=&quot;756&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
+&lt;p&gt;...Okay that&#39;s a lot of traffic. The first thing I did is trying to filter out the massive amount of traffic getting displayed so I can actually focus on what matters.
+I am no genius so I just moved my mouse and see which address it&#39;s coming from, and I just filtered that address, 1.2.1.&lt;/p&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/NGduDK7uOA-1024.avif 1024w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/NGduDK7uOA-1024.webp 1024w&quot;&gt;&lt;img alt=&quot;Wireshark Window, with usb packets filtered to usb address 1.2.1&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/NGduDK7uOA-1024.png&quot; width=&quot;1024&quot; height=&quot;756&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
+&lt;p&gt;But I quickly realized that&#39;s not the address I should be looking for. Sure it may have mouse traffic, but when I fired up my mouse software and hit &amp;quot;Apply&amp;quot;, nothing seems to show up other than my mouse movement &amp;amp; my left click.&lt;/p&gt;
+&lt;p&gt;After a bit of fiddling and research, it turns out that there are different so called &lt;strong&gt;Endpoint&lt;/strong&gt; in a USB device. (Well to put it very simply, you can think of it as a location where data can go in/out, but I am far from qualified to explain it in detail).&lt;/p&gt;
+&lt;p&gt;To the best of my understanding all USB device &lt;em&gt;must&lt;/em&gt; have at least 1 Endpoint in Address number 0 (Endpoint 0) used for control transfer. This is the endpoint that is used to communicate and configure your USB device by the OS.&lt;/p&gt;
+&lt;p&gt;In this case it appears that the mouse software also sends configuration data to the mouse on Endpoint 0, so I changed my wireshark filter to &lt;code&gt;1.2.0&lt;/code&gt; instead to inspect data coming from/to that endpoint instead.&lt;/p&gt;
+&lt;p&gt;After that I hit the &amp;quot;Apply&amp;quot; button on my mouse software again, and 14 new entry appeared:&lt;/p&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/Sz51r1Z2TC-1024.avif 1024w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/Sz51r1Z2TC-1024.webp 1024w&quot;&gt;&lt;img alt=&quot;Wireshark Window, with a list of usb packets appearing after clicking the Apply button in the mouse software&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/Sz51r1Z2TC-1024.png&quot; width=&quot;1024&quot; height=&quot;756&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
+&lt;p&gt;OwO let&#39;s inspect it :P&lt;/p&gt;
+&lt;h1 id=&quot;observation&quot; tabindex=&quot;-1&quot;&gt;Observation &lt;a class=&quot;header-anchor&quot; href=&quot;https://blog.lx862.com/blog/2024-05-13-reverse-engineering-a-mouse/&quot;&gt;#&lt;/a&gt;&lt;/h1&gt;
+&lt;p&gt;This is probably the most nerdiest part, to figure out and guess what each of the packet does and how is the data formatted.&lt;/p&gt;
+&lt;p&gt;Now I don&#39;t know a lot about reverse-engineering, but I know that a good starting point is to change 1 option in the software, apply it again, then compare it with the previous data sent and figure out the difference, so here are my (initial) observations:&lt;/p&gt;
+&lt;h2 id=&quot;button-bindings&quot; tabindex=&quot;-1&quot;&gt;Button Bindings &lt;a class=&quot;header-anchor&quot; href=&quot;https://blog.lx862.com/blog/2024-05-13-reverse-engineering-a-mouse/&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;This mouse have the capabilities to rebind buttons, either to another button or an action like &amp;quot;Showing Desktop&amp;quot; or performing shortcuts.&lt;/p&gt;
+&lt;a id=&quot;button-bindings&quot;&gt;
+&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/F6GlP_Xnpc-725.avif 725w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/F6GlP_Xnpc-725.webp 725w&quot;&gt;&lt;img alt=&quot;Button binding page, allowing you to not only rebind buttons, but also perform Shortcuts and perform Multimedia key input&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/F6GlP_Xnpc-725.png&quot; width=&quot;725&quot; height=&quot;397&quot;&gt;&lt;/picture&gt;
+&lt;/a&gt;
+&lt;p&gt;For simplicity sake I&#39;ll just call all of these &lt;strong&gt;actions&lt;/strong&gt; (i.e. A &lt;strong&gt;Left Mouse Button&lt;/strong&gt; is binded to a &lt;strong&gt;&amp;quot;Left Click&amp;quot; action&lt;/strong&gt;)&lt;/p&gt;
+&lt;p&gt;So I started changing the bindings to see what got changed from which packets (Remember it sends 14 of them all at once on apply!), and it seems that for Mouse Bindings, the data is sent in the following format (7 times for each of the 7 buttons on the mouse):&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;07 10 BT AT 00 00 00 00
+      ^^ ^^
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;BT&lt;/strong&gt; is the physical button that is to be rebinded:&lt;/p&gt;
+&lt;table&gt;
+  &lt;tr&gt;
+    &lt;th&gt;Value&lt;/th&gt;
+    &lt;th&gt;Button Name&lt;/th&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;01&lt;/td&gt;&lt;td&gt;Left Mouse Button&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;02&lt;/td&gt;&lt;td&gt;Right Mouse Button&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;03&lt;/td&gt;&lt;td&gt;Middle Mouse Button&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;04&lt;/td&gt;&lt;td&gt;Side Forward (Towards front)&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;05&lt;/td&gt;&lt;td&gt;Side Backward (Towards user)&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;06&lt;/td&gt;&lt;td&gt;Middle backward (Towards user)&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;08&lt;/td&gt;&lt;td&gt;Middle forward (Towards front)&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;AT&lt;/strong&gt; is the rebinded action:&lt;/p&gt;
+&lt;table&gt;
+  &lt;tr&gt;
+    &lt;th&gt;Value&lt;/th&gt;
+    &lt;th&gt;Action Name&lt;/th&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;00&lt;/td&gt;&lt;td&gt;Software action...?&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;01&lt;/td&gt;&lt;td&gt;Left Click&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;02&lt;/td&gt;&lt;td&gt;Middle Click&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;03&lt;/td&gt;&lt;td&gt;Right Click&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;04&lt;/td&gt;&lt;td&gt;Back&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;05&lt;/td&gt;&lt;td&gt;Forward&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;06&lt;/td&gt;&lt;td&gt;DPI Cycle&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;07&lt;/td&gt;&lt;td&gt;Show Desktop&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;08&lt;/td&gt;&lt;td&gt;Double Click&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;09&lt;/td&gt;&lt;td&gt;Fire&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;0a&lt;/td&gt;&lt;td&gt;DPI+&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;0b&lt;/td&gt;&lt;td&gt;DPI-&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;
+&lt;p&gt;So for example, a report about the &lt;strong&gt;Left Mouse Button&lt;/strong&gt; binded to a &lt;strong&gt;Right Click Action&lt;/strong&gt; would look like:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;07 10 01 03 00 00 00 00
+      ^^ ^^
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Also worth noting is the &lt;code&gt;00&lt;/code&gt; in &lt;strong&gt;AT&lt;/strong&gt;. It seems that when choosing any actions within the &lt;a href=&quot;https://blog.lx862.com/blog/2024-05-13-reverse-engineering-a-mouse/&quot;&gt;ShortCut / Media submenu&lt;/a&gt; (Copy/Pasting, Calculator, Play/Pause), &lt;strong&gt;AT&lt;/strong&gt; is always reported as &lt;code&gt;00&lt;/code&gt;.
+There&#39;s no follow up data either, &lt;em&gt;which means that the mouse would have no idea which specific action is actually binded&lt;/em&gt;?&lt;/p&gt;
+&lt;p&gt;For now I will call &lt;code&gt;00&lt;/code&gt; as &lt;strong&gt;Software action&lt;/strong&gt;. Since the mouse have no knowledge of the action, my guesses are that it most likely relies on some interference from the mouse software.&lt;/p&gt;
+&lt;h2 id=&quot;something&quot; tabindex=&quot;-1&quot;&gt;Something...? &lt;a class=&quot;header-anchor&quot; href=&quot;https://blog.lx862.com/blog/2024-05-13-reverse-engineering-a-mouse/&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;It seems that on apply, there&#39;s always this one report that is always getting sent by the software and the value never changes:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;07 11 00 00 00 00 00 00
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Without anything I can change in the software that affects the values, I really have no idea what this data means. I can only assume this is unused for now.&lt;/p&gt;
+&lt;h2 id=&quot;fire-speed&quot; tabindex=&quot;-1&quot;&gt;Fire Speed &lt;a class=&quot;header-anchor&quot; href=&quot;https://blog.lx862.com/blog/2024-05-13-reverse-engineering-a-mouse/&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/EozDWirarv-389.avif 389w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/EozDWirarv-389.webp 389w&quot;&gt;&lt;img alt=&quot;Fire Speed Slider in the mouse software&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/EozDWirarv-389.png&quot; width=&quot;389&quot; height=&quot;101&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
+&lt;p&gt;There&#39;s a &lt;strong&gt;Fire Speed&lt;/strong&gt; slider in my mouse software. Now since I don&#39;t use 90% of the mouse features I have no idea what this means, other than that it&#39;s a slider going from 8-300 :)&lt;/p&gt;
+&lt;p&gt;Data sent:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;07 12 00 FR 00 00 00 00
+         ^^
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;FR&lt;/strong&gt; appears to be a value between &lt;strong&gt;00&lt;/strong&gt; and &lt;strong&gt;1F&lt;/strong&gt;. Interestingly it seems to be &lt;strong&gt;in +16 increments and rounded down&lt;/strong&gt;. (So if the Slider reads 15 in the software, it gets sent as &lt;code&gt;00&lt;/code&gt;, if it&#39;s 16 it gets sent as &lt;code&gt;01&lt;/code&gt;), even though the software itself makes it look like you can set an arbitrary value.&lt;/p&gt;
+&lt;p&gt;I guess I did get what I paid for...&lt;/p&gt;
+&lt;h2 id=&quot;rgb-lights&quot; tabindex=&quot;-1&quot;&gt;RGB Lights &lt;a class=&quot;header-anchor&quot; href=&quot;https://blog.lx862.com/blog/2024-05-13-reverse-engineering-a-mouse/&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;This mouse comes with RGB lights (Or more appropriately named, Breathing Light), which would cycle between &lt;strong&gt;Blue, Magenta, Red and Purple&lt;/strong&gt; color.&lt;/p&gt;
+&lt;p&gt;You can choose between 4 modes in the software: &lt;strong&gt;Slow, Fast, Static and Off&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/xjVsMbnKDq-355.avif 355w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/xjVsMbnKDq-355.webp 355w&quot;&gt;&lt;img alt=&quot;Slow, Fast, Static and Off option presented in the LED page of the mouse software&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/xjVsMbnKDq-355.png&quot; width=&quot;355&quot; height=&quot;246&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
+&lt;p&gt;Now let&#39;s see what is sent:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;07 13 7f CF 00 00 00 00
+         ^^
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;CF&lt;/strong&gt; is the RGB Configuration:&lt;br&gt;
+&lt;small&gt;(The &amp;quot;seconds&amp;quot; below represents the time the mouse stayed in 1 color before cycling to the next one)&lt;/small&gt;&lt;/p&gt;
+&lt;table&gt;
+  &lt;tr&gt;
+    &lt;th&gt;Value&lt;/th&gt;
+    &lt;th&gt;RGB Mode&lt;/th&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;10&lt;/td&gt;&lt;td&gt;Slow (6s)&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;13&lt;/td&gt;&lt;td&gt;Fast (3s)&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;16&lt;/td&gt;&lt;td&gt;Static&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;17&lt;/td&gt;&lt;td&gt;Off&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;
+&lt;h2 id=&quot;dpi-configuration&quot; tabindex=&quot;-1&quot;&gt;DPI Configuration &lt;a class=&quot;header-anchor&quot; href=&quot;https://blog.lx862.com/blog/2024-05-13-reverse-engineering-a-mouse/&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;There are a total of 4 DPI profiles available for this Mouse.&lt;/p&gt;
+&lt;p&gt;Each profile has it&#39;s own configurable DPI value, and can be set as &amp;quot;active&amp;quot; either by pressing mouse buttons binded to a DPI-related action, or by simply clicking the &lt;strong&gt;DPI 1/2/3/4&lt;/strong&gt; on the software.&lt;/p&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/XhrDPgwt75-444.avif 444w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/XhrDPgwt75-444.webp 444w&quot;&gt;&lt;img alt=&quot;Advanced page in the mouse software, allowing you to choose different DPI Profile&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/XhrDPgwt75-444.png&quot; width=&quot;444&quot; height=&quot;414&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
+&lt;p&gt;4 reports gets sent to the mouse, with each representing one of the 4 DPI profiles:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;07 09 AD DP 0f 00 00 00
+      ^^ ^^
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;AD&lt;/strong&gt; is the currently active DPI Profile (00 - 03)&lt;br&gt;
+&lt;strong&gt;DP&lt;/strong&gt; is the DPI Configuration for the profile, where:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The left 4 bits is the DPI value from 1-f&lt;/li&gt;
+&lt;li&gt;The right 4 bits is the DPI profile (8-b for 4 profiles in order)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;So &lt;strong&gt;DP&lt;/strong&gt; would be:&lt;/p&gt;
+&lt;table&gt;
+  &lt;tr&gt;
+    &lt;td&gt;18-f8&lt;/td&gt;&lt;td&gt;DPI for DPI 1&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;19-f9&lt;/td&gt;&lt;td&gt;DPI for DPI 2&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;1a-fa&lt;/td&gt;&lt;td&gt;DPI for DPI 3&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;1b-fb&lt;/td&gt;&lt;td&gt;DPI for DPI 4&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;
+&lt;h2 id=&quot;an-imposter&quot; tabindex=&quot;-1&quot;&gt;An Imposter... &lt;a class=&quot;header-anchor&quot; href=&quot;https://blog.lx862.com/blog/2024-05-13-reverse-engineering-a-mouse/&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;Out of everything I&#39;ve changed, it seems that there&#39;s 2 options that doesn&#39;t change anything sent when clicking the &amp;quot;Apply&amp;quot; button:&lt;/p&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/mqco72C-HK-356.avif 356w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/mqco72C-HK-356.webp 356w&quot;&gt;&lt;img alt=&quot;Advanced page in the mouse software, with a Pointer precision slider and a wheel speed slider&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/mqco72C-HK-356.png&quot; width=&quot;356&quot; height=&quot;188&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
+&lt;p&gt;Initially I thought that there may be some other way it&#39;s communicating with the device that I have not discovered yet, and maybe it&#39;s going to another rabbit hole?&lt;br&gt;
+But then I have an idea. I opened up the Start Menu, typed &amp;quot;Mouse Settings&amp;quot;, and well there it is!&lt;/p&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/kQuWabgFiv-407.avif 407w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/kQuWabgFiv-407.webp 407w&quot;&gt;&lt;img alt=&quot;The Pointer precision slider in the mouse software and Windows mouse pointer speed settings side by side, showing that they match&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/kQuWabgFiv-407.png&quot; width=&quot;407&quot; height=&quot;248&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/XSOd36I15e-413.avif 413w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/XSOd36I15e-413.webp 413w&quot;&gt;&lt;img alt=&quot;The wheel speed slider in the mouse software and Windows scroll wheel settings side by side, showing that they match, but the mouse software always underrepresented the value by 1&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/XSOd36I15e-413.png&quot; width=&quot;413&quot; height=&quot;237&quot;&gt;&lt;/picture&gt;&lt;br&gt;
+&lt;small&gt;&lt;em&gt;Looks like someone forgot 0-based index :)&lt;/em&gt;&lt;/small&gt;&lt;/p&gt;
+&lt;h1 id=&quot;writing-the-implementation&quot; tabindex=&quot;-1&quot;&gt;Writing the implementation &lt;a class=&quot;header-anchor&quot; href=&quot;https://blog.lx862.com/blog/2024-05-13-reverse-engineering-a-mouse/&quot;&gt;#&lt;/a&gt;&lt;/h1&gt;
+&lt;p&gt;Now that I have everything I need (Or at least I thought so...), it&#39;s time to start writing an application in Linux that can control my mouse!&lt;/p&gt;
+&lt;p&gt;Given that both my Philips and my AOC mouse can be used interchangably with the same vendor-provided software, it also suggests that my implementation can potentially be used by dozens of other same generation of mouses that are simply just released under a different brand and shell.
+As such I want it to have a reasonable GUI interface rather than something that is hacked together only for my use, and ideally it should be as user-friendly and as painless as possible.&lt;/p&gt;
+&lt;p&gt;Initially I am plan to write this in Python as it&#39;s usually already bundled by most Linux distributions. I have came across a &lt;a href=&quot;https://pypi.org/project/hidapi/&quot;&gt;Python hidapi library&lt;/a&gt;, which is a wrapper to the &lt;a href=&quot;https://github.com/libusb/hidapi&quot;&gt;C hidapi library&lt;/a&gt;. However my experience with Python has been &lt;em&gt;really&lt;/em&gt; limited and even for smaller scripts I&#39;ve made, I just don&#39;t feel like it&#39;s my thing. So after some delibration I decided to just use the C hidapi library, as the example provided in the README seems reasonable enough to use.&lt;/p&gt;
+&lt;p&gt;I have also considered just using &lt;a href=&quot;https://developer.mozilla.org/en-US/docs/Web/API/WebHID_API&quot;&gt;WebHID API&lt;/a&gt; and make a webpage out of it so you can literally configure it in a web browser. However when I start to factor in the fact that:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The mouse does not store settings persistently (So every reboot it resets the config)&lt;/li&gt;
+&lt;li&gt;Firefox doesn&#39;t support WebHID API (For better or for worse)&lt;/li&gt;
+&lt;li&gt;
+&lt;ul&gt;
+&lt;li&gt;I primarily use Firefox&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;ul&gt;
+&lt;li&gt;Most Linux Distributions only ships Firefox out of the box&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;The possibility that I may need a persistently running daemon for more advanced feature I may discover later &lt;small&gt;(Spoiler: I do ended up needing it)&lt;/small&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Yeah that seems rough... let&#39;s just make a traditional desktop application lmao.&lt;/p&gt;
+&lt;p&gt;With that out of the way, I started working a prototype in C based on the hidapi example code.
+After a bit of back and fourth, just pretty much &amp;quot;blindly&amp;quot; filling everything from Wireshark, I managed to change my RGB Light configuration on my mouse, exciting stuff!&lt;/p&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/f1M5JBKAnQ-1098.avif 1098w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/f1M5JBKAnQ-1098.webp 1098w&quot;&gt;&lt;img alt=&quot;A code editor showing my C prototype implementation&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/f1M5JBKAnQ-1098.png&quot; width=&quot;1098&quot; height=&quot;905&quot;&gt;&lt;/picture&gt;
+&lt;small&gt;&lt;em&gt;Note: You may need to run the program as root (sudo), or &lt;a href=&quot;https://github.com/libusb/hidapi/blob/master/udev/69-hid.rules&quot;&gt;make a udev rules&lt;/a&gt; that permits user access to the device&lt;/em&gt;&lt;/small&gt;&lt;/p&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/W13qsvwn8s-450.avif 450w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/W13qsvwn8s-450.webp 450w&quot;&gt;&lt;img alt=&quot;My mouse&#39;s light being turned off&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/W13qsvwn8s-450.png&quot; width=&quot;450&quot; height=&quot;337&quot;&gt;&lt;/picture&gt;&lt;br&gt;
+&lt;small&gt;it off!&lt;/small&gt;&lt;/p&gt;
+&lt;p&gt;Now for the GUI. As I&#39;ve said I don&#39;t want to touch python, so I decided to use Qt Widgets (C++) as it does seems to offer a GUI Editor (.ui files), and Qt in general as it seems to offer a lot of abstractions so hopefully I don&#39;t have to shoot myself into the foot.&lt;br&gt;
+&lt;small&gt;&lt;em&gt;Gosh I need to thank my C++ teacher last semester.&lt;/em&gt;&lt;/small&gt;&lt;/p&gt;
+&lt;p&gt;As someone who have never touched Qt Widget before, it somewhat reminded me of WinForms. It&#39;s quick and a bit messy, doesn&#39;t have that much of a structure or hierarchy, but it&#39;s stupidly simple to get started.&lt;/p&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/s50rWHhfzo-1130.avif 1130w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/s50rWHhfzo-1130.webp 1130w&quot;&gt;&lt;img alt=&quot;Qt Creator showing C++ code with repetitive functions and my newly written program side by side&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/s50rWHhfzo-1130.png&quot; width=&quot;1130&quot; height=&quot;655&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
+&lt;h2 id=&quot;the-unanswered&quot; tabindex=&quot;-1&quot;&gt;The unanswered &lt;a class=&quot;header-anchor&quot; href=&quot;https://blog.lx862.com/blog/2024-05-13-reverse-engineering-a-mouse/&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;As I was working through making the DPI Page in my program, I came across multiple questions I have not thought of yet:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;How is the software suppose to keep in sync with the mouse configuration? Does it read the value from the mouse on startup?&lt;/li&gt;
+&lt;li&gt;What does the DPI value actually reads on each tick in the slider of the software? I know it&#39;s a value from 1-f, but I need a readable DPI value for the users.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;For the 1st question, I booted back into Windows, launched Wireshark and started monitoring, then started up the mouse software.&lt;br&gt;
+As it turns out, instead of ensuring the software is in-sync with the mouse, it ensures the mouse is in-sync with the software by applying the software&#39;s config to the mouse on startup.&lt;br&gt;
+Well fair enough I guess.&lt;/p&gt;
+&lt;p&gt;For the 2nd question, I started taking notes of the value for each tick in the DPI Slider.&lt;br&gt;
+However I can&#39;t help but notice that the DPI Slider only have a total of 12 ticks, but there should be 16 different values I can send.&lt;/p&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/LxHqwdHl0c-348.avif 348w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/LxHqwdHl0c-348.webp 348w&quot;&gt;&lt;img alt=&quot;The DPI Slider in the mouse software, with 12 slider overlay showing the possible value that the slider can be dragged onto&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/LxHqwdHl0c-348.png&quot; width=&quot;348&quot; height=&quot;67&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
+&lt;p&gt;Then what do they do with the rest of the 4 values, are some of them just skipped over?&lt;br&gt;
+Apparently yes, let&#39;s look at the DPI values reported by the software:&lt;/p&gt;
+&lt;table&gt;
+  &lt;tr&gt;
+    &lt;th&gt;Value&lt;/th&gt;
+    &lt;th&gt;User-facing value&lt;/th&gt;
+    &lt;th&gt;Increments&lt;/th&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;1&lt;/td&gt;&lt;td&gt;200&lt;/td&gt;&lt;td&gt;-&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;2&lt;/td&gt;&lt;td&gt;400&lt;/td&gt;&lt;td&gt;+200&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;3&lt;/td&gt;&lt;td&gt;600&lt;/td&gt;&lt;td&gt;+200&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;4&lt;/td&gt;&lt;td&gt;800&lt;/td&gt;&lt;td&gt;+200&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;5&lt;/td&gt;&lt;td&gt;1000&lt;/td&gt;&lt;td&gt;+200&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;6&lt;/td&gt;&lt;td&gt;1200&lt;/td&gt;&lt;td&gt;+200&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;8&lt;/td&gt;&lt;td&gt;1600&lt;/td&gt;&lt;td&gt;+400 (Skipped)&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;a&lt;/td&gt;&lt;td&gt;2000&lt;/td&gt;&lt;td&gt;+400 (Skipped)&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;c&lt;/td&gt;&lt;td&gt;2400&lt;/td&gt;&lt;td&gt;+400 (Skipped)&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;d&lt;/td&gt;&lt;td&gt;3200&lt;/td&gt;&lt;td&gt;&lt;strong&gt;+800&lt;/strong&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;e&lt;/td&gt;&lt;td&gt;4000&lt;/td&gt;&lt;td&gt;&lt;strong&gt;+800&lt;/strong&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;f&lt;/td&gt;&lt;td&gt;4800&lt;/td&gt;&lt;td&gt;&lt;strong&gt;+800&lt;/strong&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;
+&lt;small&gt;(Values that are not covered by the chart is the value skipped over by the slider)&lt;/small&gt;
+&lt;p&gt;The value from 1-c seems to be consistent with a +200 incrementation on each value bump. After that however it increments by +800 for each value.&lt;br&gt;
+I am no expert but this seems a bit arbitrary and I am having a hard time believing that these values are really reported as is.&lt;/p&gt;
+&lt;p&gt;I&#39;ve decided to just stick with a consistent +200 incrementation for my program (So the DPI Range would be displayed as 200 - 3000) as it seems to make the most sense at the moment.&lt;/p&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/W0EqxIQ-l3-671.avif 671w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/W0EqxIQ-l3-671.webp 671w&quot;&gt;&lt;img alt=&quot;My mouse program, showing the DPI Page with 4 DPI profile to choose from, and a slider ranging between 200 - 3000&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/W0EqxIQ-l3-671.png&quot; width=&quot;671&quot; height=&quot;650&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
+&lt;h3 id=&quot;i-didn-t-know-enough-about-the-software-apparently&quot; tabindex=&quot;-1&quot;&gt;I didn&#39;t know enough about the software, apparently &lt;a class=&quot;header-anchor&quot; href=&quot;https://blog.lx862.com/blog/2024-05-13-reverse-engineering-a-mouse/&quot;&gt;#&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;While looking through the DPI Page in the mouse software, I&#39;ve also discovered that these little Blue Square is actually checkboxes that can be turned on and off!&lt;/p&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/MhKXb83NRv-407.avif 407w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/MhKXb83NRv-407.webp 407w&quot;&gt;&lt;img alt=&quot;The provided mouse software, there&#39;s a blue square on the top of each DPI selection that is actually a checkbox&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/MhKXb83NRv-407.png&quot; width=&quot;407&quot; height=&quot;283&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
+&lt;p&gt;Once disabled, the mouse will simply skip over the DPI value when changing the DPI.&lt;br&gt;
+&lt;small&gt;&lt;em&gt;Well who would have thought this is clickable? It&#39;s not like the colored circle below is clickable either!&lt;/em&gt;&lt;/small&gt;&lt;/p&gt;
+&lt;p&gt;Anyway let&#39;s see what happens if I turn off the 1st DPI Profile:&lt;/p&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/RZZQqWOdmw-462.avif 462w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/RZZQqWOdmw-462.webp 462w&quot;&gt;&lt;img alt=&quot;Wireshark packet, highlighting the data &#39;07 09 AD DC 0e 00 00 00&#39;&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/RZZQqWOdmw-462.png&quot; width=&quot;462&quot; height=&quot;120&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
+&lt;p&gt;And compare it with our previous DPI observation:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;07 09 AD DC 0f 00 00 00
+            ^^
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Hmm so it seems that the &lt;code&gt;0f&lt;/code&gt; is not a static value after all and represents which DPI is enabled or not. But how exactly are they represented?&lt;br&gt;
+The number seems a bit random at first, especially when there are so many on/off combinations you can make, but soon it became clear:&lt;/p&gt;
+&lt;p class=&quot;section-header&quot;&gt;&lt;b&gt;Computer 101&lt;/b&gt;&lt;/p&gt;
+&lt;p class=&quot;section-content&quot;&gt;
+For the uninitiated, a byte is consisted of 8 bit (1111 1111), where each bit can either be a 0 (off) or 1 (on).
+Conveniently a byte can be represented by 2 hexadecimal number. That is because each hexadecimal number is used to represent 4 bits (1111). The total combination of all these 4 bits being on/off is (4^2 = 16), which can fit exactly to a hexadecimal as a hex have 16 possible values.
+&lt;/p&gt;
+&lt;p&gt;It seems that only the rightmost 4 bits is used to represent the enabled DPI profiles, where the 4 bits corresponds to the 4 DPI profiles for this mouse, each with an on (1) and off (0) state: &lt;code&gt;1111&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;So if the first profile is disabled, it would be &lt;code&gt;1110&lt;/code&gt;, converting it to hexadecimal and then you get &lt;code&gt;e&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/VxroZy-s5s-671.avif 671w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/VxroZy-s5s-671.webp 671w&quot;&gt;&lt;img alt=&quot;The DPI Page in my program, now with Enabled checkboxes&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/VxroZy-s5s-671.png&quot; width=&quot;671&quot; height=&quot;650&quot;&gt;&lt;/picture&gt;&lt;br&gt;
+&lt;small&gt;Now with DPI Checkboxes! I do wonder how much people use it though&lt;/small&gt;&lt;/p&gt;
+&lt;h3 id=&quot;the-fire-speed&quot; tabindex=&quot;-1&quot;&gt;The &amp;quot;Fire Speed&amp;quot; &lt;a class=&quot;header-anchor&quot; href=&quot;https://blog.lx862.com/blog/2024-05-13-reverse-engineering-a-mouse/&quot;&gt;#&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;It seems that the &lt;strong&gt;Fire Speed&lt;/strong&gt; slider is related to the &lt;strong&gt;Fire&lt;/strong&gt; button that is bindable in the mouse binding page, wow who would&#39;ve thought!&lt;/p&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/lRhR-fht1a-386.avif 386w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/lRhR-fht1a-386.webp 386w&quot;&gt;&lt;img alt=&quot;Button binding page in the mouse software, allowing a button to be binded to an action called &#39;Fire&#39;&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/lRhR-fht1a-386.png&quot; width=&quot;386&quot; height=&quot;324&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/EozDWirarv-389.avif 389w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/EozDWirarv-389.webp 389w&quot;&gt;&lt;img alt=&quot;The Fire Speed slider, which corresponds to the Fire action.&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/EozDWirarv-389.png&quot; width=&quot;389&quot; height=&quot;101&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
+&lt;p&gt;When the &lt;strong&gt;Fire&lt;/strong&gt; button is held down, it essentially acts like an auto-clicker where it will spam the left-click according to the Fire Speed.&lt;/p&gt;
+&lt;p&gt;The &lt;strong&gt;lower&lt;/strong&gt; the fire speed is, the &lt;strong&gt;faster&lt;/strong&gt; it clicks, starting with &lt;strong&gt;8&lt;/strong&gt; which clicks at a rate of &lt;strong&gt;8ms&lt;/strong&gt;. The highest I can set in the software is &lt;strong&gt;300&lt;/strong&gt;, which clicks at a rate of... &lt;strong&gt;150&lt;/strong&gt;ms? I am truly starting to develop trust issues with this software...&lt;/p&gt;
+&lt;p&gt;But still even with the slider maxed, the value only goes up to &lt;code&gt;1F&lt;/code&gt;, surely it doesn&#39;t max out at that right?&lt;/p&gt;
+&lt;p&gt;So I went back to Linux and added a slider in my application that goes from 0-255 (&lt;code&gt;00-FF&lt;/code&gt;) and fed that to the mouse.
+With the maximum value (FF), it seems that it can fire as low as every 2s, and it&#39;s merely not exposed by the vendor software, &lt;em&gt;now I am starting to feel like I am getting something out of all of this!&lt;/em&gt;&lt;/p&gt;
+&lt;h2 id=&quot;syncing-the-active-dpi-profile-with-the-ui&quot; tabindex=&quot;-1&quot;&gt;Syncing the active DPI Profile with the UI &lt;a class=&quot;header-anchor&quot; href=&quot;https://blog.lx862.com/blog/2024-05-13-reverse-engineering-a-mouse/&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;As mentioned earlier, the software syncs its config to the mouse on startup, so the UI in the software should in-theory always be aligned with the mouse&#39;s state.&lt;/p&gt;
+&lt;p&gt;Now this &lt;em&gt;would be&lt;/em&gt; true if the software is the only one being able to change the mouse configuration. But remember how you can bind your mouse button to change the DPI? This means that you can change the active DPI by pressing a mouse button, bypassing the software entirely.
+As such I constantly find my program showing the wrong active DPI profile when playing around.&lt;/p&gt;
+&lt;p&gt;So I went back to Windows and check how the mouse software would handle this:&lt;/p&gt;
+&lt;p&gt;&lt;video controls=&quot;&quot; src=&quot;https://blog.lx862.com/img/2024-05-15/dpi_sync_win.mp4&quot; type=&quot;video/mp4&quot;&gt;&lt;/video&gt;&lt;/p&gt;
+&lt;p&gt;So it appears that the software &lt;em&gt;does know&lt;/em&gt; when the DPI got changed as it would reflect the new active DPI profile in real-time. This suggests that the software is also actively monitoring the device, probably for some sort of button press, or maybe the mouse would send DPI change report to the Host?&lt;/p&gt;
+&lt;h3 id=&quot;a-second-interface&quot; tabindex=&quot;-1&quot;&gt;A second interface &lt;a class=&quot;header-anchor&quot; href=&quot;https://blog.lx862.com/blog/2024-05-13-reverse-engineering-a-mouse/&quot;&gt;#&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;I went back to Wireshark, filtered the input endpoint (1.2.1) and clicked on my DPI+ button, expecting something to come up from the mouse... But nothing?
+I mean I can clearly see stuff coming through when I click my Left/Middle/Right Mouse Button and even my side button, is the DPI button just special?&lt;br&gt;
+I was puzzled, and I left it there and went to sleep.&lt;/p&gt;
+&lt;p&gt;The next day I booted back to Windows for further digging. I fired up wireshark again, except this time the filter got cleared and I didn&#39;t bother re-applying the filter I previously had.&lt;/p&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/RuePpSr2g5-293.avif 293w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/RuePpSr2g5-293.webp 293w&quot;&gt;&lt;img alt=&quot;Wireshark window, but I didn&#39;t apply a filter&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/RuePpSr2g5-293.png&quot; width=&quot;293&quot; height=&quot;75&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
+&lt;p&gt;I clicked the DPI+ button again, and suddenly I see data sent from an address I have never seen before: &lt;strong&gt;1.2.2&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/nijrVa2YIs-803.avif 803w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/nijrVa2YIs-803.webp 803w&quot;&gt;&lt;img alt=&quot;Wireshark window with bunch of USB Packet, with a highlighted packet from usb address 1.2.2&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/nijrVa2YIs-803.png&quot; width=&quot;803&quot; height=&quot;624&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
+&lt;p&gt;It turns out there&#39;s another USB Interface (Interface 1, the one we were messing with is Interface 0) for handling... some sort of &amp;quot;special&amp;quot; input from the mouse? Anyway let&#39;s take a look at the data first, which is 3 byte long:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Button pressed: 06 f6 01
+Button released: 06 f6 80
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;After trying the DPI+ button, I tried the DPI- button:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Button pressed: 06 f8 00
+Button released: 06 f8 80
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Eventually I ended up with the following conclusion:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;06 BT DP
+   ^^ ^^
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;BT&lt;/strong&gt; is the physical button pressed (Not the binded action):&lt;/p&gt;
+&lt;table&gt;
+  &lt;tr&gt;
+    &lt;th&gt;Value&lt;/th&gt;
+    &lt;th&gt;Button Name&lt;/th&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;f1&lt;/td&gt;&lt;td&gt;Left Mouse Button&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;f2&lt;/td&gt;&lt;td&gt;Middle Mouse Button&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;f3&lt;/td&gt;&lt;td&gt;Right Mouse Button&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;f4&lt;/td&gt;&lt;td&gt;Side Backward (Towards user)&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;f5&lt;/td&gt;&lt;td&gt;Side Forward (Towards front)&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;f6&lt;/td&gt;&lt;td&gt;Middle backward (Towards user)&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;f8&lt;/td&gt;&lt;td&gt;Middle forward (Towards front)&lt;/td&gt;
+&lt;/tr&gt;&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;DP&lt;/strong&gt; is the DPI profile that should be active (00-03)
+Or &lt;strong&gt;80&lt;/strong&gt; if the button is released. (I assume 80 is only to indicate the button is released &amp;amp; is not related to DPI)&lt;/p&gt;
+&lt;p&gt;So what likely is the case is that the program monitors incoming data from this address, and update the active DPI accordingly to &lt;strong&gt;DP&lt;/strong&gt; reported by the mouse.&lt;/p&gt;
+&lt;p&gt;What I ended up doing in my program is to spin up another thread to monitor Interface 1 for &amp;quot;in-coming&amp;quot; data like this, then pass the data off to the UI and let it change the selected DPI.&lt;/p&gt;
+&lt;a id=&quot;dpi_input_handler&quot;&gt;
+&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/loX3t-97q2-653.avif 653w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/loX3t-97q2-653.webp 653w&quot;&gt;&lt;img alt=&quot;My program&#39;s implementation for monitoring incoming input&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/loX3t-97q2-653.png&quot; width=&quot;653&quot; height=&quot;307&quot;&gt;&lt;/picture&gt;
+&lt;/a&gt;
+&lt;p&gt;Again this feels like one of those very minor &amp;quot;QOL&amp;quot; features, like it&#39;s not the end of the world if the UI doesn&#39;t update, which I do agree at that time as well. However this will end up laying the ground-work for some other features which I am yet to discover at this point.&lt;/p&gt;
+&lt;h2 id=&quot;hidden-in-plain-sight&quot; tabindex=&quot;-1&quot;&gt;Hidden In Plain Sight &lt;a class=&quot;header-anchor&quot; href=&quot;https://blog.lx862.com/blog/2024-05-13-reverse-engineering-a-mouse/&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;After figuring all of that out, I am determined to get one last thing working: The &lt;strong&gt;Software action&lt;/strong&gt; bindings.&lt;/p&gt;
+&lt;p&gt;So I booted back into Windows. Before launching the program however, my mouse just managed to hovered long enough on the program to reveal the description of the executable:&lt;/p&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/aEv_uZ9Pof-294.avif 294w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/aEv_uZ9Pof-294.webp 294w&quot;&gt;&lt;img alt=&quot;Windows Desktop, hovering the program icon revealing a tooltips&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/aEv_uZ9Pof-294.png&quot; width=&quot;294&quot; height=&quot;156&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
+&lt;p&gt;It literally translates into &amp;quot;Instant A704F Gaming Mouse&amp;quot;&lt;br&gt;
+I have never heard of that before, so I decided to look it up:&lt;/p&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/KFPz_uNpna-382.avif 382w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/KFPz_uNpna-382.webp 382w&quot;&gt;&lt;img alt=&quot;Instant A704F Gaming Mouse SOC Datasheet&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/KFPz_uNpna-382.png&quot; width=&quot;382&quot; height=&quot;585&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
+&lt;p&gt;Turns out A704F is a gaming mouse SoC (System on a chip) from a Chinese company called Instant Microelectronics, &lt;em&gt;well that would have been useful to know like at the very start!&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;This PDF did at least confirm some the behaviours I am seeing, but well I am not a hardware guy. (&lt;em&gt;And if you are, &lt;a href=&quot;https://instant-sys.com/uploads/pdf/norm/SPEC/A704F_SPEC_EN.V1.00.pdf&quot;&gt;here is the PDF&lt;/a&gt;&lt;/em&gt;)&lt;br&gt;
+Besides, it doesn&#39;t mention anything about how the software works, as obviously you are suppose to obtain the software from them as well, then customize the user interface to your need (Which the software allows you to do via .ini files) and sell the mouse as it&#39;s own product, so it&#39;s not particularly helpful either.&lt;/p&gt;
+&lt;p&gt;But hey! At least now I know how to call my program now other than possibly&lt;br&gt;
+&lt;small&gt;&amp;quot;Mouse utilities for AOC GM110 &amp;amp; Philips SPK9505 and maybe other mouse who knows!&amp;quot;&lt;/small&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&quot;vendor-scroll-wheel&quot;&gt;Oh I&#39;ve also found a Instant A704 &amp;quot;Driver Manual&amp;quot;, which documents the software usage, along with images of their mouse software which has a different UI than mine, but more or less offers the same options, except this &amp;quot;Scroll Wheel Configuration&amp;quot; that allows you to use your mouse scroll wheel to either scroll &lt;em&gt;or&lt;/em&gt; change the sound volume:&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/dsgKnXyNaV-183.avif 183w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/dsgKnXyNaV-183.webp 183w&quot;&gt;&lt;img alt=&quot;Instant A704 Driver Manual, which featured a different UI, with the option to use your mouse wheel to scroll or to control the sound volume&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/dsgKnXyNaV-183.png&quot; width=&quot;183&quot; height=&quot;93&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
+&lt;p&gt;The Philips software I have did not offer those options, although I am not surprised if they just hid the option all together as their target audience is probably not some DJ :)&lt;/p&gt;
+&lt;h2 id=&quot;back-to-software-action&quot; tabindex=&quot;-1&quot;&gt;Back to &amp;quot;Software action&amp;quot; &lt;a class=&quot;header-anchor&quot; href=&quot;https://blog.lx862.com/blog/2024-05-13-reverse-engineering-a-mouse/&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;For a quick recap, when I say &amp;quot;Software action&amp;quot; I meant these:&lt;/p&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/F6GlP_Xnpc-725.avif 725w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/F6GlP_Xnpc-725.webp 725w&quot;&gt;&lt;img alt=&quot;Button binding page, allowing you to not only rebind buttons, but also perform Shortcuts and perform Multimedia key input&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/F6GlP_Xnpc-725.png&quot; width=&quot;725&quot; height=&quot;397&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
+&lt;p&gt;For these menus, &lt;code&gt;00&lt;/code&gt; is sent as the binding to the mouse, and no other data is sent. So the mouse should not know about which specific function the button is binded to other than &amp;quot;it&#39;s a software-related action&amp;quot;.
+So in-theory only the software would know it and be able to perform the corresponding action.&lt;/p&gt;
+&lt;p&gt;To confirm that, I binded my Middle Forward Button to &lt;strong&gt;Media &amp;gt; Calculator&lt;/strong&gt;. I then closed the software, and sure enough it no longer opens Calculator. These functions do rely on the software to be active.&lt;/p&gt;
+&lt;p&gt;Now remember how the mouse sends data about &amp;quot;Button Press/Release&amp;quot; for buttons with DPI action so as to update the DPI User Interface? It seems that the mouse also does the same when the action is set to &lt;code&gt;00&lt;/code&gt;!&lt;/p&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/s5Mj6-twAr-693.avif 693w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/s5Mj6-twAr-693.webp 693w&quot;&gt;&lt;img alt=&quot;Wireshark USB Packet listing. First packet is the Mouse reported that the button is pressed. Second packet is the Mouse reported that the button is released&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/s5Mj6-twAr-693.png&quot; width=&quot;693&quot; height=&quot;33&quot;&gt;&lt;/picture&gt;&lt;br&gt;
+I&#39;ve decided to start the mouse software again just to see if there&#39;s any difference, and yup!&lt;br&gt;
+&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/kFBiXyWoBY-693.avif 693w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/kFBiXyWoBY-693.webp 693w&quot;&gt;&lt;img alt=&quot;Wireshark USB Packet listing. First packet is the Mouse reported that the button is pressed. There&#39;s 2 more usb packets in between, and the last packet is the Mouse reported that the button is released&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/kFBiXyWoBY-693.png&quot; width=&quot;693&quot; height=&quot;66&quot;&gt;&lt;/picture&gt;&lt;br&gt;
+It seems there are now 2 more reports by the mouse in between:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;02 92 01
+02 00 00
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;After further digging, it seems they are in the following pattern:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;02 KY KY
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;KY&lt;/strong&gt; is the multimedia key held (Calculator in this case) configured in the software, and &lt;code&gt;00&lt;/code&gt; represents that the key is no longer held.&lt;/p&gt;
+&lt;p&gt;Observation so far:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&amp;quot;Software action&amp;quot; is reliant on the software being active.&lt;/li&gt;
+&lt;li&gt;The mouse report to the Host when a button that is binded to either DPI or Software Actions has been clicked.&lt;/li&gt;
+&lt;li&gt;The mouse itself should not have knowledge about which specific software action to perform, as it was never sent in the config.&lt;/li&gt;
+&lt;li&gt;And yet the mouse itself sends the appropriate multimedia key back to the system&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;So I did some further digging on different endpoints.&lt;br&gt;
+As it turns out the host sends a report back to the mouse in Endpoint 0 (The same one used to apply configuration to the mouse), likely commanding the mouse to do some sort of input, then the mouse makes the input to the system.&lt;/p&gt;
+&lt;p&gt;So to sum it up:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;If a button is binded to a Software/DPI-related action, the mouse will report to the Host about the button pressed and the currently active DPI.&lt;/li&gt;
+&lt;li&gt;The software monitors the incoming button press from the mouse (See Above):&lt;/li&gt;
+&lt;li&gt;
+&lt;ul&gt;
+&lt;li&gt;In order to keep the Software UI in sync with the Active DPI&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;ul&gt;
+&lt;li&gt;To command the mouse to input keys by looking up the specific action binded for this button&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/qVF3p7KUmW-827.avif 827w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/qVF3p7KUmW-827.webp 827w&quot;&gt;&lt;img alt=&quot;Wireshark usb packet listing. First packet is &#39;Mouse report button pressed to host&#39;, Second packet is &#39;Host commands mouse to send function key&#39;, Third Packet is &#39;Mouse report function key is pressed to host&#39;, Fourth packet is &#39;Mouse report function key is released to host&#39;, fifth and final packet is &#39;Mouse report button released to host&#39;&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/qVF3p7KUmW-827.png&quot; width=&quot;827&quot; height=&quot;85&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
+&lt;p&gt;This is also when I realized that what the 2 interfaces of the Mouse is all about:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The first interface reports itself as a &lt;strong&gt;HID-Complaint Mouse&lt;/strong&gt;, which is expected as it&#39;s a mouse.&lt;/li&gt;
+&lt;li&gt;The other interface (Where the Software action and blablabla is sent) reports itself as a &lt;strong&gt;HID-Keyboard&lt;/strong&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;This now makes much more sense. The so called &amp;quot;Software action&amp;quot; should be more appropriately called &amp;quot;Key Input action&amp;quot; as it&#39;s likely just the mouse sending key input to the host, acting as a keyboard.&lt;/p&gt;
+&lt;p&gt;Perhaps I should&#39;ve done more research and look into my mouse before starting all of this, but no :)&lt;/p&gt;
+&lt;p&gt;Anyway now let&#39;s take a look at what&#39;s actually being sent for the mouse to perform the input:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;07 17 00 ea = Music Vol -
+07 17 00 e9 = Music Vol +
+07 17 02 23 = Browser
+07 17 01 83 = Media Player
+07 17 01 8a = Mail Manager
+07 17 00 b6 = Last Chapter
+07 17 00 b5 = Next Chapter
+07 17 00 e2 = Mute Vol
+07 17 00 cd = Play/Pause
+07 17 01 92 = Open Calculator
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Keep in mind that this is sent on Endpoint 0 (The same one used for configuring and applying mouse settings), and it doesn&#39;t feel all that different from sending a regular mouse config at all.&lt;/p&gt;
+&lt;p&gt;The 2nd byte is &lt;code&gt;17&lt;/code&gt;, which I assume is to tell the mouse that this is a software key command.&lt;br&gt;
+Then next 2 bytes appears to be... some sort of key code I guess. I didn&#39;t really look further as this list seems to be enough :P&lt;/p&gt;
+&lt;p&gt;But it&#39;s not over. Apart from the &lt;strong&gt;Media&lt;/strong&gt; menu (Which inputs multimedia key), there&#39;s also a &lt;strong&gt;ShortCut&lt;/strong&gt; menu:&lt;/p&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/0RsbtgS_tj-346.avif 346w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/0RsbtgS_tj-346.webp 346w&quot;&gt;&lt;img alt=&quot;Button binding page from the mouse software, with a Shortcut submenu that offers actions like Copy/Paste&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/0RsbtgS_tj-346.png&quot; width=&quot;346&quot; height=&quot;306&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;I don&#39;t know about you, but something suggest that it probably has to do with inputting Keyboard Shortcut.&lt;/em&gt; And assuming that is the case, the mouse would probably have inputted &lt;strong&gt;Ctrl+C&lt;/strong&gt; if I binded it to &amp;quot;Copy&amp;quot;, so let&#39;s start with Copy.&lt;/p&gt;
+&lt;p&gt;This time the software sent 6 reports to the mouse:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;07 15 e0 00 00 00 00 00
+07 15 e0 06 00 00 00 00
+07 15 e0 00 00 00 00 00
+07 15 00 00 00 00 00 00
+
+07 16 00 ff 00 00 00 00
+07 15 00 00 00 00 00 00
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now let&#39;s try pasting (Ctrl+V):&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;07 15 e0 00 00 00 00 00
+07 15 e0 19 00 00 00 00
+07 15 e0 00 00 00 00 00
+07 15 00 00 00 00 00 00
+
+07 16 00 ff 00 00 00 00
+07 15 00 00 00 00 00 00
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;After trying some other shortcuts, my best guess would be that:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The &lt;strong&gt;2nd&lt;/strong&gt; byte (&lt;code&gt;15&lt;/code&gt;) is to command the mouse to make a regular keyboard input, just like &lt;code&gt;17&lt;/code&gt; is to command multimedia key input.&lt;/li&gt;
+&lt;li&gt;The &lt;strong&gt;3rd&lt;/strong&gt; byte (&lt;code&gt;e0&lt;/code&gt;) is for the key modifier (Probably &lt;strong&gt;Ctrl&lt;/strong&gt;)&lt;/li&gt;
+&lt;li&gt;The &lt;strong&gt;4th&lt;/strong&gt; byte (&lt;code&gt;06/19&lt;/code&gt;) is some sort of keycode that represents the key (Probably &lt;strong&gt;C or V&lt;/strong&gt;)&lt;/li&gt;
+&lt;li&gt;Each of the report is indicating all the keys that should be pressed.
+(So the sequence would be &lt;code&gt;Ctrl -&amp;gt; Ctrl+V -&amp;gt; Ctrl -&amp;gt; None&lt;/code&gt;)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I am not sure what the &lt;code&gt;07 16 00 ff&lt;/code&gt; is for, maybe it&#39;s to prevent some sort of key jamming? Either way I never ended up figuring it out :P&lt;/p&gt;
+&lt;p&gt;Okay so being able to Copy and Paste is cool and all, but if we can figure out which keycode corresponds to which key, then we can allow user to bind any key-shortcut as they like.&lt;br&gt;
+But how can we figure that out? I mean there&#39;s only a handful of shortcuts provided by the software that we can toy around with. Maybe at best we can make a LinkedIn shortcut (&lt;code&gt;Ctrl+Shift+Win+Alt+L&lt;/code&gt;), but that&#39;s cumbersome to press!&lt;/p&gt;
+&lt;h3 id=&quot;macros&quot; tabindex=&quot;-1&quot;&gt;Macros! &lt;a class=&quot;header-anchor&quot; href=&quot;https://blog.lx862.com/blog/2024-05-13-reverse-engineering-a-mouse/&quot;&gt;#&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;If your brain has not exploded yet like me writing this blog post, you might have noticed that I never talked about the &amp;quot;Macros&amp;quot; feature after &lt;a href=&quot;https://blog.lx862.com/blog/2024-05-13-reverse-engineering-a-mouse/&quot;&gt;listing it out in the beginning&lt;/a&gt;. That&#39;s because it is not a feature I use nor do I care about it, and it&#39;s also beyond the scope of this project.&lt;/p&gt;
+&lt;p&gt;However since we are looking around keyboard input for now, playing around with macros might not be a bad idea.
+After all Macro also just a series of keyboard inputs, maybe we will have some hope there? So I setup a macro in the software and triggered it.&lt;/p&gt;
+&lt;p&gt;As I have hoped, it behaves exactly the same as those in the Shortcuts menu, just that it now returns the key that I get to define!&lt;br&gt;
+So now I can press almost every indiviual key on my keyboard and get the value of it.&lt;/p&gt;
+&lt;p&gt;Oh and I also realized that there is actually no separate byte for a Key Modifier and a Regular Key.&lt;br&gt;
+In-fact all 6 bytes after the initial &lt;code&gt;15&lt;/code&gt; is just a keycode. You can hold down a maximum of 6 keys at a time and it would fill all 6 bytes:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;07 15 KY KY KY KY KY KY
+      ^^ ^^ ^^ ^^ ^^ ^^
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;KY&lt;/strong&gt; is the keycode.&lt;/p&gt;
+&lt;p&gt;After pressing a good amount of key and noting down the keycode, I just cannot ever imagine that the manufacturer would make their own set of keycode. So I looked up online to see if there&#39;s any key code with some similarities, and well it&#39;s literally just the &lt;a href=&quot;https://gist.github.com/MightyPork/6da26e382a7ad91b5496ee55fdc73db2&quot;&gt;HID Keyboard scan code&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&quot;back-to-implementation&quot; tabindex=&quot;-1&quot;&gt;Back to implementation &lt;a class=&quot;header-anchor&quot; href=&quot;https://blog.lx862.com/blog/2024-05-13-reverse-engineering-a-mouse/&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;With this information and filled with excitement, I went back to Linux and modified the prototype to start sending the input to the mouse, first by trying to input the Win/Meta key.&lt;/p&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/G9p080muNr-430.avif 430w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/G9p080muNr-430.webp 430w&quot;&gt;&lt;img alt=&quot;Linux Terminal, showing me run my prototype program&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/G9p080muNr-430.png&quot; width=&quot;430&quot; height=&quot;78&quot;&gt;&lt;/picture&gt;&lt;br&gt;
+Nothing.&lt;br&gt;
+I tried it again, still nothing.&lt;/p&gt;
+&lt;p&gt;At this point I become a bit fustrated, could it be some differing implementation between Windows and Linux? Is there anything I overlooked? I even booted back to Windows to make sure I am not doing anything wrong, but nothing seems off.&lt;br&gt;
+I went back to Linux, ran it again and then it just worked??? But then sometimes it doesn&#39;t, it&#39;s like a 50/50, which is very odd.&lt;/p&gt;
+&lt;p&gt;At one point I removed the final report that would release all keys (&lt;code&gt;07 15 00 00 ..&lt;/code&gt;) as an attempt to debug, which ended up working and my Win/Meta key is now held without releasing.&lt;/p&gt;
+&lt;p&gt;Hmm so it clearly seems to work. As I try to focus back to my terminal and press Ctrl+C to terminate the program... oh no this can&#39;t be... no No!!!&lt;br&gt;
+&lt;small&gt;&lt;em&gt;(I binded my Win/Meta key to &amp;quot;Drag Windows&amp;quot;, so I can&#39;t focus on any Window or anything as long as it&#39;s held down)&lt;/em&gt;&lt;/small&gt;&lt;/p&gt;
+&lt;p&gt;Anyway after a Hard Reset of my computer, my takeaway is that it may not be a good idea to leave a key held forever!&lt;/p&gt;
+&lt;p&gt;After some further digging, I found out that that the whole time it&#39;s because I run my program in the terminal, and naturally I pressed &lt;strong&gt;Enter&lt;/strong&gt; on my keyboard to run it.&lt;br&gt;
+By the time the program has executed and the key command is sent to the mouse, if my reaction is slow enough I might not have released the Enter key yet, it will end up blocking the Win/Meta key input by the mouse, as such I didn&#39;t notice any effect. Well that&#39;s clearly a lot of fun to figure out!&lt;/p&gt;
+&lt;p&gt;Adding a short delay before running the program (So I have time to release my enter key) fixes the issue, and practically speaking it is very unlikely such event will happen as you can only trigger the action by a mouse anyway.&lt;/p&gt;
+&lt;p&gt;Now back to my program. Since &lt;a href=&quot;https://blog.lx862.com/blog/2024-05-13-reverse-engineering-a-mouse/&quot;&gt;earlier I&#39;ve already made a monitor thread&lt;/a&gt; to sync the active DPI, I can now just extend that to handle software key as well.&lt;/p&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/TipHBxssCs-1041.avif 1041w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/TipHBxssCs-1041.webp 1041w&quot;&gt;&lt;img alt=&quot;My linux mouse program, with new codes inserted to the DPI monitoring code I wrote earlier&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/TipHBxssCs-1041.png&quot; width=&quot;1041&quot; height=&quot;596&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
+&lt;h1 id=&quot;the-untold&quot; tabindex=&quot;-1&quot;&gt;The Untold &lt;a class=&quot;header-anchor&quot; href=&quot;https://blog.lx862.com/blog/2024-05-13-reverse-engineering-a-mouse/&quot;&gt;#&lt;/a&gt;&lt;/h1&gt;
+&lt;p&gt;My own program can be considered mostly finished, with the exception of fully-featured Macros which I didn&#39;t bother implementing as it was never the scope of the project. (Doesn&#39;t interest me enough :P)&lt;/p&gt;
+&lt;p&gt;As one last act, I decided to fiddle around a bit with different config values sent to the mouse, those that was not exposed nor sent by the vendor software.
+(Spoiler: It&#39;s nothing mind-blowing, but still nice to know)&lt;/p&gt;
+&lt;h2 id=&quot;rgb-light-goes-brrrr&quot; tabindex=&quot;-1&quot;&gt;RGB light goes brrrr &lt;a class=&quot;header-anchor&quot; href=&quot;https://blog.lx862.com/blog/2024-05-13-reverse-engineering-a-mouse/&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;Remember how we can set 4 different configuration for the RGB Light?&lt;/p&gt;
+&lt;table&gt;
+  &lt;tr&gt;
+    &lt;th&gt;Value&lt;/th&gt;
+    &lt;th&gt;RGB Mode&lt;/th&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;10&lt;/td&gt;&lt;td&gt;Slow (6s)&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;13&lt;/td&gt;&lt;td&gt;Fast (3s)&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;16&lt;/td&gt;&lt;td&gt;Static&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;17&lt;/td&gt;&lt;td&gt;Off&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;
+&lt;p&gt;I decided to try the value in between, and the result is... well the speed in between.&lt;/p&gt;
+&lt;table&gt;
+  &lt;tr&gt;
+    &lt;th&gt;Value&lt;/th&gt;
+    &lt;th&gt;RGB Mode&lt;/th&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;10&lt;/td&gt;&lt;td&gt;Slow (6s)&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;&lt;strong&gt;11&lt;/strong&gt;&lt;/td&gt;&lt;td&gt;&lt;strong&gt;Slower (5s)&lt;/strong&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;&lt;strong&gt;12&lt;/strong&gt;&lt;/td&gt;&lt;td&gt;&lt;strong&gt;Slightly Slower (4s)&lt;/strong&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;13&lt;/td&gt;&lt;td&gt;Fast (3s)&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;&lt;strong&gt;14&lt;/strong&gt;&lt;/td&gt;&lt;td&gt;&lt;strong&gt;Faster (2s)&lt;/strong&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;&lt;strong&gt;15&lt;/strong&gt;&lt;/td&gt;&lt;td&gt;&lt;strong&gt;Very Fast (1s)&lt;/strong&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;16&lt;/td&gt;&lt;td&gt;Static&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;17&lt;/td&gt;&lt;td&gt;Off&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;
+&lt;p&gt;Here&#39;s how it looks with &lt;code&gt;15&lt;/code&gt; btw:&lt;/p&gt;
+&lt;p&gt;&lt;video controls=&quot;&quot; src=&quot;https://blog.lx862.com/img/rgb_vfast.mp4&quot; type=&quot;video/mp4&quot;&gt;&lt;/video&gt;&lt;br&gt;
+&lt;small&gt;Okay it may not look very fast, but trust me it&#39;s definitely way faster than I can ever set it to in the official software!&lt;/small&gt;&lt;/p&gt;
+&lt;p&gt;I&#39;ve also added the &amp;quot;Very Fast&amp;quot; option in the GUI as it seems cool:&lt;/p&gt;
+&lt;p&gt;&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/tEBkqtF53Z-580.avif 580w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/tEBkqtF53Z-580.webp 580w&quot;&gt;&lt;img alt=&quot;My linux mouse program&#39;s RGB Page, showing a new &#39;Very Fast&#39; radio option that can be selected&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/tEBkqtF53Z-580.png&quot; width=&quot;580&quot; height=&quot;615&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
+&lt;h2 id=&quot;utilizing-scroll-wheel-to-its-fullest&quot; tabindex=&quot;-1&quot;&gt;Utilizing scroll wheel to its fullest &lt;a class=&quot;header-anchor&quot; href=&quot;https://blog.lx862.com/blog/2024-05-13-reverse-engineering-a-mouse/&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;Remember earlier when the mouse software always sends this to the mouse on apply?&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;07 11 00 00 00 00 00 00
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I just thrown it off as some unused feature, but out of curiosity I decided to mess with it anyway. Maybe with enough luck I can change some minor behaviour of the mouse?&lt;/p&gt;
+&lt;p&gt;First, let&#39;s try &lt;code&gt;01&lt;/code&gt; on the 3rd byte:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;07 11 01 00 00 00 00 00
+      ^^
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now my scroll wheel is used to control my sound volume instead of scrolling!&lt;br&gt;
+&lt;picture&gt;&lt;source type=&quot;image/avif&quot; srcset=&quot;https://blog.lx862.com/img/vyiFOK6zMy-295.avif 295w&quot;&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://blog.lx862.com/img/vyiFOK6zMy-295.webp 295w&quot;&gt;&lt;img alt=&quot;Sound volume got changed&quot; loading=&quot;lazy&quot; decoding=&quot;async&quot; src=&quot;https://blog.lx862.com/img/vyiFOK6zMy-295.png&quot; width=&quot;295&quot; height=&quot;55&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
+&lt;p&gt;This is inline with what I &lt;a href=&quot;https://blog.lx862.com/blog/2024-05-13-reverse-engineering-a-mouse/&quot;&gt;observed earlier&lt;/a&gt; about there being an option to change your scroll wheel to control volume as well.&lt;/p&gt;
+&lt;p&gt;Now let&#39;s try &lt;code&gt;02&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;07 11 02 00 00 00 00 00
+      ^^
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This seems to disable the scroll wheel all-together, rendering it ineffective.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;03&lt;/code&gt; is also the same, after that the cycle just repeats.&lt;/p&gt;
+&lt;h3 id=&quot;what-about-the-4th-byte&quot; tabindex=&quot;-1&quot;&gt;What about the 4th byte &lt;a class=&quot;header-anchor&quot; href=&quot;https://blog.lx862.com/blog/2024-05-13-reverse-engineering-a-mouse/&quot;&gt;#&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;Out of curiosity I also decided to mess around with the 4th byte, starting off with &lt;code&gt;01&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;07 11 00 01 00 00 00 00
+         ^^
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This does not appear to do anything at first, &lt;em&gt;however&lt;/em&gt; if I change the 3rd byte to &lt;code&gt;02&lt;/code&gt; like so:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;07 11 02 01 00 00 00 00
+      ^^ ^^
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I can now &lt;em&gt;only&lt;/em&gt; scroll up but not down.&lt;/p&gt;
+&lt;p&gt;Now for &lt;code&gt;02&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;07 11 02 02 00 00 00 00
+         ^^
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I can still only scroll up, but the scroll direction is reversed. (So I scrolls up and it acts like it scrolls down)&lt;/p&gt;
+&lt;p&gt;After more testing, it seems that this byte is used for &lt;strong&gt;debugging/QA purposes&lt;/strong&gt;, here&#39;s a full list of the values that have an effect:&lt;br&gt;
+&lt;small&gt;(Everything shown below can only be triggered by scrolling up, not down)&lt;/small&gt;&lt;/p&gt;
+&lt;table&gt;
+  &lt;tr&gt;
+    &lt;th&gt;Value&lt;/th&gt;
+    &lt;th&gt;Action&lt;/th&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;01&lt;/td&gt;&lt;td&gt;Normal scrolling&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;02&lt;/td&gt;&lt;td&gt;Normal scrolling, direction reversed&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;03&lt;/td&gt;&lt;td&gt;Control volume&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;04&lt;/td&gt;&lt;td&gt;Control volume, direction reversed&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;06&lt;/td&gt;&lt;td&gt;Cycle active DPI Profile&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;07&lt;/td&gt;&lt;td&gt;Trigger the &lt;strong&gt;Show Desktop&lt;/strong&gt; action&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;08&lt;/td&gt;&lt;td&gt;Toggle RGB Light (On/Off)&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;09&lt;/td&gt;&lt;td&gt;Flash RGB Light&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;0b&lt;/td&gt;&lt;td&gt;Resets the RGB Light breathing animation, starting with Purple.&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;0c&lt;/td&gt;&lt;td&gt;Resets the RGB Light breathing animation, starting with Blue.&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;0d&lt;/td&gt;&lt;td&gt;Spam &lt;code&gt;z&lt;/code&gt; key input!&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;10&lt;/td&gt;&lt;td&gt;Flash RGB Light (In Red color)&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;11&lt;/td&gt;&lt;td&gt;Momentarily turn off the RGB Light, then turn it back on again&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;12&lt;/td&gt;&lt;td&gt;Flash RGB Light (In Blue color)&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;13&lt;/td&gt;&lt;td&gt;Flash RGB Light (In Magenta color)&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;
+&lt;p&gt;So I ended up with:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;07 11 SM DB 00 00 00 00
+      ^^ ^^
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;SM&lt;/strong&gt; is the scroll mode. &lt;strong&gt;00&lt;/strong&gt; is normal, &lt;strong&gt;01&lt;/strong&gt; is to control volume, and &lt;strong&gt;02/03&lt;/strong&gt; is for debugging.
+&lt;strong&gt;DB&lt;/strong&gt; is the debug byte, only have an effect if &lt;strong&gt;SM&lt;/strong&gt; is 02/03. &lt;em&gt;See above for the list.&lt;/em&gt;&lt;/p&gt;
+&lt;h1 id=&quot;conclusion&quot; tabindex=&quot;-1&quot;&gt;Conclusion &lt;a class=&quot;header-anchor&quot; href=&quot;https://blog.lx862.com/blog/2024-05-13-reverse-engineering-a-mouse/&quot;&gt;#&lt;/a&gt;&lt;/h1&gt;
+&lt;p&gt;Well it&#39;s quite a journey! I hope this blog post won&#39;t be a seizure to read due to the sheer length and my inability to formulate sentences.
+I won&#39;t claim to know the full detail of everything I did (Esp USB-related), but it is still rewarding nevertheless. Feel free to let me know if there&#39;s anything wrong or stuff that I missed in the blog post.&lt;/p&gt;
+&lt;p&gt;All the findings and the program I made to configure the mouse can be found on &lt;a href=&quot;https://github.com/Kenny-Hui/Instant-A704F-Mouse-Utilities&quot;&gt;my GitHub repo&lt;/a&gt;, installation and usage instructions are included in the README.&lt;/p&gt;
+&lt;p&gt;See you in the next one :3&lt;/p&gt;
+</content>
+	</entry>
 	
 	<entry>
 		<title>I made a class schedule widget</title>

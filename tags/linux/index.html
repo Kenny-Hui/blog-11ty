@@ -8,13 +8,15 @@
 		<link rel="alternate" href="/feed/feed.xml" type="application/atom+xml" title="LXBlog">
 		<link rel="alternate" href="/feed/feed.json" type="application/json" title="LXBlog">
 		<meta name="generator" content="Eleventy v2.0.1">
-		
-		<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Inter:slnt,wght@-10..0,100..900&display=swap" rel="stylesheet">
 		
 		<style>* { box-sizing: border-box; }
 /* Defaults */
 :root {
-	--font-family: 'Roboto', sans-serif;
+	--font-family: 'Inter', -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;
 	--font-family-monospace: monospace;
 }
 
@@ -26,11 +28,11 @@
 	--color-gray-20: #e0e0e0;
 	--color-gray-50: #C0C0C0;
 	--color-gray-90: #dad8d8;
-	--color-bg-highlight: #333;
+	--color-bg-highlight: #2C3034;
 
-	--background-color: #222;
-	--html-background-color: #191919;
-	--codeblock-background: #3B3B3B;
+	--background-color: #23272B;
+	--html-background-color: #181C22;
+	--codeblock-background: #383C40;
 
 	/* --text-color is assigned to --color-gray-_ above */
 	--text-color-link: #66C2fc;
@@ -49,7 +51,7 @@ html, body {
 	margin: 0 auto;
 	font-family: var(--font-family);
 	color: var(--text-color);
-	font-size: 1.025rem;
+	font-size: 1;
 }
 
 html::before {
@@ -62,10 +64,12 @@ html::before {
 
 html {
 	background-color: var(--html-background-color);
+	scroll-behavior: smooth;
+	scroll-padding: 4rem;
 }
 
 body {
-	max-width: 42em;
+	max-width: 52em;
 }
 
 /* https://www.a11yproject.com/posts/how-to-hide-content/ */
@@ -84,10 +88,16 @@ p:last-child {
 }
 
 p {
+	margin: 1rem 0;
 	line-height: 1.7;
 }
 
 li {
+	margin: 0.5rem 0;
+}
+
+ol > li {
+	margin: 0.25rem 0;
 	line-height: 1.5;
 }
 
@@ -157,17 +167,26 @@ header > nav {
 
 table {
 	margin: 1em 0;
+	border-collapse: collapse;
 }
 
 table td,
 table th {
-	padding-right: 1em;
+	padding: 0.25rem;
+	padding-right: 0.75rem;
+	border: 1px solid var(--color-gray-10);
+}
+
+table th {
+	text-align: left;
 }
 
 pre,
 code {
+	display: inline-block;
 	font-family: var(--font-family-monospace);
-	font-size: 0.80rem;
+	font-size: 0.90rem;
+	border: 1px solid black;
 	background: var(--codeblock-background);
 }
 
@@ -188,6 +207,7 @@ pre:not([class*="language-"]) {
 }
 
 code {
+	padding: 0 4px;
 	word-break: break-all;
 }
 
@@ -201,7 +221,7 @@ header {
 	gap: 1em .5em;
 	flex-wrap: wrap;
 	align-items: center;
-	padding: 1em 0;
+	padding: 1.25em 0;
 }
 
 .home-link {
@@ -249,6 +269,7 @@ header {
 	background: var(--color-bg-highlight);
 	align-items: baseline;
 	margin-bottom: 1em;
+	padding: 0.25em 0.25em 0em 0em;
 }
 
 .postlist-date,
@@ -282,17 +303,19 @@ header {
 	content: "";
 	padding: 0 0.1em;
 	transform: skewX(-15deg);
-	background: var(--codeblock-background);
+	background-color: var(--codeblock-background);
 	z-index: -4;
-	border-right: 1px solid gray;
+	border-left: 1px solid #555;
+	
+	border-top: 1px solid #555;
 }
 
 .postlist-tag:last-child::after {
-	border-right: none;
+	border-right: 1px solid #555;
 }
 
 .postlist-tag:hover::after {
-	background: rgba(255, 255, 255, 0.2);
+	background-color: rgba(255, 255, 255, 0.15);
 }
 
 .tag {
@@ -333,18 +356,82 @@ main img {
 	}
 }
 
+@media (prefers-reduced-motion: reduce) {
+	html {
+		scroll-behavior: auto;
+	}
+}
+
+a:target {
+	font-weight: 600;
+	text-decoration: underline;
+}
+
+#anchor-back-button {
+	position: fixed;
+	border: none;
+	outline: none;
+	padding: 0.5rem;
+	right: 15px;
+	top: 15px;
+	font-size: 1.1rem;
+	font-family: inherit;
+	display: none;
+	cursor: pointer;
+}
+
+.postlist-linkdesc {
+	padding-left: 0.5rem;
+}
+
+.postlink-desc {
+	margin-top: 0.25em;
+	margin-bottom: 1em !important;
+}
+
 .postlist-link {
 	font-size: 1.1875em; /* 19px /16 */
 	font-weight: 500;
 	flex-basis: calc(100% - 1.5rem);
-	padding-right: .75em;
+	padding-right: .5rem;
 	text-underline-position: from-font;
 	text-underline-offset: 0;
 	text-decoration-thickness: 1px;
 }
 
+.section-header {
+	display: inline-block;
+	background: var(--codeblock-background);
+	padding: 0.1rem 0.4rem;
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+.section-content {
+	margin-top: 0;
+	background: var(--codeblock-background);
+	padding: 0.5rem;
+}
+
 .postlist-item-active .postlist-link {
 	font-weight: bold;
+}
+
+ol {
+	margin-top: 0;
+}
+
+.backtotop {
+	position: fixed;
+	right: 0;
+	bottom: 0;
+	margin: 1rem;
+}
+
+@media only screen and (max-width: 1000px)  {
+	.backtotop {
+		display: none;
+	}
 }
 
 /* Tags */
@@ -374,6 +461,11 @@ main img {
 	flex-wrap: wrap;
 	gap: .5em;
 	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.post-metadata > li {
 	padding: 0;
 	margin: 0;
 }
@@ -464,6 +556,7 @@ footer {
 	filter: contrast(5);
 	background: #6C6C6C;
 }</style>
+		<link rel="icon" type="image/x-icon" href="/img/favicon.png">
 	</head>
 
 	<body>
@@ -471,7 +564,7 @@ footer {
 		<header>
 			<a href="/" class="home-link">
 				
-					<img width=120px src="/img/logo.png" alt="LXBlog">
+					<img width=128px src="/img/logo.png" alt="LXBlog">
 				
 			</a>
 			<nav>
@@ -493,9 +586,12 @@ footer {
 
 	
 		<li class="postlist-item">
-			<a href="/blog/2023-02-26-Fu-NVIDIA/" class="postlist-link">So NVIDIA, F*** you</a>
-			<time class="postlist-date" datetime="2023-02-26">2023/02/26</time>
-			<p>I got a new GPU, and NVIDIA does not make me happy.</p>
+			<div class="postlist-linkdesc">
+				<a href="/blog/2023-02-26-Fu-NVIDIA/" class="postlist-link">So NVIDIA, F*** you</a>
+				<time class="postlist-date" datetime="2023-02-26">2023/02/26</time>
+				<p class="postlink-desc">I got a new GPU, and NVIDIA does not make me happy.</p>
+			</div>
+			
 			<div class="postlist-tags">
 				
 				
@@ -520,12 +616,12 @@ footer {
 
 		<footer>
 			<div class="footer">
-				<span>LX86 2023</span>
+				<span>LX86 2024</span>
 				<div>
 					<a href="/feed/feed.xml">RSS</a>
-					<a href="mailto:lx86@lx862.com">Email</a>
+					<a href="mailto:lx86@lx862.com">Contact</a>
 				</div>
-				<span>Last updated: <time datetime="2023-10-02">2023-10-02</span>
+				<span>Last updated: <time datetime="2024-05-13">2024-05-13</span>
 			</div>
 			<div class="footer2">
 				<span>All content are under <a href="https://creativecommons.org/licenses/by-nc/4.0/">CC BY-NC 4.0</a> unless noted otherwise</span>
