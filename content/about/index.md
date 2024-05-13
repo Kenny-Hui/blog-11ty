@@ -10,7 +10,7 @@ I am Kenny Hui (Better known as LX86). I sometimes code stuff, whether you like 
 
 I like learning new technologies, especially at the software side of things, and I am an absolute horror when it comes to managing stuff, whether it's within my computer or IRL.
 
-If not saddened I am at least rather disappointed on how the modern web has became.
+If not saddened I am at least somewhat disappointed on how the modern web has became.
 
 <span class="ace"></span> Coming from Hong Kong, now supposedly <code>{{ metadata.bday | yearDiff }}</code> y/o :D
 
@@ -34,13 +34,13 @@ This blog is originally based on Beautiful Jekyll hosted on GitHub page, but lat
 - RAM: 8x2GB DDR4 @ 2400Mhz
 - GPU: NVIDIA GTX 1650 SUPER
 - Storage:
-- - SSD: PLEXTOR PX-256M6S (256GB, Windows 10)
+- - SSD: PLEXTOR PX-256M6S (256GB, Windows)
 - - HDD: WDC WD30EZRX (3TB, Data)
 - - HDD: ST2000DM001 (2TB Data and games, 300GB for Linux)
 
 - Operating System:
-- - Debian 12 (Main, with KDE Plasma)
-- - Windows 10 in case I screwed up
+- - Debian Trixie (Main, with KDE Plasma)
+- - Windows 10 in case I screwed up :D
 
 - Monitors:
 - - BenQ G2412D (Primary, 1920x1080@60Hz)

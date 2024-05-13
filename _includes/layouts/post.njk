@@ -16,6 +16,8 @@ layout: layouts/base.njk
 	{%- endfor %}
 </ul>
 
+<button id="anchor-back-button">↓ Back</button>
+
 {{ content | safe }}
 
 {%- if collections.posts %}
@@ -40,3 +42,6 @@ layout: layouts/base.njk
 </ul>
 {%- endif %}
 {%- endif %}
+
+<a href="#" class="backtotop">↑Back to top</a>
+<script src="/js/main.js"></script>
