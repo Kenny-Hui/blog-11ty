@@ -86,13 +86,15 @@ I am no genius so I just moved my mouse and see which address it's coming from, 
 
 But I quickly realized that's not the address I should be looking for. Sure it may have mouse traffic, but when I fired up my mouse software and hit "Apply", nothing seems to show up other than my mouse movement & my left click.
 
-After a bit of fiddling and research, it turns out that there are different so called **Endpoint** in a USB device. (Well to put it very simply, you can think of it as a location where data can go in/out, but I am far from qualified to explain it in detail).
+After a bit of fiddling and research, it turns out that a USB Devices have different so called **Interfaces** and **Endpoints**.  
+To put it very simply (Again I am no expert in this!):
+- **Interface** contains a group of endpoints which is dedicated for a specific use (Whether it would be a mouse, or a keyboard).  
+- **Endpoint** are... well you can think of it as a place where data goes in and out.
+All USB device *must* have at least 1 Endpoint in Address number 0 (Endpoint 0) used for control transfer. This is the endpoint that is used to communicate and configure your USB device by the OS.
 
-To the best of my understanding all USB device *must* have at least 1 Endpoint in Address number 0 (Endpoint 0) used for control transfer. This is the endpoint that is used to communicate and configure your USB device by the OS.
+In this case it appears that the mouse software also send the config to the mouse on Endpoint 0, so I changed my wireshark filter to `1.2.0` instead to inspect data coming from/to that endpoint instead.
 
-In this case it appears that the mouse software also sends configuration data to the mouse on Endpoint 0, so I changed my wireshark filter to `1.2.0` instead to inspect data coming from/to that endpoint instead.
-
-After that I hit the "Apply" button on my mouse software again, and 14 new entry appeared:
+After I hit the "Apply" button on my mouse software again, 14 new entry appeared:
 
 {% image "./wireshark_on_apply.png", "Wireshark Window, with a list of usb packets appearing after clicking the Apply button in the mouse software" %}
 
@@ -104,13 +106,13 @@ This is probably the most nerdiest part, to figure out and guess what each of th
 Now I don't know a lot about reverse-engineering, but I know that a good starting point is to change 1 option in the software, apply it again, then compare it with the previous data sent and figure out the difference, so here are my (initial) observations:
 
 ## Button Bindings
-This mouse have the capabilities to rebind buttons, either to another button or an action like "Showing Desktop" or performing shortcuts.
+This mouse have the capabilities to rebind buttons, either to another button or an action like changing the DPI, opening a calculator or performing shortcuts.
 
 <a id="button-bindings">
 {% image "./mouse_binding_menus.png", "Button binding page, allowing you to not only rebind buttons, but also perform Shortcuts and perform Multimedia key input" %}
 </a>
 
-For simplicity sake I'll just call all of these **actions** (i.e. A **Left Mouse Button** is binded to a **"Left Click" action**)
+For simplicity sake I'll just call all of these **action** (i.e. A **Left Mouse Button** is binded to a **Left Button/Left Click action**)
 
 So I started changing the bindings to see what got changed from which packets (Remember it sends 14 of them all at once on apply!), and it seems that for Mouse Bindings, the data is sent in the following format (7 times for each of the 7 buttons on the mouse):
 ```
@@ -157,13 +159,13 @@ So I started changing the bindings to see what got changed from which packets (R
     <td>00</td><td>Software action...?</td>
   </tr>
   <tr>
-    <td>01</td><td>Left Click</td>
+    <td>01</td><td>Left Button</td>
   </tr>
   <tr>
-    <td>02</td><td>Middle Click</td>
+    <td>02</td><td>Middle Button</td>
   </tr>
   <tr>
-    <td>03</td><td>Right Click</td>
+    <td>03</td><td>Right Button</td>
   </tr>
   <tr>
     <td>04</td><td>Back</td>
@@ -191,19 +193,19 @@ So I started changing the bindings to see what got changed from which packets (R
   </tr>
 </table>
 
-So for example, a report about the **Left Mouse Button** binded to a **Right Click Action** would look like:
+So for example, binding the **Left Mouse Button** to a **Right Button action** would look like:
 ```
 07 10 01 03 00 00 00 00
       ^^ ^^
 ```
 
-Also worth noting is the `00` in **AT**. It seems that when choosing any actions within the [ShortCut / Media submenu](#button-bindings) (Copy/Pasting, Calculator, Play/Pause), **AT** is always reported as `00`.
+Also worth noting is the `00` in **AT**. It seems that when choosing any actions within the [ShortCut / Media submenu](#button-bindings) (Copy/Pasting, Calculator, Play/Pause), **AT** is always reported as `00`.  
 There's no follow up data either, *which means that the mouse would have no idea which specific action is actually binded*?
 
 For now I will call `00` as **Software action**. Since the mouse have no knowledge of the action, my guesses are that it most likely relies on some interference from the mouse software.
 
 ## Something...?
-It seems that on apply, there's always this one report that is always getting sent by the software and the value never changes:
+It seems that on apply, there's always this one report that is always getting sent by the mouse software and the value never changes:
 ```
 07 11 00 00 00 00 00 00
 ```
@@ -221,7 +223,8 @@ Data sent:
          ^^
 ```
 
-**FR** appears to be a value between **00** and **1F**. Interestingly it seems to be **in +16 increments and rounded down**. (So if the Slider reads 15 in the software, it gets sent as `00`, if it's 16 it gets sent as `01`), even though the software itself makes it look like you can set an arbitrary value.
+**FR** appears to be a value between **00** and **1F**.  
+Interestingly it seems to be **in +16 increments and rounded down**. (So if the Slider reads 15 in the software, it gets sent as `00`, if it's 16 it gets sent as `01`), even though the software itself makes it look like you can set an arbitrary value.
 
 I guess I did get what I paid for...
 
@@ -432,7 +435,7 @@ Hmm so it seems that the `0f` is not a static value after all and represents whi
 The number seems a bit random at first, especially when there are so many on/off combinations you can make, but soon it became clear:
 {% set section = { header: 'Computer 101', content: '
 For the uninitiated, a byte is consisted of 8 bit (1111 1111), where each bit can either be a 0 (off) or 1 (on).
-Conveniently a byte can be represented by 2 hexadecimal number. That is because each hexadecimal number is used to represent 4 bits (1111). The total combination of all these 4 bits being on/off is (4^2 = 16), which can fit exactly to a hexadecimal as a hex have 16 possible values.
+Conveniently a byte can be represented by 2 hexadecimal number. That is because each hexadecimal number is used to represent 4 bits (1111). The total combination of all these 4 bits being on/off is (4² = 16), which can fit exactly to one hexadecimal as a hex have 16 possible values.
 ' } %}
 
 {% include "section.njk" %}
@@ -485,7 +488,7 @@ I clicked the DPI+ button again, and suddenly I see data sent from an address I 
 
 {% image "wireshark_1.2.2.png", "Wireshark window with bunch of USB Packet, with a highlighted packet from usb address 1.2.2" %}
 
-It turns out there's another USB Interface (Interface 1, the one we were messing with is Interface 0) for handling... some sort of "special" input from the mouse? Anyway let's take a look at the data first, which is 3 byte long:
+It turns out that 1.2.2 is Endpoint No. 2, which belongs to another USB Interface (Interface 1). It seems to be used for reporting... some sort of "special" button press from the mouse? Anyway let's take a look at the data first, which is 3 byte long:
 ```
 Button pressed: 06 f6 01
 Button released: 06 f6 80
@@ -531,10 +534,10 @@ Eventually I ended up with the following conclusion:
     <td>f8</td><td>Middle forward (Towards front)</td>
 </table>
 
-**DP** is the DPI profile that should be active (00-03)
+**DP** is the DPI profile that should be active (00-03)  
 Or **80** if the button is released. (I assume 80 is only to indicate the button is released & is not related to DPI)
 
-So what likely is the case is that the program monitors incoming data from this address, and update the active DPI accordingly to **DP** reported by the mouse.
+So what likely is the case is that the program monitors incoming data from this endpoint, and updates the active DPI accordingly to **DP** reported by the mouse.
 
 What I ended up doing in my program is to spin up another thread to monitor Interface 1 for "in-coming" data like this, then pass the data off to the UI and let it change the selected DPI.
 
